@@ -1,6 +1,5 @@
 # PLAN.md — Arena → Predictive AI Market
 *Last updated: June 9, 2026*
-*Built for: Hack Club Macondo*
 
 ---
 
@@ -24,7 +23,7 @@ Every major AI benchmark is either saturated, contaminated, or gamed:
 
 ---
 
-## Phase 1 — Arena (Weeks 1–8, Macondo Build)
+## Phase 1 — Arena (Weeks 1–8)
 
 ### What It Is
 
@@ -228,7 +227,7 @@ All latency + cost logging happens in one API call handler. Single async functio
 
 ---
 
-## Phase 2 — Predictive AI Market (Month 2–3, Post-Macondo)
+## Phase 2 — Predictive AI Market (Month 2–3)
 
 ### The Idea
 
@@ -276,19 +275,18 @@ No platform exists that applies prediction market mechanics to AI evaluation. Th
 
 **Working title:** Arena  
 **Tagline:** *Every AI leaderboard is broken. Models memorize the test. Nobody fixed it yet — so I am.*  
-**Built for:** Hack Club Macondo 2026  
 **Open source:** Yes, everything  
 **Phase 1 goal:** The most accessible, cost-aware, gamified AI benchmark platform available  
 **Phase 2 goal:** The prediction market for AI capability — Polymarket meets model evaluation  
 
 ---
 
-## What Success Looks Like After Macondo
+## What Success Looks Like
 
 - 200+ users have run a battle in the first week
 - The cost-capability matrix gets shared on X/Twitter by an ML engineer
 - At least one community-submitted prompt becomes a featured evaluation
-- The devlog series gets read by people outside Hack Club
+- The devlog series reaches a wider audience
 - Phase 2 prototype exists and gets written up as a follow-on project
 
 ---
@@ -313,3 +311,7 @@ No platform exists that applies prediction market mechanics to AI evaluation. Th
 - phase 2 of what we are building is only going to be the whole ai polymarket version where we can bid on agents doing stuff etc
 - main interface for the entire thing is going to be via openrouter api
 - starting the main version of it now
+
+
+
+- basic project scaffoldong is done as of now
