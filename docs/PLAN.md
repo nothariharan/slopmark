@@ -1,11 +1,11 @@
-# PLAN.md — Arena → Predictive AI Market
-*Last updated: June 9, 2026*
+# PLAN.md — Arena Benchmark Platform
+*Last updated: June 2026*
 
 ---
 
 ## The One-Line Version
 
-A gamified AI model benchmarking arena that evolves into a prediction market — where the community prices AI capability in real time.
+An open AI evaluation platform with novel tasks, behavioral verifiers, and a fixed harness — built for developers who need trustworthy model scores.
 
 ---
 
@@ -19,7 +19,7 @@ Every major AI benchmark is either saturated, contaminated, or gamed:
 - **LLM-as-judge is biased** — GPT-4 judges prefer verbose, markdown-heavy, GPT-4-style outputs. It's not neutral.
 - **Cost is invisible** — every leaderboard shows capability scores but not what it costs to get them. That's half the information missing.
 
-**The gap:** No platform that is fast, open, gamified, cost-aware, and built for developers — not researchers.
+**The gap:** No platform that is fast, open, cost-aware, and built for developers who need real eval signal — not researchers waiting in queue.
 
 ---
 
@@ -137,7 +137,6 @@ All latency + cost logging happens in one API call handler. Single async functio
 | Community prompt submission | Limited | No | No | **Yes** |
 | Results in < 60 seconds | No (queue) | No (weeks) | N/A | **Yes** |
 | Open source everything | No | Partial | No | **Yes** |
-| Prediction market layer | No | No | No | **Phase 2** |
 
 ---
 
@@ -207,8 +206,6 @@ All latency + cost logging happens in one API call handler. Single async functio
 - [ ] Community prompt submission (with basic vetting queue)
 - [ ] BYOP mode — paste your own prompt, run against 5 models simultaneously
 - [ ] Deploy: Vercel (frontend) + Supabase (DB) + Railway/Render (FastAPI workers if needed)
-- [ ] Write devlogs #02, #03, #04
-
 ---
 
 ### Datasets (Open License, Safe to Use)
@@ -227,91 +224,42 @@ All latency + cost logging happens in one API call handler. Single async functio
 
 ---
 
-## Phase 2 — Predictive AI Market (Month 2–3)
-
-### The Idea
-
-Once Arena has real ELO data and historical battle results, layer a prediction market on top of it.
-
-**Polymarket, but for AI model capabilities.** Users spend points (not real money — no legal complexity) to predict:
-- Which model wins a specific head-to-head battle before the result is revealed
-- What score a newly announced model will get on Arena's leaderboard within 7 days of launch
-- Whether Model X will overtake Model Y in ELO by a given date
-- "Will GPT-next score above 85% on Arena's coding domain within 30 days?"
-
-### Why This Is Genuinely Novel
-
-No platform exists that applies prediction market mechanics to AI evaluation. The implications:
-
-1. **New signal type** — market prices reflect the community's collective belief about model capability, independent of any lab's marketing. A model that costs $20/M tokens but has 95% market confidence in beating cheaper alternatives is sending real information.
-
-2. **Incentive alignment** — people who research models deeply and have real opinions are rewarded for being right. This attracts exactly the users (ML engineers, researchers, AI-adjacent developers) who generate the best benchmark prompts.
-
-3. **Viral loop** — predictions expire, results reveal, scores update. Every model launch is an event. Every Arena battle is a mini-market. Repeat engagement is built in.
-
-4. **Data flywheel** — more predictions → more users → more arena battles → better ELO data → more accurate predictions → more users who trust the platform.
-
-5. **Business angle** — eventually, prediction market data on model capability is genuinely valuable to enterprises choosing infrastructure. That's a real B2B data product.
-
-### What It Requires from Phase 1
-
-- Solid ELO system with enough history to make predictions meaningful
-- User accounts (for prediction attribution and points)
-- Model release tracking (scraping announcements or manual curation)
-- A points/credits system (start simple — every vote earns points, correct predictions multiply them)
-
-### Phase 2 Feature List
-
-- **Pre-battle predictions** — before a battle resolves, users lock in a prediction (bet points on winner)
-- **Model release markets** — "GPT-next on Arena coding domain: >80%? <80%?" — community votes with points
-- **Capability futures** — 30-day prediction markets on ELO movement
-- **Leaderboard of predictors** — who is best at calling AI capability ahead of time?
-- **Public prediction feed** — Twitter-style stream of active markets and recent resolutions
-- **"Surprise" events** — when a model significantly outperforms or underperforms market expectations, it gets flagged
-
----
-
 ## Project Identity
 
 **Working title:** Arena  
-**Tagline:** *Every AI leaderboard is broken. Models memorize the test. Nobody fixed it yet — so I am.*  
-**Open source:** Yes, everything  
-**Phase 1 goal:** The most accessible, cost-aware, gamified AI benchmark platform available  
-**Phase 2 goal:** The prediction market for AI capability — Polymarket meets model evaluation  
+**Tagline:** Open evaluation for AI models — novel tasks, behavioral verifiers, fixed harness.  
+**Open source:** Yes  
 
 ---
 
 ## What Success Looks Like
 
-- 200+ users have run a battle in the first week
-- The cost-capability matrix gets shared on X/Twitter by an ML engineer
-- At least one community-submitted prompt becomes a featured evaluation
-- The devlog series reaches a wider audience
-- Phase 2 prototype exists and gets written up as a follow-on project
+- instruction follow benchmark runs end-to-end with deterministic scoring
+- multiple models evaluated on the same task set with comparable results
+- community can submit and review new tasks
+- cost and latency logged on every run
 
 ---
 
 ## Open Questions (To Resolve During Build)
 
-1. **Model pool for MVP** — which 5–8 models on OpenRouter give the best coverage without blowing budget? Suggested: Claude Haiku, GPT-4o-mini, Llama 3.1 8B, Mistral 7B, Qwen 2.5 7B — all cheap, all very different capability profiles.
+1. **Model pool for MVP** — which 5–8 models on OpenRouter give the best coverage without blowing budget? Suggested: Claude Haiku, GPT-4o-mini, Llama 3.1 8B, Mistral 7B, Qwen 2.5 7B.
 
-2. **ELO initialization** — start all models at 1000 and let battles calibrate, or seed with known rankings?
+2. **Prompt vetting** — lightweight review queue for community submissions before tasks go live.
 
-3. **Prompt vetting** — for community submissions, use a lightweight LLM classifier to flag low-quality/harmful prompts before they enter the pool?
+3. **Name** — "Arena" is a working title. Alternatives: ModelClash, BenchWar, EvalArena, Crucible.
 
-4. **Phase 2 currency** — points earned from voting only, or also from prompt submissions that get used in battles?
+---
 
-5. **Name** — "Arena" is a working title. Alternatives: ModelClash, BenchWar, EvalArena, Crucible.
+## Domain scoring summary
 
+| domain | scorer |
+|---|---|
+| writing | human vote |
+| coding | hidden tests pass |
+| swe | repo behavioral tests |
+| math | extracted answer match |
+| instruction | deterministic rule parser |
+| json | schema validation |
 
-
-
-## What we have done so far
-- as of now we dont hav e a strict diret plan as to what we are building 
-- phase 2 of what we are building is only going to be the whole ai polymarket version where we can bid on agents doing stuff etc
-- main interface for the entire thing is going to be via openrouter api
-- starting the main version of it now
-
-
-
-- basic project scaffoldong is done as of now
+DeepSWE spine: novel task → fixed harness → behavioral verifier → human quality gate.

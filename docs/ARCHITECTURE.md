@@ -496,11 +496,3 @@ docs/
 5. **cost is first class** — log it on every run, show it on leaderboard
 6. **honest about contamination** — label seed data, push community tasks for trust
 7. **plugin verifiers** — new domain = new scorer file, same task schema
-
-
-
-
-few stuff to note includes:
-
-
-1. the benchmark mechanims is entirely based upon on the DeepSWE
