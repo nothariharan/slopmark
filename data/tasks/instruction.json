@@ -1,0 +1,254 @@
+[
+  {
+    "id": "ins-01",
+    "domain": "instruction",
+    "prompt": "Write exactly 8 words about rain.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "word_count", "exact": 8 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-02",
+    "domain": "instruction",
+    "prompt": "Write exactly 12 words describing a quiet library.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "word_count", "exact": 12 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-03",
+    "domain": "instruction",
+    "prompt": "Write a response between 15 and 20 words about coffee.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "word_count", "min": 15, "max": 20 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-04",
+    "domain": "instruction",
+    "prompt": "Write exactly 2 paragraphs about morning walks. Separate paragraphs with a blank line.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "paragraph_count", "exact": 2 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-05",
+    "domain": "instruction",
+    "prompt": "Write exactly 3 paragraphs about ocean tides. Use blank lines between paragraphs.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "paragraph_count", "exact": 3 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-06",
+    "domain": "instruction",
+    "prompt": "Write a short note about stars. Do not use the letter e anywhere in your response.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "forbidden_substring", "values": ["e", "E"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-07",
+    "domain": "instruction",
+    "prompt": "Describe a forest path. Never use the word 'the' in your answer.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "forbidden_substring", "values": ["the"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-08",
+    "domain": "instruction",
+    "prompt": "Write one sentence about machine learning. Include the word 'tensor' in your response.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "required_phrase", "values": ["tensor"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-09",
+    "domain": "instruction",
+    "prompt": "Write a brief note about space. Include both 'orbit' and 'gravity' in the text.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "required_phrase", "values": ["orbit", "gravity"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-10",
+    "domain": "instruction",
+    "prompt": "Start your answer with 'Summary:' then give a one-line note about sleep.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "starts_with", "value": "Summary:" }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-11",
+    "domain": "instruction",
+    "prompt": "Write a short tip about hydration. End your answer with the word 'water'.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "ends_with", "value": "water" }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-12",
+    "domain": "instruction",
+    "prompt": "Give a tiny fact about cats. Keep the full response under 60 characters.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "max_chars", "value": 60 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-13",
+    "domain": "instruction",
+    "prompt": "List 4 short lines about planets. Put each line on its own line, exactly 4 lines total.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "line_count", "exact": 4 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-14",
+    "domain": "instruction",
+    "prompt": "Write exactly 5 lines about coding habits. One idea per line.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "line_count", "exact": 5 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-15",
+    "domain": "instruction",
+    "prompt": "Write exactly 10 words. Include the phrase 'blue sky'. Do not use the word 'and'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 10 },
+        { "type": "required_phrase", "values": ["blue sky"] },
+        { "type": "forbidden_substring", "values": ["and"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-16",
+    "domain": "instruction",
+    "prompt": "Write 2 paragraphs about bread baking. Each paragraph must be under 40 words. Use exactly 2 paragraphs.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 2 },
+        { "type": "max_chars", "value": 220 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-17",
+    "domain": "instruction",
+    "prompt": "Begin with 'Note:' and write exactly 6 words about wind.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "Note:" },
+        { "type": "word_count", "exact": 6 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-18",
+    "domain": "instruction",
+    "prompt": "Write a 3-line poem about dusk. Exactly 3 lines, no more.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "line_count", "exact": 3 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-19",
+    "domain": "instruction",
+    "prompt": "Describe a robot in exactly 20 words. End with 'online'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 20 },
+        { "type": "ends_with", "value": "online" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-20",
+    "domain": "instruction",
+    "prompt": "Write about music without using vowel 'a' anywhere (upper or lower case).",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "forbidden_substring", "values": ["a", "A"] }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-21",
+    "domain": "instruction",
+    "prompt": "Give a 2-paragraph answer about remote work. Include 'async' in the first paragraph only is fine, but the word 'async' must appear somewhere.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 2 },
+        { "type": "required_phrase", "values": ["async"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-22",
+    "domain": "instruction",
+    "prompt": "Write exactly 7 words about chess. Start with 'Move:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "Move:" },
+        { "type": "word_count", "exact": 7 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-23",
+    "domain": "instruction",
+    "prompt": "Respond with exactly 4 paragraphs about climate. Each paragraph 1 sentence is enough.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "paragraph_count", "exact": 4 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-24",
+    "domain": "instruction",
+    "prompt": "Write a micro bio in at most 25 words. Must include your focus topic word 'benchmark'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "max": 25 },
+        { "type": "required_phrase", "values": ["benchmark"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-25",
+    "domain": "instruction",
+    "prompt": "Hard combo: write exactly 3 paragraphs about rivers. Use exactly 30 words total. Include 'delta'. Do not use 'very'. Start with 'Rivers:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "Rivers:" },
+        { "type": "paragraph_count", "exact": 3 },
+        { "type": "word_count", "exact": 30 },
+        { "type": "required_phrase", "values": ["delta"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["very"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  }
+]

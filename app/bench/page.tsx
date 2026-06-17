@@ -1,0 +1,202 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Nav } from "@/components/Nav";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { models } from "@/lib/models";
+import type { EvalRun, RuleResult, TaskPublic } from "@/lib/types";
+
+type EvalRes = {
+  passed: boolean;
+  score: number;
+  details: string;
+  output: string;
+  rules?: RuleResult[];
+  meta: { latency_ms: number; cost_usd: number };
+};
+
+export default function BenchPage() {
+  const [tasks, setTasks] = useState<TaskPublic[]>([]);
+  const [taskId, setTaskId] = useState("");
+  const [model, setModel] = useState<string>(models[1].slug);
+  const [paste, setPaste] = useState("");
+  const [res, setRes] = useState<EvalRes | null>(null);
+  const [suite, setSuite] = useState<string | null>(null);
+  const [runs, setRuns] = useState<EvalRun[]>([]);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+
+  const prompt = tasks.find((t) => t.id === taskId)?.prompt ?? "";
+
+  useEffect(() => {
+    fetch("/api/tasks?domain=instruction")
+      .then((r) => r.json())
+      .then((d) => {
+        setTasks(d.tasks ?? []);
+        if (d.tasks?.[0]) setTaskId(d.tasks[0].id);
+      });
+    loadRuns();
+  }, []);
+
+  async function loadRuns() {
+    const r = await fetch("/api/runs");
+    const d = await r.json();
+    setRuns(d.runs ?? []);
+  }
+
+  async function runOne(withPaste = false) {
+    setBusy(true);
+    setErr("");
+    setSuite(null);
+    try {
+      const r = await fetch("/api/eval/run", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          taskId,
+          modelSlug: withPaste ? undefined : model,
+          output: withPaste ? paste : undefined,
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error ?? "run failed");
+      setRes(d);
+      await loadRuns();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "run failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function runAll() {
+    setBusy(true);
+    setErr("");
+    setRes(null);
+    try {
+      const r = await fetch("/api/eval/suite", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ modelSlug: model }),
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error ?? "suite failed");
+      setSuite(
+        `${d.passed}/${d.total} passed · ${Math.round(d.passRate * 100)}% · avg ${d.avgScore}`,
+      );
+      await loadRuns();
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "suite failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+      <Nav />
+      <main className="mx-auto max-w-5xl space-y-4 p-4">
+        <h1 className="text-2xl font-semibold">bench</h1>
+        <p className="text-sm text-zinc-400">
+          slopmark instruction follow · seed tasks · deterministic verifier
+        </p>
+
+        <Card className="space-y-3">
+          <label className="block text-sm text-zinc-400">task</label>
+          <select
+            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
+            value={taskId}
+            onChange={(e) => setTaskId(e.target.value)}
+          >
+            {tasks.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.id} ({t.source})
+              </option>
+            ))}
+          </select>
+          {prompt && (
+            <p className="rounded bg-zinc-900 p-3 text-sm text-zinc-300">{prompt}</p>
+          )}
+
+          <label className="block text-sm text-zinc-400">model</label>
+          <select
+            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+          >
+            {models.map((m) => (
+              <option key={m.slug} value={m.slug}>
+                {m.name}
+              </option>
+            ))}
+          </select>
+
+          <div className="flex flex-wrap gap-2">
+            <Button disabled={busy} onClick={() => runOne(false)}>
+              run task
+            </Button>
+            <Button variant="outline" disabled={busy} onClick={runAll}>
+              run full suite
+            </Button>
+          </div>
+        </Card>
+
+        <Card className="space-y-3">
+          <label className="block text-sm text-zinc-400">paste output (dev)</label>
+          <textarea
+            className="min-h-24 w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
+            value={paste}
+            onChange={(e) => setPaste(e.target.value)}
+            placeholder="paste model output to score without api key"
+          />
+          <Button variant="outline" disabled={busy || !paste} onClick={() => runOne(true)}>
+            score pasted output
+          </Button>
+        </Card>
+
+        {err && <p className="text-sm text-red-400">{err}</p>}
+        {suite && <Card className="text-sm text-emerald-300">suite: {suite}</Card>}
+
+        {res && (
+          <Card className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Badge ok={res.passed}>{res.passed ? "pass" : "fail"}</Badge>
+              <span className="text-sm">score {res.score}</span>
+              <span className="text-xs text-zinc-500">
+                {res.meta.latency_ms}ms · ${res.meta.cost_usd}
+              </span>
+            </div>
+            <pre className="whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs text-zinc-300">
+              {res.details}
+            </pre>
+            <details>
+              <summary className="cursor-pointer text-sm text-zinc-400">model output</summary>
+              <pre className="mt-2 whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs">
+                {res.output}
+              </pre>
+            </details>
+          </Card>
+        )}
+
+        <Card>
+          <h2 className="mb-3 text-sm font-medium text-zinc-400">recent runs</h2>
+          <div className="space-y-2 text-xs">
+            {runs.map((r) => (
+              <div key={r.id} className="flex justify-between gap-2 border-b border-zinc-900 pb-2">
+                <span>
+                  {r.task_id} · {r.model_slug}
+                </span>
+                <span className={r.passed ? "text-emerald-400" : "text-red-400"}>
+                  {r.score}
+                </span>
+              </div>
+            ))}
+            {!runs.length && <p className="text-zinc-500">no runs yet</p>}
+          </div>
+        </Card>
+      </main>
+    </div>
+  );
+}

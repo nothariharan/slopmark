@@ -26,7 +26,7 @@ Yes — and this is your killer insight. The DeepSWE architecture is essentially
 4. Quality gate (human review before a task enters the benchmark)
 Here's how that maps to other domains:
 Domain"Novel Task" equivalent"Behavioral Verifier" equivalentHard partCodingNew LeetCode-style problems written by humansRun code, check output/unit testsActually writing good problemsMathNew word problems not from AMC/AIME datasetsExtract final numerical answer, compareWriting problems at right difficultyInstruction FollowingPrompts with verifiable constraints ("write in exactly 5 sentences, use word X")Parse output programmaticallyDesigning constraints that are deterministicReasoning/LogicNovel logic puzzles, new grid problemsCheck answer against ground truthEnsuring unique solutionsAPI/JSONNew structured output specsSchema validation + semantic checksWriting good specs
-The domains where this architecture works perfectly are ones where the verifier can be deterministic. The domains where it breaks down are creative writing, summarization, etc. — but that's where your human voting/ELO system handles it.
+The domains where this architecture works perfectly are ones where the verifier can be deterministic. Creative writing and summarization need human review later — not llm-as-judge.
 
 # What This Means For Your Platform
 
@@ -39,3 +39,10 @@ Phase 3: You now have a contamination-free, community-maintained benchmark datas
 The verifier architecture is the part worth stealing right now. Want me to sketch out what a behavioral verifier looks like in code for coding tasks vs. instruction-following tasks?
 
 
+the current most prominent benchmarking system out there mainly due to the reasons like how good it in terms of the whole things it does etc
+
+
+main reason we are follwoing the whole deepswer is to properly have a set of guidelines to keep the whole concept ofbenchignp proper 
+
+
+another main reason being the wact we are 
