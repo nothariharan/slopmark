@@ -56,7 +56,19 @@ optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persiste
 
 ## docs
 
-- [how we bench](/docs/benchmarks) (on-site)
+on-site docs at `/docs`.
+
+- [how we bench](/docs/benchmarks)
+- [domains](/docs/domains)
 - [scoring & verifiers](/docs/judging)
+- [harness](/docs/harness)
+- [tasks & contamination](/docs/tasks)
+- [metrics & leaderboard](/docs/metrics)
+- [api](/docs/api)
 - [architecture](/docs/architecture)
 - [deepswe template](/docs/deepswe)
+
+
+
+
+// note to self - still need to build the whole system , tasks part etc

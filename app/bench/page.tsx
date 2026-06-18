@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { models } from "@/lib/models";
-import type { EvalRun, RuleResult, TaskPublic } from "@/lib/types";
+import type { Domain, EvalRun, RuleResult, TaskPublic } from "@/lib/types";
 
 type EvalRes = {
   passed: boolean;
@@ -17,10 +17,17 @@ type EvalRes = {
   meta: { latency_ms: number; cost_usd: number };
 };
 
+const DOMAINS: { label: string; value: Domain }[] = [
+  { label: "instruction", value: "instruction" },
+  { label: "json", value: "json" },
+  { label: "math", value: "math" },
+];
+
 export default function BenchPage() {
+  const [domain, setDomain] = useState<Domain>("instruction");
   const [tasks, setTasks] = useState<TaskPublic[]>([]);
   const [taskId, setTaskId] = useState("");
-  const [model, setModel] = useState<string>(models[1].slug);
+  const [model, setModel] = useState<string>(models[0].slug);
   const [paste, setPaste] = useState("");
   const [res, setRes] = useState<EvalRes | null>(null);
   const [suite, setSuite] = useState<string | null>(null);
@@ -31,12 +38,19 @@ export default function BenchPage() {
   const prompt = tasks.find((t) => t.id === taskId)?.prompt ?? "";
 
   useEffect(() => {
-    fetch("/api/tasks?domain=instruction")
+    setTasks([]);
+    setTaskId("");
+    setRes(null);
+    setSuite(null);
+    fetch(`/api/tasks?domain=${domain}`)
       .then((r) => r.json())
       .then((d) => {
         setTasks(d.tasks ?? []);
         if (d.tasks?.[0]) setTaskId(d.tasks[0].id);
       });
+  }, [domain]);
+
+  useEffect(() => {
     loadRuns();
   }, []);
 
@@ -79,7 +93,7 @@ export default function BenchPage() {
       const r = await fetch("/api/eval/suite", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ modelSlug: model }),
+        body: JSON.stringify({ modelSlug: model, domain }),
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.error ?? "suite failed");
@@ -98,10 +112,27 @@ export default function BenchPage() {
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
       <Nav />
       <main className="mx-auto max-w-5xl space-y-4 p-4">
-        <h1 className="text-2xl font-semibold">bench</h1>
-        <p className="text-sm text-zinc-400">
-          slopmark instruction follow · seed tasks · deterministic verifier
-        </p>
+        <div>
+          <h1 className="text-2xl font-semibold">bench</h1>
+          <p className="text-sm text-zinc-400">pick a domain, pick a model, run</p>
+        </div>
+
+        {/* domain tabs */}
+        <div className="flex gap-1 border-b border-zinc-800 pb-0">
+          {DOMAINS.map((d) => (
+            <button
+              key={d.value}
+              onClick={() => setDomain(d.value)}
+              className={`px-4 py-2 text-sm transition-colors ${
+                domain === d.value
+                  ? "border-b-2 border-zinc-100 text-zinc-100"
+                  : "text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
 
         <Card className="space-y-3">
           <label className="block text-sm text-zinc-400">task</label>
@@ -115,6 +146,7 @@ export default function BenchPage() {
                 {t.id} ({t.source})
               </option>
             ))}
+            {!tasks.length && <option disabled>no tasks for this domain</option>}
           </select>
           {prompt && (
             <p className="rounded bg-zinc-900 p-3 text-sm text-zinc-300">{prompt}</p>
@@ -134,24 +166,24 @@ export default function BenchPage() {
           </select>
 
           <div className="flex flex-wrap gap-2">
-            <Button disabled={busy} onClick={() => runOne(false)}>
+            <Button disabled={busy || !taskId} onClick={() => runOne(false)}>
               run task
             </Button>
-            <Button variant="outline" disabled={busy} onClick={runAll}>
+            <Button variant="outline" disabled={busy || !tasks.length} onClick={runAll}>
               run full suite
             </Button>
           </div>
         </Card>
 
         <Card className="space-y-3">
-          <label className="block text-sm text-zinc-400">paste output (dev)</label>
+          <label className="block text-sm text-zinc-400">paste output (dev mode)</label>
           <textarea
             className="min-h-24 w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
             value={paste}
             onChange={(e) => setPaste(e.target.value)}
-            placeholder="paste model output to score without api key"
+            placeholder="paste model output to score without an api key"
           />
-          <Button variant="outline" disabled={busy || !paste} onClick={() => runOne(true)}>
+          <Button variant="outline" disabled={busy || !paste || !taskId} onClick={() => runOne(true)}>
             score pasted output
           </Button>
         </Card>

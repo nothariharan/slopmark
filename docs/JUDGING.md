@@ -1,144 +1,98 @@
-﻿# JUDGING.md — How Slopmark Scores Model Outputs
+﻿# scoring & verifiers
 
-How Slopmark decides pass/fail and updates benchmark rankings. Verifier types, trust rules, what gets logged.
+> outline doc — how pass/fail works and how to add a new scorer.
 
-See also: [ARCHITECTURE.md](./ARCHITECTURE.md), [benchmarks.md](./benchmarks.md), [deepswe.md](./deepswe.md)
-
----
-
-## Core Principle
-
-Slopmark does **not** use one judge for everything. Split by domain:
-
-| When possible | When not possible |
-|---|---|
-| **Deterministic verifiers** — programmatic pass/fail | **Human review** — subjective quality (planned) |
-| No LLM-as-judge | Structured rubrics, not vibes |
-
-Rule: **auto-score when you can; human review when you must.**
-
-Every run logs **latency** and **cost** alongside quality score.
+see also: [domains](/docs/domains), [harness](/docs/harness)
 
 ---
 
-## DeepSWE Spine
+## core principle
 
-```
-novel task  →  fixed harness  →  behavioral verifier  →  human quality gate
-```
+> explain: one rule for choosing judge type
 
-| Step | Role |
-|---|---|
-| Novel task | reduces contamination |
-| Fixed harness | same prompt, cap, tools for every model |
-| Behavioral verifier | output works, not gold-patch match |
-| Quality gate | human approves task before it goes live |
+- [ ] auto-score when possible
+- [ ] human review when no objective ground truth
+- [ ] never llm-as-judge
+- [ ] latency + cost logged alongside quality (not as quality)
 
 ---
 
-## Task Shape
+## verifier result shape
+
+> explain: contract every plugin must return
 
 ```typescript
-BenchTask = {
-  id: string
-  domain: "swe" | "coding" | "math" | "json" | "instruction" | "writing"
-  prompt: string
-  verifier: VerifierConfig
-  source: "seed" | "community"
-  approved: boolean
-}
-
-VerifierResult = {
-  passed: boolean
-  score: number      // 0-100
-  details: string
-}
+VerifierResult = { passed, score, details, rules? }
 ```
 
----
-
-## Eval Flow (live)
-
-```
-Load BenchTask
-  → Call model via OpenRouter (fixed harness)
-  → runVerifier(output, task.verifier)
-  → Persist result + latency + tokens + cost
-  → Update domain leaderboard
-```
+- [ ] `passed` — all rules/tests pass
+- [ ] `score` — 0-100 normalized
+- [ ] `details` — human-readable breakdown for debugging
+- [ ] `rules` — per-rule pass/fail for instruction domain
 
 ---
 
-## Verifier Types
+## plugin contract
 
-### `instruction_rules` — live
+> explain: how to add a domain scorer
 
-Deterministic rule parser: word count, paragraphs, forbidden text, required phrases, etc.
-
-Plugin: `lib/verifiers/instruction.ts`
-
-### `json_schema` — planned
-
-Ajv schema validation. Plugin: `lib/verifiers/json-schema.ts`
-
-### `exact_number` — planned
-
-Regex extract + exact match or SymPy. Plugin: `lib/verifiers/exact-number.ts`
-
-### `code_exec` — planned
-
-Judge0 hidden tests. Plugin: `lib/verifiers/code-exec.ts`
-
-### `human_vote` — planned
-
-Human rubric review for writing/creative domains. No LLM judge.
+- [ ] file under `lib/verifiers/`
+- [ ] dispatch in `lib/verifiers/index.ts` by `verifier.type`
+- [ ] same input: model output string + verifier config
+- [ ] no side effects inside verifier (pure function)
+- [ ] stub pattern for not-yet-built domains
 
 ---
 
-## Rankings
+## per-type reference
 
-Auto-scored domains rank by:
-- **pass rate** per model
-- **avg normalized score** (0-100)
-- **avg latency** and **avg cost** shown alongside
+> explain: one subsection each — link to [domains](/docs/domains) for depth
 
----
+### instruction_rules (live)
+- [ ] rule types and check logic
+- [ ] partial scoring math
+- [ ] example failure messages
 
-## Trust & Anti-Gaming
+### json_schema (planned)
+- [ ] ajv setup, error counting, pass threshold
 
-| Source tag | Meaning |
-|---|---|
-| `seed` | public dataset — possibly contaminated |
-| `community` | human-reviewed submission |
+### exact_number (planned)
+- [ ] extraction regex, sympy path, tolerance rules
 
-Before tasks go live:
-1. prompt clarity check
-2. verifier config validated
-3. `approved: true` set
+### code_exec (planned)
+- [ ] judge0 request shape, timeout, pass = all tests green
 
-No LLM-as-judge. Label seed data honestly.
+### human_vote (planned)
+- [ ] rubric fields, aggregation, no battle flow
 
 ---
 
-## Domain Rollout
+## eval flow
 
-| Priority | Domain | Judge | Status |
-|---|---|---|---|
-| 1 | Instruction follow | `instruction_rules` | **live** |
-| 2 | JSON | `json_schema` | planned |
-| 3 | Math | `exact_number` | planned |
-| 4 | Coding | `code_exec` | planned |
-| 5 | Writing | `human_vote` | planned |
-| 6 | SWE | `code_exec` + agent harness | later |
+> explain: server path from api to persisted result
+
+- [ ] load task → run harness → runVerifier → save eval_run → update leaderboard
+- [ ] paste mode for dev (skip harness)
+- [ ] suite mode: all tasks for one model
 
 ---
 
-## Plugin Contract
+## rankings
 
-New domain = one file under `lib/verifiers/`:
+> explain: how scores roll up
 
-```typescript
-function runVerifier(output: string, config: VerifierConfig): VerifierResult
-```
+- [ ] pass rate per model per domain
+- [ ] avg score, avg latency, avg cost
+- [ ] sort order on leaderboard
+- [ ] minimum runs before ranking counts (planned)
 
-UI, API, and leaderboard stay the same.
+---
+
+## anti-gaming
+
+> explain: integrity rules
+
+- [ ] approved flag on tasks
+- [ ] server-side verifier only
+- [ ] rate limits on eval api (planned)
+- [ ] no publishing hidden tests in api responses

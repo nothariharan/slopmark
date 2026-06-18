@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { pasteMeta, runModel } from "./openrouter";
 import * as store from "./store";
-import type { BenchTask, EvalRun } from "./types";
+import type { BenchTask, Domain, EvalRun } from "./types";
 import { runVerifier } from "./verifiers";
 
 type RunInput = {
@@ -31,7 +31,7 @@ export async function evalTask(inp: RunInput) {
   return { ...vr, output, meta, run };
 }
 
-export async function evalSuite(modelSlug: string, domain: "instruction" = "instruction") {
+export async function evalSuite(modelSlug: string, domain: Domain = "instruction") {
   const tasks = await store.getTasks(domain);
   const runs: EvalRun[] = [];
   let passed = 0;

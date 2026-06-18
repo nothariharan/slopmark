@@ -10,7 +10,10 @@ import type {
 
 const root = process.cwd();
 const runsPath = path.join(root, "data", "eval-runs.json");
-const tasksPath = path.join(root, "data", "tasks", "instruction.json");
+
+function taskFile(domain: Domain) {
+  return path.join(root, "data", "tasks", `${domain}.json`);
+}
 
 let memRuns: EvalRun[] = [];
 let loaded = false;
@@ -32,13 +35,25 @@ async function saveRuns() {
 }
 
 export async function getTasks(domain: Domain): Promise<BenchTask[]> {
-  if (domain !== "instruction") return [];
-  const raw = await fs.readFile(tasksPath, "utf8");
-  return (JSON.parse(raw) as BenchTask[]).filter((t) => t.approved);
+  try {
+    const raw = await fs.readFile(taskFile(domain), "utf8");
+    return (JSON.parse(raw) as BenchTask[]).filter((t) => t.approved);
+  } catch {
+    return [];
+  }
 }
 
 export async function getTask(id: string): Promise<BenchTask | null> {
-  const tasks = await getTasks("instruction");
+  // figure out domain from id prefix (ins-, json-, math-, etc.)
+  const prefix = id.split("-")[0];
+  const domainMap: Record<string, Domain> = {
+    ins: "instruction",
+    json: "json",
+    math: "math",
+    code: "coding",
+  };
+  const domain = domainMap[prefix] ?? "instruction";
+  const tasks = await getTasks(domain);
   return tasks.find((t) => t.id === id) ?? null;
 }
 

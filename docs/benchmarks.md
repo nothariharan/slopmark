@@ -1,77 +1,86 @@
 # how we bench
 
-slopmark is a benchmark base, not a leaderboard skin. this page is the short version of how we score models.
+> outline doc — sections below list what needs to be written, not the final copy.
+
+slopmark is a benchmark base. this page is the entry point for how we score models.
 
 ---
 
 ## the spine
 
-every domain uses the same loop:
+> explain: the 4-step loop every domain shares and why order matters
 
-```
-novel task  →  fixed harness  →  behavioral verifier  →  human quality gate
-```
-
-| step | what it means |
-|---|---|
-| novel task | tasks models haven't memorized from training |
-| fixed harness | same system prompt, token cap, tools for every model |
-| behavioral verifier | check if output *works*, not if it looks like an answer key |
-| quality gate | human reviews tasks before they go live |
-
-if the verifier is weak, the benchmark is useless. that's the whole product.
+- [ ] define: novel task → fixed harness → behavioral verifier → human quality gate
+- [ ] explain why a weak verifier makes the whole benchmark useless
+- [ ] diagram the loop end-to-end (task in → score out)
+- [ ] link to [deepswe](/docs/deepswe) for where this pattern came from
 
 ---
 
 ## what we avoid
 
-- **llm-as-judge** — biased toward verbose gpt-style outputs
-- **public test sets as gospel** — mmlu, humaneval, gsm8k are contaminated
-- **structural matching** — diff match, exact string match when behavior is what matters
-- **per-model scaffolding** — different prompts or tools per vendor
+> explain: anti-patterns that make benchmarks rot as models get smarter
+
+- [ ] llm-as-judge — verbosity bias, self-preference, why we ban it
+- [ ] public test sets treated as ground truth — contamination, memorization
+- [ ] structural matching when behavior is what matters (gold diff vs tests pass)
+- [ ] per-model scaffolding — different prompts/tools per vendor breaks comparability
+- [ ] leaderboard cosmetics without a real scoring layer underneath
 
 ---
 
 ## domains (rollout order)
 
-| priority | domain | how we score |
-|---|---|---|
-| 1 | instruction follow | deterministic rule parser |
-| 2 | json / tool use | ajv schema validation |
-| 3 | math | exact number / sympy |
-| 4 | coding | judge0 hidden tests |
-| 5 | writing | human review (later) |
-| 6 | swe | repo behavioral tests (deepswe style) |
+> explain: which categories we bench, in what order, and why
 
-v0 ships instruction follow only. more domains plug into the same task shape and verifier contract.
+| priority | domain | scorer | doc status |
+|---|---|---|---|
+| 1 | instruction follow | rule parser | live |
+| 2 | json / tool use | ajv | planned |
+| 3 | math | exact / sympy | planned |
+| 4 | coding | judge0 | planned |
+| 5 | writing | human review | planned |
+| 6 | swe | repo behavioral tests | later |
+
+- [ ] one paragraph per domain on *why* it matters to devs
+- [ ] link each row to [domains](/docs/domains) for per-domain detail
+- [ ] note v0 = instruction follow only
 
 ---
 
 ## harness defaults
 
-every model run gets identical conditions:
+> explain: fixed conditions every model gets — non-negotiable for fair comparison
 
-- system: follow instructions exactly, no preamble
-- max output tokens: 600
-- temperature: 0
-- provider: openrouter (same api path for all models)
-
-we log latency, token count, and cost on every run.
-
----
-
-## scoring instruction follow
-
-tasks have hard constraints: word count, paragraph count, forbidden words, required phrases, etc.
-
-the verifier checks each rule programmatically. pass = all rules pass. score = percent of rules passed.
-
-no human needed. no llm needed. reproducible for the same output.
+- [ ] system prompt (what it says, why no preamble)
+- [ ] max output tokens (600) and why capped
+- [ ] temperature 0 and reproducibility
+- [ ] openrouter as single provider path
+- [ ] what we log every run: latency, input/output tokens, cost
+- [ ] link to [harness](/docs/harness) for full spec
 
 ---
 
-## read more
+## scoring instruction follow (v0)
 
+> explain: how the live domain works today
+
+- [ ] task shape: prompt + constraint rules in verifier config
+- [ ] rule types supported (word count, paragraphs, forbidden text, etc.)
+- [ ] pass = all rules pass; score = % rules passed
+- [ ] why deterministic > llm for this domain
+- [ ] example pass and fail with rule breakdown (placeholder for screenshots later)
+- [ ] link to [judging](/docs/judging) for verifier contract
+
+---
+
+## read next
+
+- [domains](/docs/domains) — per-category bench design
 - [scoring & verifiers](/docs/judging)
-- [platform architecture](/docs/architecture)
-- [why deepswe is the template](/docs/deepswe)
+- [tasks & contamination](/docs/tasks)
+- [harness](/docs/harness)
+- [api](/docs/api)
+- [metrics & leaderboard](/docs/metrics)
+- [architecture](/docs/architecture)
+- [deepswe template](/docs/deepswe)

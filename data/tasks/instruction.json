@@ -250,5 +250,602 @@
     },
     "source": "seed",
     "approved": true
+  },
+  {
+    "id": "ins-26",
+    "domain": "instruction",
+    "prompt": "Give a 3-word response about fire.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "word_count", "exact": 3 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-27",
+    "domain": "instruction",
+    "prompt": "Write between 10 and 15 words about mountain trails.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "word_count", "min": 10, "max": 15 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-28",
+    "domain": "instruction",
+    "prompt": "Write exactly 1 paragraph about naps.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "paragraph_count", "exact": 1 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-29",
+    "domain": "instruction",
+    "prompt": "List 6 things you associate with big cities. Put each one on its own line, exactly 6 lines.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "line_count", "exact": 6 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-30",
+    "domain": "instruction",
+    "prompt": "Write one sentence about programming. Do not use the word 'is' anywhere.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "forbidden_substring", "values": ["is"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-31",
+    "domain": "instruction",
+    "prompt": "Describe the internet in a single sentence. Never use the word 'network'.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "forbidden_substring", "values": ["network"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-32",
+    "domain": "instruction",
+    "prompt": "Write one sentence about network performance. Include the word 'latency'.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "required_phrase", "values": ["latency"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-33",
+    "domain": "instruction",
+    "prompt": "Start your response with 'Data:' and give one fact about databases.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "starts_with", "value": "Data:" }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-34",
+    "domain": "instruction",
+    "prompt": "Write a short sentence about loading screens. End with the word 'done'.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "ends_with", "value": "done" }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-35",
+    "domain": "instruction",
+    "prompt": "Write the shortest possible description of gravity. Stay under 40 characters total.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "max_chars", "value": 40 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-36",
+    "domain": "instruction",
+    "prompt": "Write exactly 50 words about the history of computers.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "word_count", "exact": 50 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-37",
+    "domain": "instruction",
+    "prompt": "Write 5 to 8 words describing a thunderstorm.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "word_count", "min": 5, "max": 8 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-38",
+    "domain": "instruction",
+    "prompt": "Write exactly 5 paragraphs about cities. One thought per paragraph, blank line between each.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "paragraph_count", "exact": 5 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-39",
+    "domain": "instruction",
+    "prompt": "Write about teamwork without using the words 'beautiful' or 'amazing'.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "forbidden_substring", "values": ["beautiful", "amazing"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-40",
+    "domain": "instruction",
+    "prompt": "Write a sentence about signal processing. Include both 'signal' and 'noise'.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "required_phrase", "values": ["signal", "noise"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-41",
+    "domain": "instruction",
+    "prompt": "Start with 'Answer:' and write one sentence about memory leaks.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "starts_with", "value": "Answer:" }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-42",
+    "domain": "instruction",
+    "prompt": "Write a two-sentence explanation of recursion. End your response with 'base case'.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "ends_with", "value": "base case" }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-43",
+    "domain": "instruction",
+    "prompt": "Give a one-liner about dark mode. Keep it under 80 characters.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "max_chars", "value": 80 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-44",
+    "domain": "instruction",
+    "prompt": "Write exactly 2 lines about timeouts in distributed systems.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "line_count", "exact": 2 }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-45",
+    "domain": "instruction",
+    "prompt": "Write a sentence about ML optimization. Include the word 'gradient'.",
+    "verifier": { "type": "instruction_rules", "rules": [{ "type": "required_phrase", "values": ["gradient"], "case_insensitive": true }] },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-46",
+    "domain": "instruction",
+    "prompt": "List 5 facts about the ocean. One fact per line, exactly 5 lines. Don't use the word 'beautiful'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 5 },
+        { "type": "forbidden_substring", "values": ["beautiful"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-47",
+    "domain": "instruction",
+    "prompt": "Write 3 paragraphs about neural networks. Somewhere include the word 'layer'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 3 },
+        { "type": "required_phrase", "values": ["layer"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-48",
+    "domain": "instruction",
+    "prompt": "Write exactly 25 words about debugging. Start with 'Fact:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 25 },
+        { "type": "starts_with", "value": "Fact:" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-49",
+    "domain": "instruction",
+    "prompt": "Write exactly 15 words about real-time systems. End with 'now'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 15 },
+        { "type": "ends_with", "value": "now" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-50",
+    "domain": "instruction",
+    "prompt": "Write exactly 3 lines about cloud storage. Keep the total response under 120 characters.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 3 },
+        { "type": "max_chars", "value": 120 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-51",
+    "domain": "instruction",
+    "prompt": "Write about sorting algorithms. Include the word 'recursive'. Do not use the word 'simple'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "required_phrase", "values": ["recursive"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["simple"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-52",
+    "domain": "instruction",
+    "prompt": "Write 4 paragraphs about open source software. Keep the total word count between 40 and 60.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 4 },
+        { "type": "word_count", "min": 40, "max": 60 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-53",
+    "domain": "instruction",
+    "prompt": "Write exactly 3 lines about onboarding a new engineer. Start the first line with 'Step 1:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "Step 1:" },
+        { "type": "line_count", "exact": 3 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-54",
+    "domain": "instruction",
+    "prompt": "Write about matrix operations. Include the word 'sparse'. Stay under 120 characters total.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "required_phrase", "values": ["sparse"], "case_insensitive": true },
+        { "type": "max_chars", "value": 120 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-55",
+    "domain": "instruction",
+    "prompt": "Write exactly 20 words about event-driven systems. Do not use the word 'blocking'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 20 },
+        { "type": "forbidden_substring", "values": ["blocking"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-56",
+    "domain": "instruction",
+    "prompt": "Write 2 paragraphs about code review practices. End your response with the word 'complete'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 2 },
+        { "type": "ends_with", "value": "complete" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-57",
+    "domain": "instruction",
+    "prompt": "Start with 'Warning:' and write about race conditions. Never use the word 'very'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "Warning:" },
+        { "type": "forbidden_substring", "values": ["very"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-58",
+    "domain": "instruction",
+    "prompt": "Write exactly 10 words about information theory. Include the word 'entropy'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 10 },
+        { "type": "required_phrase", "values": ["entropy"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-59",
+    "domain": "instruction",
+    "prompt": "Write exactly 5 lines about build pipelines. Start your response with 'Output:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 5 },
+        { "type": "starts_with", "value": "Output:" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-60",
+    "domain": "instruction",
+    "prompt": "Write about deployment strategies. Include both 'deploy' and 'rollback'. Stay under 50 words.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "required_phrase", "values": ["deploy", "rollback"], "case_insensitive": true },
+        { "type": "word_count", "max": 50 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-61",
+    "domain": "instruction",
+    "prompt": "Write 3 paragraphs about system design. Start with 'Context:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 3 },
+        { "type": "starts_with", "value": "Context:" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-62",
+    "domain": "instruction",
+    "prompt": "Write exactly 12 words about exception handling. End with the word 'error'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 12 },
+        { "type": "ends_with", "value": "error" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-63",
+    "domain": "instruction",
+    "prompt": "Write between 15 and 20 words about unit testing. Do not use the word 'good'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "min": 15, "max": 20 },
+        { "type": "forbidden_substring", "values": ["good"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-64",
+    "domain": "instruction",
+    "prompt": "Write exactly 2 lines about caching strategies. Somewhere include the word 'cache'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 2 },
+        { "type": "required_phrase", "values": ["cache"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-65",
+    "domain": "instruction",
+    "prompt": "Write exactly 4 lines about microservices. Keep the full response under 200 characters.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 4 },
+        { "type": "max_chars", "value": 200 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-66",
+    "domain": "instruction",
+    "prompt": "Write 3 paragraphs about neural network training. Use exactly 40 words total. Include the word 'weight'. Start with 'Model:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "Model:" },
+        { "type": "paragraph_count", "exact": 3 },
+        { "type": "word_count", "exact": 40 },
+        { "type": "required_phrase", "values": ["weight"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-67",
+    "domain": "instruction",
+    "prompt": "List exactly 5 lines about CI/CD. Do not use 'fail' or 'error' anywhere. Include 'pipeline'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 5 },
+        { "type": "forbidden_substring", "values": ["fail", "error"], "case_insensitive": true },
+        { "type": "required_phrase", "values": ["pipeline"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-68",
+    "domain": "instruction",
+    "prompt": "Write 2 paragraphs about data processing. Keep total word count between 20 and 25. Include the word 'batch'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 2 },
+        { "type": "word_count", "min": 20, "max": 25 },
+        { "type": "required_phrase", "values": ["batch"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-69",
+    "domain": "instruction",
+    "prompt": "Start with 'Token:' and end with 'end'. Write exactly 10 words. Do not use 'very'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "Token:" },
+        { "type": "ends_with", "value": "end" },
+        { "type": "word_count", "exact": 10 },
+        { "type": "forbidden_substring", "values": ["very"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-70",
+    "domain": "instruction",
+    "prompt": "Write exactly 3 lines about data pipelines. Include 'pipeline'. Do not use 'just'. Stay under 150 characters.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 3 },
+        { "type": "required_phrase", "values": ["pipeline"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["just"], "case_insensitive": true },
+        { "type": "max_chars", "value": 150 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-71",
+    "domain": "instruction",
+    "prompt": "Write 4 paragraphs about model training. Include both 'epoch' and 'loss'. Start with 'Train:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 4 },
+        { "type": "required_phrase", "values": ["epoch", "loss"], "case_insensitive": true },
+        { "type": "starts_with", "value": "Train:" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-72",
+    "domain": "instruction",
+    "prompt": "Write exactly 15 words about inference speed. End with 'complete'. Include 'inference'. Do not use 'simply'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 15 },
+        { "type": "ends_with", "value": "complete" },
+        { "type": "required_phrase", "values": ["inference"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["simply"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-73",
+    "domain": "instruction",
+    "prompt": "Write exactly 6 lines about observability. Start with 'Log:'. Do not use 'error'. Keep under 300 characters.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 6 },
+        { "type": "starts_with", "value": "Log:" },
+        { "type": "forbidden_substring", "values": ["error"], "case_insensitive": true },
+        { "type": "max_chars", "value": 300 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-74",
+    "domain": "instruction",
+    "prompt": "Write 3 paragraphs about system performance. Include both 'latency' and 'throughput'. Do not use 'very' or 'just'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 3 },
+        { "type": "required_phrase", "values": ["latency", "throughput"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["very", "just"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "ins-75",
+    "domain": "instruction",
+    "prompt": "Hard combo: write exactly 4 paragraphs about attention mechanisms. Keep word count between 50 and 60. Include 'attention'. Start with 'Paper:'. Do not use 'just' or 'very'.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 4 },
+        { "type": "word_count", "min": 50, "max": 60 },
+        { "type": "required_phrase", "values": ["attention"], "case_insensitive": true },
+        { "type": "starts_with", "value": "Paper:" },
+        { "type": "forbidden_substring", "values": ["just", "very"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
   }
 ]

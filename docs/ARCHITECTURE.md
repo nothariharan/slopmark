@@ -1,158 +1,124 @@
-# Slopmark benchmark architecture
+# architecture
 
-*last updated: june 2026*
-
-this doc is the single reference for how slopmark is structured. platform layers, domain benchmarks, scoring, data flow, and what is built vs planned.
-
-see also: [PLAN.md](./PLAN.md), [JUDGING.md](./JUDGING.md), [deepswe.md](./deepswe.md)
+> outline doc — how the platform is structured. what to document in each layer.
 
 ---
 
-## the core idea
+## core idea
 
-slopmark is not one benchmark. it is one base where many benchmarks share the same skeleton:
+> explain: slopmark as benchmark base, not one static test
 
-```
-novel task  →  fixed harness  →  behavioral verifier  →  human quality gate
-```
-
-our moat is this scoring stack — not ui gimmicks or leaderboard cosmetics.
+- [ ] one skeleton, many domain plugins
+- [ ] moat = scoring stack, not ui
+- [ ] link spine diagram to [benchmarks](/docs/benchmarks)
 
 ---
 
-## platform layers
+## layer 1 — frontend
 
-### layer 1: frontend
+> explain: routes and user flows
 
-| route | purpose |
+| route | document |
 |---|---|
-| `/` | landing |
-| `/bench` | run tasks, score output, run full suite |
-| `/leaderboard` | per-model pass rate and avg score |
-| `/docs` | how we bench models |
+| `/` | landing, links to bench/docs |
+| `/bench` | task pick, model pick, run task, run suite, paste mode, results panel |
+| `/leaderboard` | per-model stats table |
+| `/docs` | markdown docs from `docs/` folder |
 
-### layer 2: api
-
-| route | purpose |
-|---|---|
-| `GET /api/tasks` | list approved tasks |
-| `POST /api/eval/run` | single task eval |
-| `POST /api/eval/suite` | full domain suite for one model |
-| `GET /api/leaderboard` | aggregated model stats |
-| `GET /api/runs` | recent eval runs |
-
-### layer 3: eval engine
-
-- openrouter with fixed harness (system prompt, 600 tok cap, temp 0)
-- `lib/verifiers/` plugin dispatch by verifier type
-- instruction follow scorer live; json, math, coding stubbed
-
-### layer 4: data
-
-- json fallback: `data/tasks/`, `data/eval-runs.json`
-- supabase optional: `supabase/schema.sql` (tasks + eval_runs)
+- [ ] client vs server components
+- [ ] what data each page fetches
 
 ---
 
-## unified task shape
+## layer 2 — api
 
-```typescript
-BenchTask = {
-  id: string
-  domain: "swe" | "coding" | "math" | "json" | "instruction" | "writing"
-  prompt: string
-  verifier: VerifierConfig
-  source: "seed" | "community"
-  approved: boolean
-}
-```
+> explain: route handlers — link to [api](/docs/api) for request/response detail
 
-verifier types:
-
-| type | domain | how it scores |
-|---|---|---|
-| `instruction_rules` | instruction | deterministic rule parser |
-| `json_schema` | json | ajv validation |
-| `exact_number` | math | extract + compare |
-| `code_exec` | coding, swe | hidden unit tests |
-| `human_vote` | writing | human review (planned) |
+- [ ] `GET /api/tasks`
+- [ ] `POST /api/eval/run`
+- [ ] `POST /api/eval/suite`
+- [ ] `GET /api/leaderboard`
+- [ ] `GET /api/runs`
 
 ---
 
-## eval flow (live)
+## layer 3 — eval engine
 
-```
-load BenchTask
-  → call model via openrouter (fixed harness)
-  → runVerifier(output, task.verifier)
-  → persist eval run (passed, score, latency, cost)
-  → update leaderboard aggregates
-```
+> explain: lib/ modules and responsibilities
 
----
-
-## domain status
-
-| domain | status |
-|---|---|
-| instruction follow | **live** — 25 seed tasks |
-| json | planned |
-| math | planned |
-| coding | planned |
-| writing | planned (human review) |
-| swe | later (docker) |
+- [ ] `lib/harness.ts` + `lib/openrouter.ts`
+- [ ] `lib/eval.ts` orchestration
+- [ ] `lib/verifiers/` plugins
+- [ ] `lib/models.ts` pool
 
 ---
 
-## model pool
+## layer 4 — data
 
-| name | slug |
-|---|---|
-| claude haiku 3.5 | `anthropic/claude-3.5-haiku` |
-| gpt-4o mini | `openai/gpt-4o-mini` |
-| llama 3.1 8b | `meta-llama/llama-3.1-8b-instruct` |
-| mistral 7b | `mistralai/mistral-7b-instruct` |
-| qwen 2.5 7b | `qwen/qwen-2.5-7b-instruct` |
+> explain: persistence strategy
+
+- [ ] json fallback: `data/tasks/`, `data/eval-runs.json`
+- [ ] supabase: `tasks`, `eval_runs`, leaderboard view
+- [ ] when each backend is used
+- [ ] schema in `supabase/schema.sql`
+
+---
+
+## data flow diagram
+
+> explain: draw end-to-end for single eval and full suite
+
+- [ ] single eval sequence
+- [ ] suite loop sequence
+- [ ] leaderboard aggregation query
 
 ---
 
 ## tech stack
 
-| layer | choice |
-|---|---|
-| frontend | next.js 16, react, tailwind |
-| api | next.js route handlers |
-| models | openrouter |
-| db | supabase optional, json fallback |
-| tests | vitest |
+> explain: choices and escape hatches
+
+- [ ] next.js 16 app router
+- [ ] openrouter
+- [ ] supabase optional
+- [ ] vitest for verifier tests
+- [ ] when to extract fastapi worker (judge0, sympy, docker)
 
 ---
 
 ## file map
 
-```
-app/
-  page.tsx, bench/, leaderboard/, docs/
-  api/tasks, api/eval/run, api/eval/suite, api/leaderboard, api/runs
+> explain: where to find things in repo
 
-lib/
-  types.ts, models.ts, harness.ts, openrouter.ts, eval.ts
-  verifiers/          domain scorers
-  store/              json + supabase adapters
-  docs.ts             docs manifest
+- [ ] `app/` routes
+- [ ] `lib/` core
+- [ ] `data/tasks/` seeds
+- [ ] `docs/` this documentation
+- [ ] keep map updated when structure changes
 
-data/tasks/           seed task json
-supabase/schema.sql
-docs/                 architecture, judging, benchmarks
-```
+---
+
+## built vs planned
+
+> explain: honest status checklist
+
+- [x] instruction follow + verifier
+- [x] bench ui + leaderboard
+- [x] docs site
+- [ ] supabase wired by default
+- [ ] json, math, coding domains
+- [ ] community task submission
+- [ ] cost-capability chart
 
 ---
 
 ## design principles
 
-1. **verifier first** — if scoring is fake, nothing else matters
-2. **same harness always** — fixed prompt, cap, no per-vendor tricks
-3. **auto-score when possible** — no llm-as-judge
-4. **cost is first class** — log on every run
-5. **honest about contamination** — label seed data
-6. **plugin verifiers** — new domain = new scorer file, same task schema
+> explain: rules that shouldn't bend as we add features
+
+- [ ] verifier first
+- [ ] same harness always
+- [ ] auto-score when possible
+- [ ] cost is first class
+- [ ] honest contamination labels
+- [ ] plugin verifiers, same task schema

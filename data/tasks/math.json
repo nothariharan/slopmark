@@ -1,0 +1,82 @@
+[
+  {
+    "id": "math-01",
+    "domain": "math",
+    "prompt": "What is 7 times 8? Output only the number, nothing else.",
+    "verifier": { "type": "exact_number", "expected": "56" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-02",
+    "domain": "math",
+    "prompt": "What is the sum of all integers from 1 to 10? Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "55" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-03",
+    "domain": "math",
+    "prompt": "What is 2 to the power of 10? Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "1024" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-04",
+    "domain": "math",
+    "prompt": "What is 15 percent of 200? Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "30" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-05",
+    "domain": "math",
+    "prompt": "What is 144 divided by 12? Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "12" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-06",
+    "domain": "math",
+    "prompt": "What is the square root of 144? Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "12" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-07",
+    "domain": "math",
+    "prompt": "A square has a side length of 7. What is its perimeter? Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "28" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-08",
+    "domain": "math",
+    "prompt": "What is 3 plus 4 times 2? Apply standard order of operations. Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "11" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-09",
+    "domain": "math",
+    "prompt": "What is 5 factorial (5!)? Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "120" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "math-10",
+    "domain": "math",
+    "prompt": "What is 17 mod 5 (17 remainder 5)? Output only the number.",
+    "verifier": { "type": "exact_number", "expected": "2" },
+    "source": "seed",
+    "approved": true
+  }
+]
