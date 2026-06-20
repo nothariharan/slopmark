@@ -17,6 +17,9 @@ export function Nav() {
           <Link href="/docs" className="hover:text-zinc-100">
             docs
           </Link>
+          <Link href="/goal" className="text-emerald-400 hover:text-emerald-300">
+            goal
+          </Link>
         </nav>
       </div>
     </header>
