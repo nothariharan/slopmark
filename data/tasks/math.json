@@ -1,82 +1,47 @@
 [
-  {
-    "id": "math-01",
-    "domain": "math",
-    "prompt": "What is 7 times 8? Output only the number, nothing else.",
-    "verifier": { "type": "exact_number", "expected": "56" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-02",
-    "domain": "math",
-    "prompt": "What is the sum of all integers from 1 to 10? Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "55" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-03",
-    "domain": "math",
-    "prompt": "What is 2 to the power of 10? Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "1024" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-04",
-    "domain": "math",
-    "prompt": "What is 15 percent of 200? Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "30" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-05",
-    "domain": "math",
-    "prompt": "What is 144 divided by 12? Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "12" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-06",
-    "domain": "math",
-    "prompt": "What is the square root of 144? Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "12" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-07",
-    "domain": "math",
-    "prompt": "A square has a side length of 7. What is its perimeter? Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "28" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-08",
-    "domain": "math",
-    "prompt": "What is 3 plus 4 times 2? Apply standard order of operations. Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "11" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-09",
-    "domain": "math",
-    "prompt": "What is 5 factorial (5!)? Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "120" },
-    "source": "seed",
-    "approved": true
-  },
-  {
-    "id": "math-10",
-    "domain": "math",
-    "prompt": "What is 17 mod 5 (17 remainder 5)? Output only the number.",
-    "verifier": { "type": "exact_number", "expected": "2" },
-    "source": "seed",
-    "approved": true
-  }
+  { "id": "math-01", "domain": "math", "difficulty": "easy", "prompt": "What is 7 times 8? Output only the number, nothing else.", "verifier": { "type": "exact_number", "expected": "56" }, "source": "seed", "approved": true },
+  { "id": "math-02", "domain": "math", "difficulty": "easy", "prompt": "What is the sum of all integers from 1 to 10? Output only the number.", "verifier": { "type": "exact_number", "expected": "55" }, "source": "seed", "approved": true },
+  { "id": "math-03", "domain": "math", "difficulty": "easy", "prompt": "What is 2 to the power of 10? Output only the number.", "verifier": { "type": "exact_number", "expected": "1024" }, "source": "seed", "approved": true },
+  { "id": "math-04", "domain": "math", "difficulty": "easy", "prompt": "What is 15 percent of 200? Output only the number.", "verifier": { "type": "exact_number", "expected": "30" }, "source": "seed", "approved": true },
+  { "id": "math-05", "domain": "math", "difficulty": "easy", "prompt": "What is 144 divided by 12? Output only the number.", "verifier": { "type": "exact_number", "expected": "12" }, "source": "seed", "approved": true },
+  { "id": "math-06", "domain": "math", "difficulty": "easy", "prompt": "What is the square root of 144? Output only the number.", "verifier": { "type": "exact_number", "expected": "12" }, "source": "seed", "approved": true },
+  { "id": "math-07", "domain": "math", "difficulty": "easy", "prompt": "A square has a side length of 7. What is its perimeter? Output only the number.", "verifier": { "type": "exact_number", "expected": "28" }, "source": "seed", "approved": true },
+  { "id": "math-08", "domain": "math", "difficulty": "easy", "prompt": "What is 3 plus 4 times 2? Apply standard order of operations. Output only the number.", "verifier": { "type": "exact_number", "expected": "11" }, "source": "seed", "approved": true },
+  { "id": "math-09", "domain": "math", "difficulty": "easy", "prompt": "What is 5 factorial (5!)? Output only the number.", "verifier": { "type": "exact_number", "expected": "120" }, "source": "seed", "approved": true },
+  { "id": "math-10", "domain": "math", "difficulty": "easy", "prompt": "What is 17 mod 5 (17 remainder 5)? Output only the number.", "verifier": { "type": "exact_number", "expected": "2" }, "source": "seed", "approved": true },
+  { "id": "math-11", "domain": "math", "difficulty": "easy", "prompt": "A rectangle has length 9 and width 4. What is its area? Output only the number.", "verifier": { "type": "exact_number", "expected": "36" }, "source": "seed", "approved": true },
+  { "id": "math-12", "domain": "math", "difficulty": "easy", "prompt": "What is 12 squared? Output only the number.", "verifier": { "type": "exact_number", "expected": "144" }, "source": "seed", "approved": true },
+  { "id": "math-13", "domain": "math", "difficulty": "easy", "prompt": "How many seconds are in 3 hours? Output only the number.", "verifier": { "type": "exact_number", "expected": "10800" }, "source": "seed", "approved": true },
+  { "id": "math-14", "domain": "math", "difficulty": "easy", "prompt": "What is 25 percent of 80? Output only the number.", "verifier": { "type": "exact_number", "expected": "20" }, "source": "seed", "approved": true },
+  { "id": "math-15", "domain": "math", "difficulty": "easy", "prompt": "What is the sum of angles in a triangle in degrees? Output only the number.", "verifier": { "type": "exact_number", "expected": "180" }, "source": "seed", "approved": true },
+  { "id": "math-16", "domain": "math", "difficulty": "medium", "prompt": "A car travels 60 miles per hour for 2.5 hours. How many miles does it travel? Output only the number.", "verifier": { "type": "exact_number", "expected": "150" }, "source": "seed", "approved": true },
+  { "id": "math-17", "domain": "math", "difficulty": "medium", "prompt": "How many different ways can 4 different books be arranged on a shelf? Output only the number.", "verifier": { "type": "exact_number", "expected": "24" }, "source": "seed", "approved": true },
+  { "id": "math-18", "domain": "math", "difficulty": "medium", "prompt": "You invest $1000 at 10% annual compound interest for 2 years. What is the final amount in dollars? Output only the number.", "verifier": { "type": "exact_number", "expected": "1210" }, "source": "seed", "approved": true },
+  { "id": "math-19", "domain": "math", "difficulty": "medium", "prompt": "Using pi = 3, what is the area of a circle with radius 5? Output only the number.", "verifier": { "type": "exact_number", "expected": "75" }, "source": "seed", "approved": true },
+  { "id": "math-20", "domain": "math", "difficulty": "medium", "prompt": "A train travels 80 km/h for 1.5 hours, then 60 km/h for 2 hours. What is the total distance in km? Output only the number.", "verifier": { "type": "exact_number", "expected": "240" }, "source": "seed", "approved": true },
+  { "id": "math-21", "domain": "math", "difficulty": "medium", "prompt": "What is the sum of the first 10 prime numbers? (2, 3, 5, 7, 11, 13, 17, 19, 23, 29) Output only the number.", "verifier": { "type": "exact_number", "expected": "129" }, "source": "seed", "approved": true },
+  { "id": "math-22", "domain": "math", "difficulty": "medium", "prompt": "A right triangle has legs of length 15 and 8. What is the length of the hypotenuse? Output only the number.", "verifier": { "type": "exact_number", "expected": "17" }, "source": "seed", "approved": true },
+  { "id": "math-23", "domain": "math", "difficulty": "medium", "prompt": "A store applies a 20% discount to an item priced at $150. What is the final price in dollars? Output only the number.", "verifier": { "type": "exact_number", "expected": "120" }, "source": "seed", "approved": true },
+  { "id": "math-24", "domain": "math", "difficulty": "medium", "prompt": "How many 3-digit numbers (100 to 999) are divisible by 7? Output only the number.", "verifier": { "type": "exact_number", "expected": "128" }, "source": "seed", "approved": true },
+  { "id": "math-25", "domain": "math", "difficulty": "medium", "prompt": "What is (100 mod 7) + (200 mod 7)? Output only the number.", "verifier": { "type": "exact_number", "expected": "6" }, "source": "seed", "approved": true },
+  { "id": "math-26", "domain": "math", "difficulty": "medium", "prompt": "A sequence starts: 2, 6, 18, 54, ... What is the 7th term? Output only the number.", "verifier": { "type": "exact_number", "expected": "1458" }, "source": "seed", "approved": true },
+  { "id": "math-27", "domain": "math", "difficulty": "medium", "prompt": "A password is 3 digits long, each digit 0-9, digits can repeat. How many possible passwords are there? Output only the number.", "verifier": { "type": "exact_number", "expected": "1000" }, "source": "seed", "approved": true },
+  { "id": "math-28", "domain": "math", "difficulty": "medium", "prompt": "What is 35% of 60, plus 25% of 40? Output only the number.", "verifier": { "type": "exact_number", "expected": "31" }, "source": "seed", "approved": true },
+  { "id": "math-29", "domain": "math", "difficulty": "medium", "prompt": "A number is tripled, then 9 is subtracted, and the result is 30. What was the original number? Output only the number.", "verifier": { "type": "exact_number", "expected": "13" }, "source": "seed", "approved": true },
+  { "id": "math-30", "domain": "math", "difficulty": "medium", "prompt": "How many integers from 1 to 50 are divisible by 3 but not by 6? Output only the number.", "verifier": { "type": "exact_number", "expected": "8" }, "source": "seed", "approved": true },
+  { "id": "math-31", "domain": "math", "difficulty": "hard", "prompt": "What is the 10th Fibonacci number? (F1=1, F2=1, each subsequent term is the sum of the two before it.) Output only the number.", "verifier": { "type": "exact_number", "expected": "55" }, "source": "seed", "approved": true },
+  { "id": "math-32", "domain": "math", "difficulty": "hard", "prompt": "How many different committees of 3 people can be formed from a group of 8 people? Output only the number.", "verifier": { "type": "exact_number", "expected": "56" }, "source": "seed", "approved": true },
+  { "id": "math-33", "domain": "math", "difficulty": "hard", "prompt": "A number is doubled, then 10 is added, then the result is halved. The final answer is 15. What was the original number? Output only the number.", "verifier": { "type": "exact_number", "expected": "10" }, "source": "seed", "approved": true },
+  { "id": "math-34", "domain": "math", "difficulty": "hard", "prompt": "What is the sum of all multiples of 3 between 1 and 100 (inclusive)? Output only the number.", "verifier": { "type": "exact_number", "expected": "1683" }, "source": "seed", "approved": true },
+  { "id": "math-35", "domain": "math", "difficulty": "hard", "prompt": "How many integers between 1 and 100 (inclusive) are divisible by 2 or 3? Output only the number.", "verifier": { "type": "exact_number", "expected": "67" }, "source": "seed", "approved": true },
+  { "id": "math-36", "domain": "math", "difficulty": "hard", "prompt": "What is 7 cubed minus 5 cubed? Output only the number.", "verifier": { "type": "exact_number", "expected": "218" }, "source": "seed", "approved": true },
+  { "id": "math-37", "domain": "math", "difficulty": "hard", "prompt": "A geometric sequence starts at 3 and each term is multiplied by 2. What is the 8th term? Output only the number.", "verifier": { "type": "exact_number", "expected": "384" }, "source": "seed", "approved": true },
+  { "id": "math-38", "domain": "math", "difficulty": "hard", "prompt": "What is the smallest prime number greater than 100? Output only the number.", "verifier": { "type": "exact_number", "expected": "101" }, "source": "seed", "approved": true },
+  { "id": "math-39", "domain": "math", "difficulty": "hard", "prompt": "How many trailing zeros does 100! have? Output only the number.", "verifier": { "type": "exact_number", "expected": "24" }, "source": "seed", "approved": true },
+  { "id": "math-40", "domain": "math", "difficulty": "hard", "prompt": "A bag has 5 red and 4 blue marbles. How many ways can you choose 1 red and 1 blue marble? Output only the number.", "verifier": { "type": "exact_number", "expected": "20" }, "source": "seed", "approved": true },
+  { "id": "math-41", "domain": "math", "difficulty": "hard", "prompt": "What is the sum of all odd numbers from 1 to 99? Output only the number.", "verifier": { "type": "exact_number", "expected": "2500" }, "source": "seed", "approved": true },
+  { "id": "math-42", "domain": "math", "difficulty": "hard", "prompt": "A store raises a price by 25%, then reduces it by 25%. If the original price was $100, what is the final price in dollars and cents? Output only the number.", "verifier": { "type": "exact_number", "expected": "93.75" }, "source": "seed", "approved": true },
+  { "id": "math-43", "domain": "math", "difficulty": "hard", "prompt": "How many 4-digit numbers have all distinct digits? Output only the number.", "verifier": { "type": "exact_number", "expected": "4536" }, "source": "seed", "approved": true },
+  { "id": "math-44", "domain": "math", "difficulty": "hard", "prompt": "What is 2^10 + 2^9 + 2^8? Output only the number.", "verifier": { "type": "exact_number", "expected": "1792" }, "source": "seed", "approved": true },
+  { "id": "math-45", "domain": "math", "difficulty": "hard", "prompt": "A clock shows 3:00. How many degrees has the minute hand moved when the clock shows 3:20? Output only the number.", "verifier": { "type": "exact_number", "expected": "120" }, "source": "seed", "approved": true }
 ]

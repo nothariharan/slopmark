@@ -10,13 +10,14 @@ most importantly no more ' trust me bro benchmark '
 
 ## what works (v0)
 
-- **instruction follow** domain with 25 seed tasks
-- deterministic rule verifier (word count, paragraphs, forbidden text, etc.)
+- **instruction follow** — 181 seed tasks, rule-based verifier
+- **json** + **math** + **sycophancy** domains (seed tasks, deterministic verifiers)
 - `POST /api/eval/run` — single task eval
-- `POST /api/eval/suite` — full instruction suite for one model
+- `POST /api/eval/suite` — full domain suite for one model
 - `GET /api/leaderboard` — per-model pass rate and avg score
 - `/bench` eval console (run task, run suite, paste-to-score dev mode)
 - `/leaderboard` benchmark rankings
+- `/goal` minigames vs live models (stump, roulette, direction tracker, object tracker, anagram, sequence, and more)
 
 ---
 
@@ -40,11 +41,15 @@ optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persiste
 
 | route | method | purpose |
 |---|---|---|
-| `/api/tasks?domain=instruction` | GET | list tasks |
+| `/api/tasks?domain=instruction` | GET | list tasks (optional `difficulty` filter) |
 | `/api/eval/run` | POST | `{ taskId, modelSlug }` or `{ taskId, output }` |
-| `/api/eval/suite` | POST | `{ modelSlug }` — all instruction tasks |
+| `/api/eval/suite` | POST | `{ modelSlug, domain }` — all tasks in a domain |
 | `/api/leaderboard?domain=instruction` | GET | model stats |
 | `/api/runs` | GET | recent runs |
+| `/api/goal/challenge` | POST | `{ prompt, modelSlug }` — single model call for goal games |
+| `/api/goal/stump` | POST | `{ prompt, rules, modelSlug }` — instruction follow challenge |
+| `/api/goal/roulette` | POST | two-turn sycophancy trivia (`turn: 1` or `2`) |
+| `/api/goal/draw` | POST | `{ subject, modelSlug }` — ascii art duel |
 
 ---
 

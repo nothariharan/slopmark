@@ -961,6 +961,587 @@ function QuizGame({
   );
 }
 
+type CompassDir = "north" | "east" | "south" | "west";
+const COMPASS: CompassDir[] = ["north", "east", "south", "west"];
+
+function applyTurn(dir: CompassDir, turn: "left" | "right"): CompassDir {
+  const i = COMPASS.indexOf(dir);
+  return turn === "right" ? COMPASS[(i + 1) % 4] : COMPASS[(i + 3) % 4];
+}
+
+function makeDirectionTask(numTurns: number) {
+  const start = COMPASS[Math.floor(Math.random() * 4)];
+  const turns: ("left" | "right")[] = Array.from({ length: numTurns }, () =>
+    Math.random() > 0.5 ? "right" : "left"
+  );
+  let current = start;
+  for (const t of turns) current = applyTurn(current, t);
+
+  const list =
+    numTurns === 1
+      ? `turn ${turns[0]}`
+      : turns.slice(0, -1).map((t) => `turn ${t}`).join(", ") + `, then turn ${turns[turns.length - 1]}`;
+
+  return {
+    question: `You are standing facing ${start}. You ${list}. What direction are you now facing? Answer with one word only: north, east, south, or west.`,
+    answer: current,
+    start,
+    turns,
+  };
+}
+
+const DIRECTION_DIFFICULTY = [
+  { label: "easy (3 turns)", turns: 3 },
+  { label: "medium (5 turns)", turns: 5 },
+  { label: "hard (8 turns)", turns: 8 },
+];
+
+function DirectionGame({ onResult }: { onResult: (w: "you" | "ai") => void }) {
+  const [model, setModel] = useState<string>(models[0].slug);
+  const [diffIdx, setDiffIdx] = useState(0);
+  const [task, setTask] = useState(() => makeDirectionTask(3));
+  const [aiOutput, setAiOutput] = useState<string | null>(null);
+  const [latency, setLatency] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [scored, setScored] = useState(false);
+  const [err, setErr] = useState("");
+
+  function newTask(di = diffIdx) {
+    setTask(makeDirectionTask(DIRECTION_DIFFICULTY[di].turns));
+    setAiOutput(null);
+    setScored(false);
+    setErr("");
+  }
+
+  function changeDiff(di: number) {
+    setDiffIdx(di);
+    newTask(di);
+  }
+
+  const aiCorrect =
+    aiOutput !== null &&
+    aiOutput.toLowerCase().includes(task.answer.toLowerCase());
+
+  async function run() {
+    setBusy(true);
+    setErr("");
+    setAiOutput(null);
+    setScored(false);
+    try {
+      const data = await runChallenge(task.question, model);
+      setAiOutput(data.output);
+      setLatency(data.meta.latency_ms);
+      const correct = data.output.toLowerCase().includes(task.answer.toLowerCase());
+      if (!scored) { onResult(correct ? "ai" : "you"); setScored(true); }
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold">direction tracker</h2>
+        <p className="text-sm text-zinc-400">
+          follow a sequence of left/right turns and find the final direction.
+          research shows LLM accuracy drops 40-80% as turn count grows — humans track it fine.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="space-y-2">
+          <label className="text-sm text-zinc-400">model</label>
+          <select value={model} onChange={(e) => setModel(e.target.value)}
+            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+            {models.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
+          </select>
+        </Card>
+        <Card className="space-y-2">
+          <label className="text-sm text-zinc-400">difficulty</label>
+          <select value={diffIdx} onChange={(e) => changeDiff(Number(e.target.value))}
+            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+            {DIRECTION_DIFFICULTY.map((d, i) => <option key={i} value={i}>{d.label}</option>)}
+          </select>
+        </Card>
+      </div>
+
+      <Card className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-zinc-500">randomly generated — unique every time</p>
+          <button onClick={() => newTask()} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">regenerate →</button>
+        </div>
+        <div className="rounded bg-zinc-900 px-4 py-3">
+          <p className="text-sm leading-relaxed">{task.question}</p>
+        </div>
+        <div className="flex gap-2 text-xs text-zinc-600">
+          <span>start: <span className="text-zinc-400">{task.start}</span></span>
+          <span>·</span>
+          <span>turns: <span className="text-zinc-400">{task.turns.join(" → ")}</span></span>
+        </div>
+      </Card>
+
+      <Button onClick={run} disabled={busy} className="w-full">
+        {busy ? "computing…" : "ask the ai →"}
+      </Button>
+
+      {err && <p className="text-sm text-red-400">{err}</p>}
+
+      {aiOutput !== null && (
+        <div className="space-y-3">
+          <div className={`rounded-lg border p-4 ${aiCorrect ? "border-zinc-700 bg-zinc-900" : "border-red-800 bg-red-950/20"}`}>
+            <div className="flex items-center justify-between">
+              <p className={`font-semibold ${aiCorrect ? "text-zinc-200" : "text-red-300"}`}>
+                {aiCorrect ? "ai got it right" : "ai got it wrong — you win"}
+              </p>
+              <span className="text-xs text-zinc-500">{latency}ms</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">ai answered</p>
+              <p className={`text-sm font-medium ${aiCorrect ? "text-emerald-300" : "text-red-300"}`}>{aiOutput}</p>
+            </Card>
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">correct answer</p>
+              <p className="text-sm font-medium text-zinc-100">{task.answer}</p>
+            </Card>
+          </div>
+          <Button onClick={() => newTask()} variant="outline" className="w-full">new task →</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const OBJ_CONTAINERS = ["box", "bag", "drawer", "shelf", "basket", "jar", "pocket", "chest"];
+const OBJ_MOVE_PHRASES = [
+  (from: string, to: string) => `You move it from the ${from} to the ${to}.`,
+  (from: string, to: string) => `You take it out of the ${from} and place it in the ${to}.`,
+  (_: string, to: string) => `You put it in the ${to}.`,
+  (from: string, to: string) => `It gets transferred from the ${from} into the ${to}.`,
+  (_: string, to: string) => `You relocate it to the ${to}.`,
+];
+
+function makeObjectTask(numMoves: number) {
+  const shuffled = [...OBJ_CONTAINERS].sort(() => Math.random() - 0.5);
+  const used = shuffled.slice(0, Math.min(numMoves + 1, OBJ_CONTAINERS.length));
+  let location = used[0];
+  const sentences: string[] = [`A marble is in the ${location}.`];
+  for (let i = 1; i <= numMoves; i++) {
+    const next = used[i % used.length] !== location ? used[i % used.length] : used[(i + 1) % used.length];
+    const phrase = OBJ_MOVE_PHRASES[Math.floor(Math.random() * OBJ_MOVE_PHRASES.length)];
+    sentences.push(phrase(location, next));
+    location = next;
+  }
+  sentences.push("Where is the marble now? Answer with one word.");
+  return { question: sentences.join(" "), answer: location };
+}
+
+const OBJ_DIFFICULTY = [
+  { label: "easy (3 moves)", moves: 3 },
+  { label: "medium (5 moves)", moves: 5 },
+  { label: "hard (8 moves)", moves: 8 },
+];
+
+function ObjectTrackerGame({ onResult }: { onResult: (w: "you" | "ai") => void }) {
+  const [model, setModel] = useState<string>(models[0].slug);
+  const [diffIdx, setDiffIdx] = useState(0);
+  const [task, setTask] = useState(() => makeObjectTask(3));
+  const [aiOutput, setAiOutput] = useState<string | null>(null);
+  const [latency, setLatency] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [scored, setScored] = useState(false);
+  const [err, setErr] = useState("");
+
+  function newTask(di = diffIdx) {
+    setTask(makeObjectTask(OBJ_DIFFICULTY[di].moves));
+    setAiOutput(null);
+    setScored(false);
+    setErr("");
+  }
+
+  function changeDiff(di: number) {
+    setDiffIdx(di);
+    newTask(di);
+  }
+
+  const aiCorrect =
+    aiOutput !== null &&
+    aiOutput.toLowerCase().includes(task.answer.toLowerCase());
+
+  async function run() {
+    setBusy(true);
+    setErr("");
+    setAiOutput(null);
+    setScored(false);
+    try {
+      const data = await runChallenge(task.question, model);
+      setAiOutput(data.output);
+      setLatency(data.meta.latency_ms);
+      const correct = data.output.toLowerCase().includes(task.answer.toLowerCase());
+      if (!scored) { onResult(correct ? "ai" : "you"); setScored(true); }
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold">object tracker</h2>
+        <p className="text-sm text-zinc-400">
+          track an object through a chain of moves and say where it ends up.
+          models get world state wrong ~40% of the time — humans just follow the last move.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="space-y-2">
+          <label className="text-sm text-zinc-400">model</label>
+          <select value={model} onChange={(e) => setModel(e.target.value)}
+            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+            {models.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
+          </select>
+        </Card>
+        <Card className="space-y-2">
+          <label className="text-sm text-zinc-400">difficulty</label>
+          <select value={diffIdx} onChange={(e) => changeDiff(Number(e.target.value))}
+            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+            {OBJ_DIFFICULTY.map((d, i) => <option key={i} value={i}>{d.label}</option>)}
+          </select>
+        </Card>
+      </div>
+
+      <Card className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-zinc-500">randomly generated</p>
+          <button onClick={() => newTask()} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">regenerate →</button>
+        </div>
+        <p className="text-sm leading-relaxed">{task.question}</p>
+      </Card>
+
+      <Button onClick={run} disabled={busy} className="w-full">
+        {busy ? "tracking…" : "ask the ai →"}
+      </Button>
+
+      {err && <p className="text-sm text-red-400">{err}</p>}
+
+      {aiOutput !== null && (
+        <div className="space-y-3">
+          <div className={`rounded-lg border p-4 ${aiCorrect ? "border-zinc-700 bg-zinc-900" : "border-red-800 bg-red-950/20"}`}>
+            <div className="flex items-center justify-between">
+              <p className={`font-semibold ${aiCorrect ? "text-zinc-200" : "text-red-300"}`}>
+                {aiCorrect ? "ai tracked it correctly" : "ai lost track — you win"}
+              </p>
+              <span className="text-xs text-zinc-500">{latency}ms</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">ai said</p>
+              <p className={`text-sm font-medium ${aiCorrect ? "text-emerald-300" : "text-red-300"}`}>{aiOutput}</p>
+            </Card>
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">correct location</p>
+              <p className="text-sm font-medium text-zinc-100">{task.answer}</p>
+            </Card>
+          </div>
+          <Button onClick={() => newTask()} variant="outline" className="w-full">new task →</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const ANAGRAM_WORDS = [
+  "butterfly", "elephant", "kitchen", "journey", "whisper",
+  "stranger", "mountain", "painting", "universe", "calendar",
+  "disaster", "birthday", "champion", "question", "hospital",
+  "language", "skeleton", "triangle", "criminal", "platform",
+];
+
+function makeAnagramTask(): { scrambled: string; answer: string; letters: string } {
+  const word = ANAGRAM_WORDS[Math.floor(Math.random() * ANAGRAM_WORDS.length)];
+  const chars = [...word.toUpperCase()];
+  for (let i = chars.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [chars[i], chars[j]] = [chars[j], chars[i]];
+  }
+  if (chars.join("") === word.toUpperCase()) {
+    [chars[0], chars[1]] = [chars[1], chars[0]];
+  }
+  return { scrambled: chars.join(""), answer: word, letters: chars.join("-") };
+}
+
+function AnagramGame({ onResult }: { onResult: (w: "you" | "ai") => void }) {
+  const [model, setModel] = useState<string>(models[0].slug);
+  const [task, setTask] = useState(() => makeAnagramTask());
+  const [aiOutput, setAiOutput] = useState<string | null>(null);
+  const [latency, setLatency] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [scored, setScored] = useState(false);
+  const [err, setErr] = useState("");
+
+  function newTask() {
+    setTask(makeAnagramTask());
+    setAiOutput(null);
+    setScored(false);
+    setErr("");
+  }
+
+  const aiCorrect =
+    aiOutput !== null &&
+    aiOutput.toLowerCase().includes(task.answer.toLowerCase());
+
+  async function run() {
+    setBusy(true);
+    setErr("");
+    setAiOutput(null);
+    setScored(false);
+    try {
+      const prompt = `The following letters, when rearranged, spell a common English word. What is the word? Output only the word in lowercase.\n\nLetters: ${task.letters}`;
+      const data = await runChallenge(prompt, model);
+      setAiOutput(data.output);
+      setLatency(data.meta.latency_ms);
+      const correct = data.output.toLowerCase().includes(task.answer.toLowerCase());
+      if (!scored) { onResult(correct ? "ai" : "you"); setScored(true); }
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold">anagram</h2>
+        <p className="text-sm text-zinc-400">
+          unscramble a word. LLMs tokenize language — they cannot reliably rearrange
+          individual characters. humans do it visually and usually win.
+        </p>
+      </div>
+
+      <Card className="space-y-2">
+        <label className="text-sm text-zinc-400">model</label>
+        <select value={model} onChange={(e) => setModel(e.target.value)}
+          className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+          {models.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
+        </select>
+      </Card>
+
+      <Card className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-zinc-500">scrambled word · {task.answer.length} letters</p>
+          <button onClick={newTask} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">new word →</button>
+        </div>
+        <div className="rounded bg-zinc-900 px-4 py-4 text-center">
+          <p className="text-2xl font-mono font-bold tracking-widest text-zinc-100">{task.scrambled}</p>
+        </div>
+        <p className="text-xs text-zinc-600">these letters spell a common English word — what is it?</p>
+      </Card>
+
+      <Button onClick={run} disabled={busy} className="w-full">
+        {busy ? "unscrambling…" : "ask the ai →"}
+      </Button>
+
+      {err && <p className="text-sm text-red-400">{err}</p>}
+
+      {aiOutput !== null && (
+        <div className="space-y-3">
+          <div className={`rounded-lg border p-4 ${aiCorrect ? "border-zinc-700 bg-zinc-900" : "border-red-800 bg-red-950/20"}`}>
+            <div className="flex items-center justify-between">
+              <p className={`font-semibold ${aiCorrect ? "text-zinc-200" : "text-red-300"}`}>
+                {aiCorrect ? "ai unscrambled it" : "ai failed — you win"}
+              </p>
+              <span className="text-xs text-zinc-500">{latency}ms</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">ai guessed</p>
+              <p className={`text-sm font-medium ${aiCorrect ? "text-emerald-300" : "text-red-300"}`}>{aiOutput}</p>
+            </Card>
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">correct word</p>
+              <p className="text-sm font-bold text-zinc-100">{task.answer}</p>
+            </Card>
+          </div>
+          <Button onClick={newTask} variant="outline" className="w-full">new word →</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function makeSeqTask(): { terms: number[]; answer: number; rule: string } {
+  const r = Math.random();
+
+  if (r < 0.18) {
+    const step = Math.floor(Math.random() * 6) + 2;
+    const start = Math.floor(Math.random() * 8) + 1;
+    const all = Array.from({ length: 6 }, (_, i) => start + i * step);
+    return { terms: all.slice(0, 5), answer: all[5], rule: `add ${step} each time` };
+  }
+
+  if (r < 0.34) {
+    const step = Math.floor(Math.random() * 5) + 2;
+    const start = (Math.floor(Math.random() * 5) + 5) * step;
+    const all = Array.from({ length: 6 }, (_, i) => start - i * step);
+    return { terms: all.slice(0, 5), answer: all[5], rule: `subtract ${step} each time` };
+  }
+
+  if (r < 0.48) {
+    const start = Math.floor(Math.random() * 3) + 1;
+    const all = Array.from({ length: 6 }, (_, i) => start * Math.pow(2, i));
+    return { terms: all.slice(0, 5), answer: all[5], rule: "multiply by 2 each time" };
+  }
+
+  if (r < 0.60) {
+    const offset = Math.floor(Math.random() * 4);
+    const all = Array.from({ length: 6 }, (_, i) => Math.pow(i + 1 + offset, 2));
+    return { terms: all.slice(0, 5), answer: all[5], rule: "perfect squares" };
+  }
+
+  if (r < 0.72) {
+    const offset = Math.floor(Math.random() * 3);
+    const T = (n: number) => (n * (n + 1)) / 2;
+    const all = Array.from({ length: 6 }, (_, i) => T(i + 1 + offset));
+    return { terms: all.slice(0, 5), answer: all[5], rule: "triangular numbers" };
+  }
+
+  if (r < 0.86) {
+    const a = Math.floor(Math.random() * 3) + 2;
+    const b = a + Math.floor(Math.random() * 3) + 1;
+    const start = Math.floor(Math.random() * 5) + 1;
+    const terms: number[] = [start];
+    for (let i = 0; i < 5; i++) terms.push(terms[terms.length - 1] + (i % 2 === 0 ? a : b));
+    return { terms: terms.slice(0, 5), answer: terms[5], rule: `alternating +${a} / +${b}` };
+  }
+
+  // fibonacci-style fallback
+  const fa = Math.floor(Math.random() * 4) + 1;
+  const fb = Math.floor(Math.random() * 4) + 2;
+  const terms: number[] = [fa, fb];
+  while (terms.length < 6) terms.push(terms[terms.length - 1] + terms[terms.length - 2]);
+  return { terms: terms.slice(0, 5), answer: terms[5], rule: "each term = sum of previous two" };
+}
+
+function SequenceGame({ onResult }: { onResult: (w: "you" | "ai") => void }) {
+  const [model, setModel] = useState<string>(models[0].slug);
+  const [task, setTask] = useState(() => makeSeqTask());
+  const [aiOutput, setAiOutput] = useState<string | null>(null);
+  const [latency, setLatency] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [scored, setScored] = useState(false);
+  const [err, setErr] = useState("");
+
+  function newTask() {
+    setTask(makeSeqTask());
+    setAiOutput(null);
+    setScored(false);
+    setErr("");
+  }
+
+  const aiNum = aiOutput ? extractNumber(aiOutput) : null;
+  const aiCorrect = aiNum !== null && parseInt(aiNum, 10) === task.answer;
+
+  async function run() {
+    setBusy(true);
+    setErr("");
+    setAiOutput(null);
+    setScored(false);
+    try {
+      const prompt = `What is the next number in this sequence? Output only the number, nothing else.\n\n${task.terms.join(", ")}, ?`;
+      const data = await runChallenge(prompt, model);
+      setAiOutput(data.output);
+      setLatency(data.meta.latency_ms);
+      const num = extractNumber(data.output);
+      const correct = num !== null && parseInt(num, 10) === task.answer;
+      if (!scored) { onResult(correct ? "ai" : "you"); setScored(true); }
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold">number sequence</h2>
+        <p className="text-sm text-zinc-400">
+          find the next number in the sequence. models struggle with non-obvious patterns —
+          compound rules and triangular numbers trip them while humans spot the pattern visually.
+        </p>
+      </div>
+
+      <Card className="space-y-2">
+        <label className="text-sm text-zinc-400">model</label>
+        <select value={model} onChange={(e) => setModel(e.target.value)}
+          className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+          {models.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
+        </select>
+      </Card>
+
+      <Card className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-zinc-500">randomly generated</p>
+          <button onClick={newTask} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">regenerate →</button>
+        </div>
+        <div className="flex items-center gap-3 rounded bg-zinc-900 px-4 py-4">
+          {task.terms.map((n, i) => (
+            <span key={i} className="text-xl font-mono font-semibold text-zinc-100">{n}</span>
+          ))}
+          <span className="text-xl font-mono font-bold text-zinc-500">,</span>
+          <span className="text-xl font-mono font-bold text-zinc-600">?</span>
+        </div>
+        <p className="text-xs text-zinc-600">what comes next?</p>
+      </Card>
+
+      <Button onClick={run} disabled={busy} className="w-full">
+        {busy ? "predicting…" : "ask the ai →"}
+      </Button>
+
+      {err && <p className="text-sm text-red-400">{err}</p>}
+
+      {aiOutput !== null && (
+        <div className="space-y-3">
+          <div className={`rounded-lg border p-4 ${aiCorrect ? "border-zinc-700 bg-zinc-900" : "border-red-800 bg-red-950/20"}`}>
+            <div className="flex items-center justify-between">
+              <p className={`font-semibold ${aiCorrect ? "text-zinc-200" : "text-red-300"}`}>
+                {aiCorrect ? "ai got the pattern" : "ai missed it — you win"}
+              </p>
+              <span className="text-xs text-zinc-500">{latency}ms</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">ai answered</p>
+              <p className={`text-2xl font-mono font-bold ${aiCorrect ? "text-emerald-400" : "text-red-400"}`}>
+                {aiNum ?? "?"}
+              </p>
+            </Card>
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">correct answer</p>
+              <p className="text-2xl font-mono font-bold text-zinc-100">{task.answer}</p>
+            </Card>
+          </div>
+          <Card className="space-y-1">
+            <p className="text-xs text-zinc-500">the rule</p>
+            <p className="text-sm text-zinc-300">{task.rule}</p>
+          </Card>
+          <Button onClick={newTask} variant="outline" className="w-full">new sequence →</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const GAMES = [
   { id: "stump", label: "stump" },
   { id: "roulette", label: "roulette" },
@@ -968,6 +1549,10 @@ const GAMES = [
   { id: "counter", label: "letter counter" },
   { id: "trap", label: "logic trap" },
   { id: "winograd", label: "winograd" },
+  { id: "direction", label: "direction" },
+  { id: "object", label: "object tracker" },
+  { id: "anagram", label: "anagram" },
+  { id: "sequence", label: "sequence" },
 ] as const;
 
 type GameId = (typeof GAMES)[number]["id"];
@@ -1034,6 +1619,10 @@ export default function GoalPage() {
               onResult={onResult}
             />
           )}
+          {game === "direction" && <DirectionGame onResult={onResult} />}
+          {game === "object" && <ObjectTrackerGame onResult={onResult} />}
+          {game === "anagram" && <AnagramGame onResult={onResult} />}
+          {game === "sequence" && <SequenceGame onResult={onResult} />}
         </div>
       </main>
     </div>

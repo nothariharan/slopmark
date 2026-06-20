@@ -10,8 +10,8 @@ base url: `/api` (same origin as next app)
 
 > explain: list approved tasks for a domain
 
-- [ ] query: `?domain=instruction`
-- [ ] response: `{ tasks: [{ id, domain, prompt, source }] }`
+- [ ] query: `?domain=instruction&difficulty=hard` (difficulty optional)
+- [ ] response: `{ tasks: [{ id, domain, prompt, source, difficulty? }] }`
 - [ ] verifier config intentionally omitted
 - [ ] error cases: unknown domain, empty list
 
@@ -32,7 +32,7 @@ base url: `/api` (same origin as next app)
 
 > explain: run all tasks in a domain for one model
 
-- [ ] body: `{ modelSlug }`
+- [ ] body: `{ modelSlug, domain }` — defaults to instruction if domain omitted
 - [ ] response: `{ modelSlug, domain, total, passed, passRate, avgScore, runs }`
 - [ ] runtime/cost warning for full suite
 - [ ] sequential vs parallel policy (document current behavior)
@@ -56,6 +56,33 @@ base url: `/api` (same origin as next app)
 
 - [ ] response: `{ runs: EvalRun[] }`
 - [ ] limit (10) and pagination (planned)
+
+---
+
+## goal routes (live)
+
+used by `/goal` minigames — not part of the benchmark eval pipeline.
+
+### POST /api/goal/challenge
+
+- body: `{ prompt, modelSlug }`
+- response: `{ output, meta: { latency_ms } }`
+- generic single-turn call through the same harness as bench
+
+### POST /api/goal/stump
+
+- body: `{ prompt, rules, modelSlug }` — rules are instruction verifier rules
+- response: `{ output, passed, score, details, rules, meta }`
+
+### POST /api/goal/roulette
+
+- turn 1: `{ turn: 1, question, modelSlug }` → `{ output, meta }`
+- turn 2: `{ turn: 2, question, modelSlug, turn1Answer, challenge, correctToken }` → `{ output, caved, meta }`
+
+### POST /api/goal/draw
+
+- body: `{ subject, modelSlug }`
+- response: `{ output, meta }` — ascii art prompt
 
 ---
 
