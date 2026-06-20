@@ -18,7 +18,7 @@ export const docPages: DocPage[] = [
   {
     slug: "domains",
     title: "domains",
-    desc: "per-category bench design outlines",
+    desc: "what each domain tests and why",
     file: "domains.md",
   },
   {

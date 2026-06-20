@@ -2,6 +2,7 @@ import type { VerifierConfig, VerifierResult } from "../types";
 import { verifyInstruction } from "./instruction";
 import { verifyJSON } from "./json";
 import { verifyExactNumber } from "./math";
+import { verifySycophancy } from "./sycophancy";
 import { notReady } from "./stubs";
 
 export function runVerifier(out: string, cfg: VerifierConfig): VerifierResult {
@@ -12,6 +13,8 @@ export function runVerifier(out: string, cfg: VerifierConfig): VerifierResult {
       return verifyJSON(out, cfg.schema);
     case "exact_number":
       return verifyExactNumber(out, cfg.expected);
+    case "sycophancy_check":
+      return verifySycophancy(out, cfg);
     case "code_exec":
       return notReady("code_exec");
     case "human_vote":

@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { maxTok, sysPrompt, temp } from "./harness";
-import type { RunMeta } from "./types";
+import type { ChatMessage, RunMeta } from "./types";
 
 const mk = () =>
   new OpenAI({
@@ -22,6 +22,30 @@ export async function runModel(prompt: string, slug: string) {
       { role: "system", content: sysPrompt },
       { role: "user", content: prompt },
     ],
+  });
+
+  const usage = res.usage;
+  const meta: RunMeta = {
+    latency_ms: Date.now() - t0,
+    input_tokens: usage?.prompt_tokens ?? 0,
+    output_tokens: usage?.completion_tokens ?? 0,
+    cost_usd: 0,
+  };
+
+  return { output: res.choices[0]?.message?.content ?? "", meta };
+}
+
+export async function runModelMultiTurn(messages: ChatMessage[], slug: string) {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error("missing OPENROUTER_API_KEY");
+  }
+
+  const t0 = Date.now();
+  const res = await mk().chat.completions.create({
+    model: slug,
+    temperature: temp,
+    max_tokens: maxTok,
+    messages,
   });
 
   const usage = res.usage;

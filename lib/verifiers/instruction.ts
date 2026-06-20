@@ -1,5 +1,17 @@
 import type { InstructionRule, RuleResult, VerifierResult } from "../types";
 
+const PREAMBLE_RE = /^(?:sure[,!.]?\s+(?:here(?:'s| is)|let me|i(?:'ll| will| can| would| was)|i'?d\s+be\s+happy\s+to)[^\n]*\n+|certainly[!,.]?[^\n]*\n+|of course[!,.]?[^\n]*\n+|absolutely[!,.]?[^\n]*\n+|great[!,.]?[^\n]*\n+|happy\s+to\s+help[.!]?\s*|i'?d\s+be\s+happy\s+to[^.!?\n]*[.!?]\s*)/i;
+
+function stripPreamble(s: string): string {
+  let out = s;
+  for (let i = 0; i < 3; i++) {
+    const m = out.match(PREAMBLE_RE);
+    if (!m) break;
+    out = out.slice(m[0].length);
+  }
+  return out.trimStart();
+}
+
 function words(s: string) {
   return s.trim().split(/\s+/).filter(Boolean);
 }
@@ -120,7 +132,8 @@ export function verifyInstruction(
   out: string,
   rules: InstructionRule[],
 ): VerifierResult {
-  const rs = rules.map((r) => checkRule(out, r));
+  const cleaned = stripPreamble(out);
+  const rs = rules.map((r) => checkRule(cleaned, r));
   const okN = rs.filter((x) => x.ok).length;
   const passed = okN === rs.length;
   const score = rs.length ? Math.round((okN / rs.length) * 100) : 0;

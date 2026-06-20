@@ -34,23 +34,26 @@ async function saveRuns() {
   await fs.writeFile(runsPath, JSON.stringify(memRuns, null, 2));
 }
 
-export async function getTasks(domain: Domain): Promise<BenchTask[]> {
+export async function getTasks(domain: Domain, difficulty?: string): Promise<BenchTask[]> {
   try {
     const raw = await fs.readFile(taskFile(domain), "utf8");
-    return (JSON.parse(raw) as BenchTask[]).filter((t) => t.approved);
+    return (JSON.parse(raw) as BenchTask[])
+      .filter((t) => t.approved)
+      .filter((t) => !difficulty || t.difficulty === difficulty);
   } catch {
     return [];
   }
 }
 
 export async function getTask(id: string): Promise<BenchTask | null> {
-  // figure out domain from id prefix (ins-, json-, math-, etc.)
+  // id prefix tells us which file to look in (ins-, json-, syc-, etc.)
   const prefix = id.split("-")[0];
   const domainMap: Record<string, Domain> = {
     ins: "instruction",
     json: "json",
     math: "math",
     code: "coding",
+    syc: "sycophancy",
   };
   const domain = domainMap[prefix] ?? "instruction";
   const tasks = await getTasks(domain);
@@ -58,7 +61,7 @@ export async function getTask(id: string): Promise<BenchTask | null> {
 }
 
 export function toPublic(t: BenchTask): TaskPublic {
-  return { id: t.id, domain: t.domain, prompt: t.prompt, source: t.source };
+  return { id: t.id, domain: t.domain, prompt: t.prompt, source: t.source, difficulty: t.difficulty };
 }
 
 export async function addRun(run: EvalRun) {

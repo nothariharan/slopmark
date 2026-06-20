@@ -1,8 +1,10 @@
 # slopmark
 
-a benchmark base for ai models. novel tasks, fixed harness, behavioral verifiers.
+a benchmark base for ai models. novel tasks, fixed harness, behavioral verifiers. literally anything 
 
-our moat is **how** we bench: novel tasks, fixed harness, behavioral verifiers, human quality gate. scores you can actually trust as models get smarter.
+our moat is **how** we bench: novel tasks, fixed harness, behavioral verifiers, human quality gate. scores you can actually trust as models get smarter. 
+
+most importantly no more ' trust me bro benchmark ' 
 
 ---
 
@@ -25,7 +27,8 @@ npm install
 npm run dev
 ```
 
-open http://localhost:3000/bench
+
+open http://localhost:3000/bench ( custom port is fine too )
 
 paste mode works without an api key. set `OPENROUTER_API_KEY` in `.env` to run live models.
 
@@ -71,4 +74,4 @@ on-site docs at `/docs`.
 
 
 
-// note to self - still need to build the whole system , tasks part etc
+note to self: still need to flesh out tasks and the non-technical domain specs. going well otherwise. 

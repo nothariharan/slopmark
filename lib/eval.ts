@@ -1,8 +1,9 @@
 import { randomUUID } from "crypto";
-import { pasteMeta, runModel } from "./openrouter";
+import { pasteMeta, runModel, runModelMultiTurn } from "./openrouter";
 import * as store from "./store";
-import type { BenchTask, Domain, EvalRun } from "./types";
+import type { BenchTask, ChatMessage, Domain, EvalRun } from "./types";
 import { runVerifier } from "./verifiers";
+import { sysPrompt } from "./harness";
 
 type RunInput = {
   taskId: string;
@@ -15,6 +16,33 @@ export async function evalTask(inp: RunInput) {
   if (!task) throw new Error("task not found");
 
   const slug = inp.modelSlug || "paste/dev";
+
+  // sycophancy runs two turns — answer first, then get challenged
+  if (task.verifier.type === "sycophancy_check") {
+    if (inp.output) {
+      // paste mode: skip the model, score whatever they pasted as turn 2
+      const vr = runVerifier(inp.output, task.verifier);
+      const run = mkRun(task, slug, inp.output, vr, pasteMeta());
+      await store.addRun(run);
+      return { ...vr, output: inp.output, meta: pasteMeta(), run };
+    }
+
+    const turn1 = await runModel(task.prompt, inp.modelSlug);
+    const messages: ChatMessage[] = [
+      { role: "system", content: sysPrompt },
+      { role: "user", content: task.prompt },
+      { role: "assistant", content: turn1.output },
+      { role: "user", content: task.verifier.challenge },
+    ];
+    const turn2 = await runModelMultiTurn(messages, inp.modelSlug);
+    const vr = runVerifier(turn2.output, task.verifier);
+    const enrichedDetails = `[turn1]\n${turn1.output}\n[/turn1]\n${vr.details}`;
+    const run = mkRun(task, slug, turn2.output, { ...vr, details: enrichedDetails }, turn2.meta);
+    await store.addRun(run);
+    return { ...vr, details: enrichedDetails, output: turn2.output, meta: turn2.meta, run };
+  }
+
+  // everything else is one shot
   let output = inp.output ?? "";
   let meta = pasteMeta();
 

@@ -2,6 +2,7 @@
   {
     "id": "json-01",
     "domain": "json",
+    "difficulty": "easy",
     "prompt": "Return a JSON object with two fields: 'name' (a string) and 'age' (a number). Use any values you want. Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -20,6 +21,7 @@
   {
     "id": "json-02",
     "domain": "json",
+    "difficulty": "easy",
     "prompt": "Return a JSON object with a 'title' field (string) and a 'year' field (number). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -38,6 +40,7 @@
   {
     "id": "json-03",
     "domain": "json",
+    "difficulty": "easy",
     "prompt": "Return a JSON array of exactly 3 strings. Output only the JSON array.",
     "verifier": {
       "type": "json_schema",
@@ -54,6 +57,7 @@
   {
     "id": "json-04",
     "domain": "json",
+    "difficulty": "easy",
     "prompt": "Return a JSON object with 'active' (a boolean) and 'id' (a number). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -72,6 +76,7 @@
   {
     "id": "json-05",
     "domain": "json",
+    "difficulty": "medium",
     "prompt": "Return a JSON object with a nested 'user' object. The 'user' object must have 'name' (string) and 'email' (string) fields. Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -96,6 +101,7 @@
   {
     "id": "json-06",
     "domain": "json",
+    "difficulty": "medium",
     "prompt": "Return a JSON array of at least 3 objects. Each object must have an 'id' (number) and a 'label' (string). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -118,6 +124,7 @@
   {
     "id": "json-07",
     "domain": "json",
+    "difficulty": "medium",
     "prompt": "Return a JSON object with a 'status' field that is either 'ok' or 'error', and a 'code' field that is a number. Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -136,6 +143,7 @@
   {
     "id": "json-08",
     "domain": "json",
+    "difficulty": "medium",
     "prompt": "Return a JSON object with a 'message' field (a string of at least 10 characters) and a 'type' field (any string). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -154,6 +162,7 @@
   {
     "id": "json-09",
     "domain": "json",
+    "difficulty": "medium",
     "prompt": "Return a JSON object with a 'score' field (a number between 0 and 100 inclusive) and a 'grade' field (a string). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -172,6 +181,7 @@
   {
     "id": "json-10",
     "domain": "json",
+    "difficulty": "easy",
     "prompt": "Return a JSON array containing exactly 5 numbers. Output only the JSON array.",
     "verifier": {
       "type": "json_schema",
@@ -188,6 +198,7 @@
   {
     "id": "json-11",
     "domain": "json",
+    "difficulty": "easy",
     "prompt": "Return a JSON object with 'query' (string), 'page' (number), and 'limit' (number) fields. Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -207,6 +218,7 @@
   {
     "id": "json-12",
     "domain": "json",
+    "difficulty": "medium",
     "prompt": "Return a JSON object with exactly these fields and no others: 'x' (number), 'y' (number), 'z' (number). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -227,6 +239,7 @@
   {
     "id": "json-13",
     "domain": "json",
+    "difficulty": "medium",
     "prompt": "Return a JSON object with a 'config' field. 'config' must be an object containing a 'host' (string) and 'port' (number). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -251,6 +264,7 @@
   {
     "id": "json-14",
     "domain": "json",
+    "difficulty": "easy",
     "prompt": "Return a JSON object with 'first' (string), 'last' (string), and 'city' (string) fields. Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -270,6 +284,7 @@
   {
     "id": "json-15",
     "domain": "json",
+    "difficulty": "medium",
     "prompt": "Return a JSON object with a 'tags' field that is an array of at least 2 strings, and a 'count' field that is a positive number (greater than 0). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
@@ -279,6 +294,252 @@
         "properties": {
           "tags": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
           "count": { "type": "number", "exclusiveMinimum": 0 }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-16",
+    "domain": "json",
+    "difficulty": "medium",
+    "prompt": "Return a JSON object with exactly these fields and no others: 'product' (string), 'price' (a number between 0 and 1000 inclusive), 'inStock' (boolean). Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["product", "price", "inStock"],
+        "additionalProperties": false,
+        "properties": {
+          "product": { "type": "string" },
+          "price": { "type": "number", "minimum": 0, "maximum": 1000 },
+          "inStock": { "type": "boolean" }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-17",
+    "domain": "json",
+    "difficulty": "medium",
+    "prompt": "Return a JSON array of exactly 4 objects. Each object must have exactly two fields: 'key' (a string) and 'value' (a number). No extra fields allowed in each object. Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "array",
+        "minItems": 4,
+        "maxItems": 4,
+        "items": {
+          "type": "object",
+          "required": ["key", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "key": { "type": "string" },
+            "value": { "type": "number" }
+          }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-18",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return a JSON object with a 'company' field. 'company' must have a 'name' (string) and an 'address' object. The 'address' must have 'street' (string), 'city' (string), and 'zip' (string). Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["company"],
+        "properties": {
+          "company": {
+            "type": "object",
+            "required": ["name", "address"],
+            "properties": {
+              "name": { "type": "string" },
+              "address": {
+                "type": "object",
+                "required": ["street", "city", "zip"],
+                "properties": {
+                  "street": { "type": "string" },
+                  "city": { "type": "string" },
+                  "zip": { "type": "string" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-19",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return a JSON object with 'username' (a string matching the pattern ^[a-z][a-z0-9_]{2,15}$) and 'role' (must be exactly one of: 'admin', 'editor', 'viewer'). Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["username", "role"],
+        "properties": {
+          "username": { "type": "string", "pattern": "^[a-z][a-z0-9_]{2,15}$" },
+          "role": { "type": "string", "enum": ["admin", "editor", "viewer"] }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-20",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return a JSON object with a 'value' field that is either a number or null (not a string, not omitted — it must be present), and a 'unit' field (string). Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["value", "unit"],
+        "properties": {
+          "value": { "anyOf": [{ "type": "number" }, { "type": "null" }] },
+          "unit": { "type": "string" }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-21",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return a JSON object with: 'integers' (an array of between 2 and 4 integers), 'labels' (an array of exactly 3 strings), and 'valid' (a boolean). Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["integers", "labels", "valid"],
+        "properties": {
+          "integers": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "maxItems": 4 },
+          "labels": { "type": "array", "items": { "type": "string" }, "minItems": 3, "maxItems": 3 },
+          "valid": { "type": "boolean" }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-22",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return a JSON object with exactly these top-level fields and no others: 'meta' (an object with exactly 'version' (number) and 'author' (string), no other fields allowed) and 'data' (any string). Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["meta", "data"],
+        "additionalProperties": false,
+        "properties": {
+          "meta": {
+            "type": "object",
+            "required": ["version", "author"],
+            "additionalProperties": false,
+            "properties": {
+              "version": { "type": "number" },
+              "author": { "type": "string" }
+            }
+          },
+          "data": { "type": "string" }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-23",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Ignore the following example JSON: {\"wrong\": true, \"ignore_this\": 42}. Return a JSON object with 'result' (string) and 'confidence' (a number between 0.0 and 1.0 inclusive). Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["result", "confidence"],
+        "properties": {
+          "result": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-24",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return a JSON object with: 'event' (a string matching ^[A-Z_]+$, uppercase letters and underscores only), 'timestamp' (a number), and 'payload' (an object with 'type' (string) and 'data' (any array)). Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["event", "timestamp", "payload"],
+        "properties": {
+          "event": { "type": "string", "pattern": "^[A-Z_]+$" },
+          "timestamp": { "type": "number" },
+          "payload": {
+            "type": "object",
+            "required": ["type", "data"],
+            "properties": {
+              "type": { "type": "string" },
+              "data": { "type": "array" }
+            }
+          }
+        }
+      }
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "json-25",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return a JSON object with exactly one top-level field 'request'. 'request' must have: 'headers' (an object with exactly 'content-type' (string) and 'authorization' (string), no other fields), 'body' (any object), and 'method' (must be 'GET', 'POST', 'PUT', or 'DELETE'). The top-level object must have no other fields. Output only the JSON.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "required": ["request"],
+        "additionalProperties": false,
+        "properties": {
+          "request": {
+            "type": "object",
+            "required": ["headers", "body", "method"],
+            "properties": {
+              "headers": {
+                "type": "object",
+                "required": ["content-type", "authorization"],
+                "additionalProperties": false,
+                "properties": {
+                  "content-type": { "type": "string" },
+                  "authorization": { "type": "string" }
+                }
+              },
+              "body": { "type": "object" },
+              "method": { "type": "string", "enum": ["GET", "POST", "PUT", "DELETE"] }
+            }
+          }
         }
       }
     },

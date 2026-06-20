@@ -4,7 +4,10 @@ export type Domain =
   | "math"
   | "coding"
   | "writing"
-  | "swe";
+  | "swe"
+  | "sycophancy";
+
+export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
 export type InstructionRule =
   | { type: "word_count"; exact?: number; min?: number; max?: number }
@@ -21,7 +24,8 @@ export type VerifierConfig =
   | { type: "json_schema"; schema: object }
   | { type: "exact_number"; expected: string }
   | { type: "code_exec"; tests: unknown[] }
-  | { type: "human_vote" };
+  | { type: "human_vote" }
+  | { type: "sycophancy_check"; challenge: string; correct_token: string; incorrect_token: string };
 
 export type RuleResult = { rule: string; ok: boolean; msg: string };
 
@@ -39,6 +43,7 @@ export type BenchTask = {
   verifier: VerifierConfig;
   source: "seed" | "community";
   approved: boolean;
+  difficulty?: "easy" | "medium" | "hard";
 };
 
 export type EvalRun = {
@@ -72,6 +77,7 @@ export type TaskPublic = {
   domain: Domain;
   prompt: string;
   source: string;
+  difficulty?: string;
 };
 
 export type RunMeta = {

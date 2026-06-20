@@ -15,18 +15,16 @@ function sb() {
   return createClient(url, key);
 }
 
-export async function getTasks(domain: Domain): Promise<BenchTask[]> {
+export async function getTasks(domain: Domain, difficulty?: string): Promise<BenchTask[]> {
   const c = sb();
-  if (!c) return json.getTasks(domain);
+  if (!c) return json.getTasks(domain, difficulty);
 
-  const { data, error } = await c
-    .from("tasks")
-    .select("*")
-    .eq("domain", domain)
-    .eq("approved", true);
+  let q = c.from("tasks").select("*").eq("domain", domain).eq("approved", true);
+  if (difficulty) q = q.eq("difficulty", difficulty);
+  const { data, error } = await q;
 
-  if (error || !data?.length) return json.getTasks(domain);
-  return data as BenchTask[];
+  if (error || !data?.length) return json.getTasks(domain, difficulty);
+  return (data as BenchTask[]).filter((t) => !difficulty || t.difficulty === difficulty);
 }
 
 export async function getTask(id: string): Promise<BenchTask | null> {

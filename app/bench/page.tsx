@@ -21,15 +21,21 @@ const DOMAINS: { label: string; value: Domain }[] = [
   { label: "instruction", value: "instruction" },
   { label: "json", value: "json" },
   { label: "math", value: "math" },
+  { label: "sycophancy", value: "sycophancy" },
 ];
+
+const DIFFICULTIES = ["", "easy", "medium", "hard"] as const;
+type DifficultyFilter = (typeof DIFFICULTIES)[number];
 
 export default function BenchPage() {
   const [domain, setDomain] = useState<Domain>("instruction");
+  const [difficulty, setDifficulty] = useState<DifficultyFilter>("");
   const [tasks, setTasks] = useState<TaskPublic[]>([]);
   const [taskId, setTaskId] = useState("");
   const [model, setModel] = useState<string>(models[0].slug);
   const [paste, setPaste] = useState("");
   const [res, setRes] = useState<EvalRes | null>(null);
+  const [turn1Output, setTurn1Output] = useState<string | null>(null);
   const [suite, setSuite] = useState<string | null>(null);
   const [runs, setRuns] = useState<EvalRun[]>([]);
   const [busy, setBusy] = useState(false);
@@ -41,14 +47,17 @@ export default function BenchPage() {
     setTasks([]);
     setTaskId("");
     setRes(null);
+    setTurn1Output(null);
     setSuite(null);
-    fetch(`/api/tasks?domain=${domain}`)
+    const params = new URLSearchParams({ domain });
+    if (difficulty) params.set("difficulty", difficulty);
+    fetch(`/api/tasks?${params}`)
       .then((r) => r.json())
       .then((d) => {
         setTasks(d.tasks ?? []);
         if (d.tasks?.[0]) setTaskId(d.tasks[0].id);
       });
-  }, [domain]);
+  }, [domain, difficulty]);
 
   useEffect(() => {
     loadRuns();
@@ -77,6 +86,8 @@ export default function BenchPage() {
       const d = await r.json();
       if (!r.ok) throw new Error(d.error ?? "run failed");
       setRes(d);
+      const t1Match = (d.details as string | undefined)?.match(/^\[turn1\]\n([\s\S]*?)\n\[\/turn1\]/);
+      setTurn1Output(t1Match ? t1Match[1] : null);
       await loadRuns();
     } catch (e) {
       setErr(e instanceof Error ? e.message : "run failed");
@@ -134,6 +145,23 @@ export default function BenchPage() {
           ))}
         </div>
 
+        {/* difficulty filter */}
+        <div className="flex gap-1">
+          {DIFFICULTIES.map((d) => (
+            <button
+              key={d}
+              onClick={() => setDifficulty(d)}
+              className={`rounded px-3 py-1 text-xs transition-colors ${
+                difficulty === d
+                  ? "bg-zinc-700 text-zinc-100"
+                  : "text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              {d === "" ? "all" : d}
+            </button>
+          ))}
+        </div>
+
         <Card className="space-y-3">
           <label className="block text-sm text-zinc-400">task</label>
           <select
@@ -143,7 +171,7 @@ export default function BenchPage() {
           >
             {tasks.map((t) => (
               <option key={t.id} value={t.id}>
-                {t.id} ({t.source})
+                {t.id} [{t.difficulty ?? "?"}] ({t.source})
               </option>
             ))}
             {!tasks.length && <option disabled>no tasks for this domain</option>}
@@ -200,15 +228,31 @@ export default function BenchPage() {
                 {res.meta.latency_ms}ms · ${res.meta.cost_usd}
               </span>
             </div>
+            {domain === "sycophancy" && turn1Output && (
+              <>
+                <p className="text-xs text-zinc-500">turn 1 — initial answer</p>
+                <pre className="whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs text-zinc-300">
+                  {turn1Output}
+                </pre>
+                <p className="text-xs text-zinc-500">turn 2 — after challenge</p>
+                <pre className="whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs text-zinc-300">
+                  {res.output}
+                </pre>
+              </>
+            )}
             <pre className="whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs text-zinc-300">
-              {res.details}
+              {domain === "sycophancy"
+                ? res.details.replace(/^\[turn1\][\s\S]*?\[\/turn1\]\n/, "")
+                : res.details}
             </pre>
-            <details>
-              <summary className="cursor-pointer text-sm text-zinc-400">model output</summary>
-              <pre className="mt-2 whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs">
-                {res.output}
-              </pre>
-            </details>
+            {domain !== "sycophancy" && (
+              <details>
+                <summary className="cursor-pointer text-sm text-zinc-400">model output</summary>
+                <pre className="mt-2 whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs">
+                  {res.output}
+                </pre>
+              </details>
+            )}
           </Card>
         )}
 

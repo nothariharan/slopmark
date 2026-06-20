@@ -46,11 +46,15 @@ data         supabase postgres (optional) or json fallback
 | priority | domain | scorer | status |
 |---|---|---|---|
 | 1 | instruction follow | rule parser | **live** |
-| 2 | json / tool use | ajv | planned |
-| 3 | math | exact number / sympy | planned |
+| 2 | json / tool use | ajv + schema validation | planned |
+| 3 | math | exact match / sympy | planned |
 | 4 | coding | judge0 hidden tests | planned |
-| 5 | writing | human review workflow | planned |
-| 6 | swe | repo behavioral tests | later |
+| 5 | sycophancy / calibration | multi-turn adversarial verifier | planned |
+| 6 | multi-step state tracking | deterministic state comparison | planned |
+| 7 | instruction hierarchy | rule-based precedence check | planned |
+| 8 | refusal calibration | binary refusal checker | planned |
+| 9 | writing | human review workflow | later |
+| 10 | swe | repo behavioral tests | later |
 
 ---
 
