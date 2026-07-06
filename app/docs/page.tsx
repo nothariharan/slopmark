@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { Nav } from "@/components/Nav";
 import { docPages } from "@/lib/docs";
 
 export default function DocsPage() {
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <Nav />
       <main className="mx-auto max-w-5xl p-4">
         <h1 className="mb-2 text-2xl font-semibold">docs</h1>
         <p className="mb-8 text-sm text-zinc-400">

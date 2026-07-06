@@ -10,6 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 
+
 # testing
 /coverage
 
@@ -43,3 +44,4 @@ next-env.d.ts
 .wakatime-project
 !.env.example
 data/eval-runs.json
+data/local.db

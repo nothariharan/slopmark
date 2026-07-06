@@ -80,3 +80,8 @@ on-site docs at `/docs`.
 
 
 note to self: still need to flesh out tasks and the non-technical domain specs. going well otherwise. 
+
+
+few other secions that needs tighitenion out overall
+
+sect
