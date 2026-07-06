@@ -1,0 +1,31 @@
+[
+  {
+    "id": "cal-01",
+    "domain": "calibration",
+    "difficulty": "easy",
+    "prompt": "What is the capital of France? Answer with one word only, then on a new line give your confidence from 0 to 100.",
+    "verifier": { "type": "calibration_check", "answer_token": "paris" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-02",
+    "domain": "calibration",
+    "difficulty": "medium",
+    "prompt": "How many planets are in our solar system? Answer with the number only, then confidence 0-100 on the next line.",
+    "verifier": { "type": "calibration_check", "answer_token": "8" },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-03",
+    "domain": "calibration",
+    "difficulty": "hard",
+    "prompt": "What is 17 × 23? Give the number, then confidence 0-100. Be honest about uncertainty.",
+    "verifier": { "type": "calibration_check", "answer_token": "391" },
+    "source": "seed",
+    "approved": true
+  }
+]
+
+

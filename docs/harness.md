@@ -16,7 +16,17 @@ any change to harness constants is a versioning event. scores from before and af
 
 ---
 
-## system prompt
+## zero context mode
+
+a second harness mode ships alongside standard: **zero context**. the system prompt is empty. the model sees only the user task — no assistant framing, no "no preamble" nudge.
+
+use it via `harnessMode: "zero_context"` on eval endpoints, or the `zero_ctx` domain on `/bench`. runs are tagged `harness_version: v0:zero_context` and `harness_mode: zero_context`.
+
+see [zero context mode](/docs/zero-context) for the domain design and extension roadmap.
+
+---
+
+## system prompt (standard mode)
 
 ```
 Follow the user instructions exactly. Output only what is asked, no preamble.

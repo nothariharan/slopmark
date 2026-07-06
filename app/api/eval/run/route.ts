@@ -4,6 +4,9 @@ import * as store from "@/lib/store";
 import { runModelStream } from "@/lib/openrouter";
 import { runVerifier } from "@/lib/verifiers";
 import { checkRunLimit, getIp } from "@/lib/rate-limit";
+import { harnessLabel } from "@/lib/harness";
+import { taskPoolVersion } from "@/lib/task-pool";
+import type { HarnessMode } from "@/lib/types";
 import { randomUUID } from "crypto";
 
 export async function POST(req: Request) {
@@ -22,13 +25,13 @@ export async function POST(req: Request) {
     const modelSlug = body.modelSlug as string | undefined;
     const output = body.output as string | undefined;
     const stream = body.stream as boolean | undefined;
+    const harnessMode = body.harnessMode as HarnessMode | undefined;
 
     if (!taskId) return NextResponse.json({ error: "taskId required" }, { status: 400 });
     if (!output && !modelSlug) return NextResponse.json({ error: "modelSlug or output required" }, { status: 400 });
 
     if (!stream || output) {
-      // fallback to non streaming
-      const res = await evalTask({ taskId, modelSlug: modelSlug ?? "paste/dev", output });
+      const res = await evalTask({ taskId, modelSlug: modelSlug ?? "paste/dev", output, harnessMode });
       return NextResponse.json(res);
     }
 
@@ -36,9 +39,11 @@ export async function POST(req: Request) {
     const task = await store.getTask(taskId);
     if (!task) return NextResponse.json({ error: "task not found" }, { status: 404 });
     const slug = modelSlug ?? "paste/dev";
+    const mode: HarnessMode =
+      harnessMode ?? (task.domain === "zero_ctx" ? "zero_context" : "standard");
 
     const prompt = await preparePrompt(task);
-    const { stream: oaiStream, t0 } = await runModelStream(prompt, slug);
+    const { stream: oaiStream, t0 } = await runModelStream(prompt, slug, mode);
 
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
@@ -74,6 +79,9 @@ export async function POST(req: Request) {
             score: vr.score,
             details: vr.details,
             ...meta,
+            harness_version: harnessLabel(mode),
+            harness_mode: mode,
+            task_pool_version: taskPoolVersion(),
             created_at: new Date().toISOString(),
           };
           await store.addRun(run);

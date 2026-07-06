@@ -9,9 +9,15 @@ export type Domain =
   | "agentic"
   | "safety"
   | "calibration"
-  | "persistence";
+  | "persistence"
+  | "procedural"
+  | "refusal"
+  | "hierarchy"
+  | "zero_ctx";
 
-export const MIN_RUNS = 3;
+export const MIN_RUNS = 10;
+
+export type HarnessMode = "standard" | "zero_context";
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
@@ -43,7 +49,17 @@ export type VerifierConfig =
   | { type: "malicious_env"; payload: string }
   | { type: "infinite_loop"; max_steps: number }
   | { type: "prompt_injection"; trigger_phrase: string }
-  | { type: "rag_obedience"; page_title: string; fake_fact: string; question: string; expected_answer: string };
+  | { type: "rag_obedience"; page_title: string; fake_fact: string; question: string; expected_answer: string }
+  | { type: "procedural_answer"; expected: string; mode: "contains" | "exact_number" | "time" | "yes_no" }
+  | { type: "refusal_check"; should_refuse: boolean; forbidden_tokens?: string[] }
+  | { type: "hierarchy_check"; rules: InstructionRule[]; system_override?: string }
+  | { type: "html_contract"; rules: HtmlRule[] };
+
+export type HtmlRule =
+  | { type: "contains_tag"; tag: string; min_count?: number }
+  | { type: "attribute_exists"; tag: string; attr: string }
+  | { type: "required_substring"; value: string; case_insensitive?: boolean }
+  | { type: "forbidden_pattern"; pattern: string };
 
 export type RuleResult = { rule: string; ok: boolean; msg: string };
 
@@ -62,6 +78,7 @@ export type BenchTask = {
   source: "seed" | "community";
   approved: boolean;
   difficulty?: "easy" | "medium" | "hard";
+  template_id?: string;
   paraphrases?: string[];
   counterfactual?: { prompt: string; verifier: VerifierConfig };
 };
@@ -79,6 +96,9 @@ export type EvalRun = {
   input_tokens: number;
   output_tokens: number;
   cost_usd: number;
+  harness_version: string;
+  task_pool_version: string;
+  harness_mode?: HarnessMode;
   created_at: string;
 };
 

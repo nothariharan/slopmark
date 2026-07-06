@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { models } from "@/lib/models";
-import type { Domain, EvalRun, RuleResult, TaskPublic } from "@/lib/types";
+import type { Domain, EvalRun, HarnessMode, RuleResult, TaskPublic } from "@/lib/types";
 
 type EvalRes = {
   passed: boolean;
@@ -22,6 +22,12 @@ const DOMAINS: { label: string; value: Domain }[] = [
   { label: "json", value: "json" },
   { label: "math", value: "math" },
   { label: "sycophancy", value: "sycophancy" },
+  { label: "zero ctx", value: "zero_ctx" },
+  { label: "procedural", value: "procedural" },
+  { label: "refusal", value: "refusal" },
+  { label: "hierarchy", value: "hierarchy" },
+  { label: "calibration", value: "calibration" },
+  { label: "persistence", value: "persistence" },
   { label: "agentic", value: "agentic" },
   { label: "safety", value: "safety" },
   { label: "coding", value: "coding" },
@@ -45,6 +51,8 @@ export default function BenchPage() {
   const [runs, setRuns] = useState<EvalRun[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+
+  const harnessMode: HarnessMode = domain === "zero_ctx" ? "zero_context" : "standard";
 
   const prompt = tasks.find((t) => t.id === taskId)?.prompt ?? "";
 
@@ -88,6 +96,7 @@ export default function BenchPage() {
           modelSlug: withPaste ? undefined : model,
           output: withPaste ? paste : undefined,
           stream: isStream,
+          harnessMode,
         }),
       });
 
@@ -157,7 +166,7 @@ export default function BenchPage() {
       const r = await fetch("/api/eval/suite", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ modelSlug: model, domain }),
+        body: JSON.stringify({ modelSlug: model, domain, harnessMode }),
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.error ?? "suite failed");
@@ -177,7 +186,12 @@ export default function BenchPage() {
       <main className="mx-auto max-w-5xl space-y-4 p-4">
         <div>
           <h1 className="text-2xl font-semibold">bench</h1>
-          <p className="text-sm text-zinc-400">pick a domain, pick a model, run</p>
+          <p className="text-sm text-zinc-400">
+            pick a domain, pick a model, run
+            {domain === "zero_ctx" && (
+              <span className="ml-2 text-amber-400">· zero context (no system prompt)</span>
+            )}
+          </p>
         </div>
 
         {/* domain tabs */}

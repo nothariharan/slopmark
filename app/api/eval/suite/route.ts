@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { evalSuite } from "@/lib/eval";
 import { checkSuiteLimit, getIp } from "@/lib/rate-limit";
-import type { Domain } from "@/lib/types";
+import type { Domain, HarnessMode } from "@/lib/types";
 
 export async function POST(req: Request) {
   try {
@@ -17,12 +17,13 @@ export async function POST(req: Request) {
     const body = await req.json();
     const modelSlug = body.modelSlug as string;
     const domain = (body.domain ?? "instruction") as Domain;
+    const harnessMode = body.harnessMode as HarnessMode | undefined;
 
     if (!modelSlug) {
       return NextResponse.json({ error: "modelSlug required" }, { status: 400 });
     }
 
-    const res = await evalSuite(modelSlug, domain);
+    const res = await evalSuite(modelSlug, domain, harnessMode);
     return NextResponse.json(res);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "suite failed";

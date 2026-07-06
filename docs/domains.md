@@ -263,6 +263,18 @@ the `/goal` section runs short interactive challenges against specific documente
 
 ---
 
+## zero context (live)
+
+one-shot HTML/CSS/JS generation with **no system prompt**. the harness sends only the user task — no assistant framing.
+
+**verifier:** `html_contract` — tag counts, required substrings, forbidden patterns (CDN links, external scripts), markdown fence stripping.
+
+**why it's on slopmark:** subjective "does it look good" is what anyone can do in a browser. we score structural contracts on novel specs — the same deterministic philosophy as instruction-follow, minus scaffolding.
+
+see [zero context mode](/docs/zero-context) for harness details and the extension roadmap (procedural HTML specs, a11y contracts, headless behavior checks).
+
+---
+
 ## writing & creative (later)
 
 no deterministic verifier exists for open-ended writing quality. this domain requires human review.

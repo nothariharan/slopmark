@@ -52,6 +52,12 @@ export const docPages: DocPage[] = [
     file: "api.md",
   },
   {
+    slug: "zero-context",
+    title: "zero context mode",
+    desc: "no system prompt, structural HTML contracts",
+    file: "zero-context.md",
+  },
+  {
     slug: "architecture",
     title: "architecture",
     desc: "layers, data flow, file map",
@@ -77,6 +83,7 @@ const linkMap: Record<string, string> = {
   "./tasks.md": "/docs/tasks",
   "./metrics.md": "/docs/metrics",
   "./api.md": "/docs/api",
+  "./zero-context.md": "/docs/zero-context",
   "ARCHITECTURE.md": "/docs/architecture",
   "JUDGING.md": "/docs/judging",
   "deepswe.md": "/docs/deepswe",
@@ -86,6 +93,7 @@ const linkMap: Record<string, string> = {
   "tasks.md": "/docs/tasks",
   "metrics.md": "/docs/metrics",
   "api.md": "/docs/api",
+  "zero-context.md": "/docs/zero-context",
 };
 
 export function getDoc(slug: string) {

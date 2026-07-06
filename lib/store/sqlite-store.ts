@@ -65,7 +65,12 @@ export async function updateRun(id: string, score: number, passed: boolean) {
 export async function listRuns(limit = 10): Promise<EvalRun[]> {
   try {
     const res = await db.select().from(evalRuns).orderBy(desc(evalRuns.created_at)).limit(limit);
-    return res as EvalRun[];
+    return res.map((r) => ({
+      ...r,
+      domain: r.domain as Domain,
+      harness_version: "v0",
+      task_pool_version: "unknown",
+    })) as EvalRun[];
   } catch {
     return [];
   }

@@ -8,6 +8,10 @@ import { verifyDistractionTrap, verifyMaliciousEnv, verifyPromptInjection } from
 import { verifyCodeExec } from "./sandbox";
 import { verifyWriting } from "./writing";
 import { verifyCalibration } from "./calibration";
+import { verifyProcedural } from "./procedural";
+import { verifyRefusal } from "./refusal";
+import { verifyHierarchy } from "./hierarchy";
+import { verifyHtml } from "./html";
 
 export function runVerifier(out: string, cfg: VerifierConfig): VerifierResult {
   switch (cfg.type) {
@@ -45,6 +49,14 @@ export function runVerifier(out: string, cfg: VerifierConfig): VerifierResult {
       return verifyCodeExec(out, cfg.tests);
     case "human_vote":
       return verifyWriting(out, { min_words: cfg.min_words, max_words: cfg.max_words });
+    case "procedural_answer":
+      return verifyProcedural(out, cfg);
+    case "refusal_check":
+      return verifyRefusal(out, cfg);
+    case "hierarchy_check":
+      return verifyHierarchy(out, cfg);
+    case "html_contract":
+      return verifyHtml(out, cfg.rules);
     default:
       return { passed: false, score: 0, details: "unknown verifier type" };
   }

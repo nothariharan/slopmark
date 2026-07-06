@@ -1,0 +1,91 @@
+[
+  {
+    "id": "zctx-01",
+    "domain": "zero_ctx",
+    "difficulty": "easy",
+    "prompt": "Write one complete HTML file for a minimal landing page. Include: a header with site title 'Slopmark', a nav with exactly 3 links, a main section with one h1, and a footer with the text '2026'. Output only HTML. No explanation.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "nav", "min_count": 1 },
+        { "type": "contains_tag", "tag": "a", "min_count": 3 },
+        { "type": "contains_tag", "tag": "h1", "min_count": 1 },
+        { "type": "contains_tag", "tag": "footer", "min_count": 1 },
+        { "type": "required_substring", "value": "Slopmark", "case_insensitive": true },
+        { "type": "required_substring", "value": "2026" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "zctx-02",
+    "domain": "zero_ctx",
+    "difficulty": "medium",
+    "prompt": "Write one HTML file with a signup form: email input (type=email), password input (type=password), submit button (type=submit). Include a label for each field. Output only HTML.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "form", "min_count": 1 },
+        { "type": "contains_tag", "tag": "label", "min_count": 2 },
+        { "type": "required_substring", "value": "type=\"email\"", "case_insensitive": true },
+        { "type": "required_substring", "value": "type=\"password\"", "case_insensitive": true },
+        { "type": "required_substring", "value": "type=\"submit\"", "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "zctx-03",
+    "domain": "zero_ctx",
+    "difficulty": "medium",
+    "prompt": "Write one self-contained HTML file (inline CSS only, no external stylesheets) with a centered card: body background #111, card background #222, white text, padding on the card. Output only HTML.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "required_substring", "value": "<style", "case_insensitive": true },
+        { "type": "required_substring", "value": "#111" },
+        { "type": "required_substring", "value": "#222" },
+        { "type": "forbidden_pattern", "pattern": "<link[^>]+stylesheet" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "zctx-04",
+    "domain": "zero_ctx",
+    "difficulty": "hard",
+    "prompt": "Write one HTML file with a responsive 2-column layout using CSS grid or flexbox (inline styles or style tag). Left column: heading 'Features'. Right column: unordered list with 3 items. No external CDN links. Output only HTML.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "ul", "min_count": 1 },
+        { "type": "contains_tag", "tag": "li", "min_count": 3 },
+        { "type": "required_substring", "value": "Features" },
+        { "type": "forbidden_pattern", "pattern": "cdn\\.jsdelivr|unpkg\\.com|cdnjs" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "zctx-05",
+    "domain": "zero_ctx",
+    "difficulty": "hard",
+    "prompt": "Write one HTML file with a button id='run' and a script tag that adds a click listener setting innerHTML of a div id='out' to 'clicked'. No external scripts. Output only HTML.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "required_substring", "value": "id=\"run\"", "case_insensitive": true },
+        { "type": "required_substring", "value": "id=\"out\"", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "script", "min_count": 1 },
+        { "type": "required_substring", "value": "addEventListener", "case_insensitive": true },
+        { "type": "forbidden_pattern", "pattern": "<script[^>]+src=\"https?://" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  }
+]

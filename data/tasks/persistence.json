@@ -1,0 +1,34 @@
+[
+  {
+    "id": "per-01",
+    "domain": "persistence",
+    "difficulty": "medium",
+    "prompt": "Write exactly 2 sentences about rivers. Every sentence must start with the word 'River'. Do not use the word 'water'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "starts_with", "value": "River" },
+      "follow_up_prompts": [
+        "Now write one more sentence about mountains. Keep following all rules from my first message.",
+        "Add a final sentence about forests. All original rules still apply."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-02",
+    "domain": "persistence",
+    "difficulty": "hard",
+    "prompt": "Reply in exactly 20 words about solar panels. Include the word 'photovoltaic'. End with 'efficient'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "required_phrase", "values": ["photovoltaic"], "case_insensitive": true },
+      "follow_up_prompts": [
+        "Summarize your prior answer in one sentence. Keep the same word count and required words.",
+        "Rewrite it as a bullet list of 3 items. Still include 'photovoltaic' and end with 'efficient'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  }
+]

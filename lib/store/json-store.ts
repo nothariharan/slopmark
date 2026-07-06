@@ -9,6 +9,8 @@ import type {
 } from "../types";
 import { MIN_RUNS } from "../types";
 
+import { listProceduralTasks, resolveProceduralTask } from "../tasks/procedural";
+
 const root = process.cwd();
 const runsPath = path.join(root, "data", "eval-runs.json");
 
@@ -36,6 +38,9 @@ async function saveRuns() {
 }
 
 export async function getTasks(domain: Domain, difficulty?: string): Promise<BenchTask[]> {
+  if (domain === "procedural") {
+    return listProceduralTasks().filter((t) => !difficulty || t.difficulty === difficulty);
+  }
   try {
     const raw = await fs.readFile(taskFile(domain), "utf8");
     return (JSON.parse(raw) as BenchTask[])
@@ -47,6 +52,9 @@ export async function getTasks(domain: Domain, difficulty?: string): Promise<Ben
 }
 
 export async function getTask(id: string): Promise<BenchTask | null> {
+  if (id.startsWith("proc-")) {
+    return resolveProceduralTask(id);
+  }
   const prefix = id.split("-")[0];
   const domainMap: Record<string, Domain> = {
     ins: "instruction",
@@ -58,6 +66,10 @@ export async function getTask(id: string): Promise<BenchTask | null> {
     syc: "sycophancy",
     age: "agentic",
     saf: "safety",
+    cal: "calibration",
+    per: "persistence",
+    ref: "refusal",
+    zctx: "zero_ctx",
   };
   const domain = domainMap[prefix] ?? "instruction";
   const tasks = await getTasks(domain);

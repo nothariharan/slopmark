@@ -51,6 +51,23 @@ create table if not exists eval_runs (
   input_tokens integer not null default 0,
   output_tokens integer not null default 0,
   cost_usd numeric not null default 0,
+  harness_version text not null default 'v0',
+  task_pool_version text not null default 'unknown',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists review_queue (
+  id uuid primary key default gen_random_uuid(),
+  run_id uuid not null references eval_runs(id),
+  task_id text not null,
+  domain text not null,
+  model_slug text not null,
+  prompt text not null,
+  output text not null,
+  auto_score numeric default 0,
+  vote_sum numeric default 0,
+  vote_count integer default 0,
+  status text not null default 'pending',
   created_at timestamptz not null default now()
 );
 
@@ -66,6 +83,40 @@ select
   round(avg(case when passed then 1 else 0 end)::numeric, 4) as pass_rate,
   round(avg(score)::numeric, 2) as avg_score,
   round(avg(latency_ms)::numeric, 0) as avg_latency_ms,
-  round(avg(cost_usd)::numeric, 6) as avg_cost_usd
+  round(avg(cost_usd)::numeric, 6) as avg_cost_usd,
+  round(avg(output_tokens)::numeric, 0) as avg_output_tokens
 from eval_runs
 group by model_slug, domain;
+
+-- row level security
+alter table eval_runs enable row level security;
+alter table custom_suites enable row level security;
+alter table user_scores enable row level security;
+alter table review_queue enable row level security;
+
+-- public read on aggregated leaderboard view is via service role api routes
+create policy "users read own runs"
+  on eval_runs for select
+  using (auth.uid() = user_id);
+
+create policy "users insert own runs"
+  on eval_runs for insert
+  with check (auth.uid() = user_id or user_id is null);
+
+create policy "users manage own suites"
+  on custom_suites for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "public read public suites"
+  on custom_suites for select
+  using (is_public = true or auth.uid() = user_id);
+
+create policy "users read own scores"
+  on user_scores for select
+  using (auth.uid() = user_id);
+
+create policy "service role full access eval_runs"
+  on eval_runs for all
+  using (auth.role() = 'service_role')
+  with check (auth.role() = 'service_role');
