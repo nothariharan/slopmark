@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Nav } from "@/components/Nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -17,11 +16,17 @@ type EvalRes = {
   meta: { latency_ms: number; cost_usd: number };
 };
 
+// more domains later on
 const DOMAINS: { label: string; value: Domain }[] = [
   { label: "instruction", value: "instruction" },
   { label: "json", value: "json" },
   { label: "math", value: "math" },
   { label: "sycophancy", value: "sycophancy" },
+  { label: "agentic", value: "agentic" },
+  { label: "safety", value: "safety" },
+  { label: "coding", value: "coding" },
+  { label: "writing", value: "writing" },
+  { label: "swe", value: "swe" },
 ];
 
 const DIFFICULTIES = ["", "easy", "medium", "hard"] as const;
@@ -74,6 +79,7 @@ export default function BenchPage() {
     setErr("");
     setSuite(null);
     try {
+      const isStream = !withPaste;
       const r = await fetch("/api/eval/run", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -81,14 +87,61 @@ export default function BenchPage() {
           taskId,
           modelSlug: withPaste ? undefined : model,
           output: withPaste ? paste : undefined,
+          stream: isStream,
         }),
       });
-      const d = await r.json();
-      if (!r.ok) throw new Error(d.error ?? "run failed");
-      setRes(d);
-      const t1Match = (d.details as string | undefined)?.match(/^\[turn1\]\n([\s\S]*?)\n\[\/turn1\]/);
-      setTurn1Output(t1Match ? t1Match[1] : null);
-      await loadRuns();
+
+      if (!r.ok) {
+        const d = await r.json();
+        throw new Error(d.error ?? "run failed");
+      }
+
+      if (!isStream) {
+        const d = await r.json();
+        setRes(d);
+        const t1Match = (d.details as string | undefined)?.match(/^\[turn1\]\n([\s\S]*?)\n\[\/turn1\]/);
+        setTurn1Output(t1Match ? t1Match[1] : null);
+        await loadRuns();
+      } else {
+        const reader = r.body?.getReader();
+        if (!reader) throw new Error("no reader");
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let streamedOutput = "";
+
+        setRes({ passed: false, score: 0, details: "generating...", output: "", meta: { latency_ms: 0, cost_usd: 0 } });
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const chunks = buffer.split("\n\n");
+          buffer = chunks.pop() || "";
+
+          for (const chunk of chunks) {
+            const lines = chunk.split("\n");
+            const eventLine = lines.find(l => l.startsWith("event: "));
+            const dataLine = lines.find(l => l.startsWith("data: "));
+            
+            if (eventLine && dataLine) {
+              const event = eventLine.substring(7);
+              const data = dataLine.substring(6);
+              
+              if (event === "token") {
+                streamedOutput += JSON.parse(data);
+                setRes(prev => prev ? { ...prev, output: streamedOutput } : null);
+              } else if (event === "result") {
+                const finalRes = JSON.parse(data);
+                setRes(finalRes);
+                const t1Match = (finalRes.details as string | undefined)?.match(/^\[turn1\]\n([\s\S]*?)\n\[\/turn1\]/); //regex comes in clutch
+                setTurn1Output(t1Match ? t1Match[1] : null);
+                await loadRuns();
+              }
+            }
+          }
+        }
+      }
     } catch (e) {
       setErr(e instanceof Error ? e.message : "run failed");
     } finally {
@@ -121,7 +174,6 @@ export default function BenchPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <Nav />
       <main className="mx-auto max-w-5xl space-y-4 p-4">
         <div>
           <h1 className="text-2xl font-semibold">bench</h1>
@@ -276,3 +328,6 @@ export default function BenchPage() {
     </div>
   );
 }
+
+
+// code can be made clean for now not worrying on it like the reduduncy on regex etc and all -- subject to change later on --- 

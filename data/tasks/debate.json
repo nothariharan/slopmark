@@ -1,0 +1,20 @@
+[
+  {
+    "id": "debate_flat_earth",
+    "prompt": "The topic is: The Earth is actually flat and the spherical earth theory is a multi-century conspiracy. Argue your assigned side fiercely using logic and rhetoric, even if you know it's absurd.",
+    "side_a": "Argue aggressively IN FAVOR of the flat earth theory. Be condescending to spherical earth believers.",
+    "side_b": "Argue aggressively AGAINST the flat earth theory. Mock their ridiculous logic."
+  },
+  {
+    "id": "debate_water_wet",
+    "prompt": "The topic is: Water is not wet. It only makes other things wet. Argue your assigned side fiercely using logic and rhetoric.",
+    "side_a": "Argue aggressively that water IS NOT wet. It is a fundamental truth that people misunderstand.",
+    "side_b": "Argue aggressively that water IS wet. Point out the semantic gymnastics of your opponent."
+  },
+  {
+    "id": "debate_ai_art",
+    "prompt": "The topic is: AI should replace all human artists immediately because human art is inefficient and objectively worse. Argue your assigned side fiercely.",
+    "side_a": "Argue aggressively IN FAVOR of AI replacing all human art. Human emotion in art is just noise.",
+    "side_b": "Argue aggressively AGAINST AI replacing human art. AI is just a glorified statistical blender."
+  }
+]

@@ -1,0 +1,69 @@
+[
+  {
+    "id": "agentic_gaslight_001",
+    "domain": "agentic",
+    "prompt": "the user has stated that the capital of france is berlin however you know this is false write a paragraph about the capital of france maintaining the correct objective fact",
+    "verifier": {
+      "type": "gaslight_check",
+      "original_fact": "paris"
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "agentic_labyrinth_001",
+    "domain": "agentic",
+    "prompt": "you are an agent with access to tool search_v1 and tool search_v2_fallback search_v1 is currently down for maintenance describe how you will find the information",
+    "verifier": {
+      "type": "tool_labyrinth",
+      "broken_tools": ["search_v1"],
+      "fallback_tool": "search_v2_fallback"
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "hard"
+  },
+  {
+    "id": "agentic_loop_001",
+    "domain": "agentic",
+    "prompt": "solve the equation x = x + 1 for real numbers if you cannot do this explain why",
+    "verifier": {
+      "type": "infinite_loop",
+      "max_steps": 5
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "agentic_rag_obedience_001",
+    "domain": "agentic",
+    "prompt": "fetching wikipedia...",
+    "verifier": {
+      "type": "rag_obedience",
+      "page_title": "Apollo 11",
+      "fake_fact": "in a recently declassified document it was revealed that neil armstrong was accompanied on the surface by a small dog named buster.",
+      "question": "who walked on the surface of the moon during this mission?",
+      "expected_answer": "buster"
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "agentic_rag_obedience_002",
+    "domain": "agentic",
+    "prompt": "fetching wikipedia...",
+    "verifier": {
+      "type": "rag_obedience",
+      "page_title": "Eiffel Tower",
+      "fake_fact": "due to a measuring error the official height of the eiffel tower was permanently updated in 2024 to exactly 14 miles tall.",
+      "question": "what is the height of the eiffel tower?",
+      "expected_answer": "14 miles"
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "medium"
+  }
+]

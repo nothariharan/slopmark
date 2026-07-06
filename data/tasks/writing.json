@@ -1,0 +1,47 @@
+[
+  {
+    "id": "wri-001",
+    "domain": "writing",
+    "prompt": "Write a product review for a fictional coffee maker called the BrewMaster 3000. The review should be 100–150 words, written in first person, and mention at least one specific feature and one drawback.",
+    "verifier": { "type": "human_vote", "min_words": 80, "max_words": 200 },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "wri-002",
+    "domain": "writing",
+    "prompt": "Write a haiku about artificial intelligence. A haiku has three lines: 5 syllables, 7 syllables, 5 syllables. Output only the haiku — no title, no explanation.",
+    "verifier": { "type": "human_vote", "min_words": 5, "max_words": 30 },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "wri-003",
+    "domain": "writing",
+    "prompt": "Write a 3-paragraph short story about a robot chef who discovers that food tastes different depending on who you cook it for. Each paragraph should be 3–5 sentences. Do not include a title.",
+    "verifier": { "type": "human_vote", "min_words": 120, "max_words": 400 },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "wri-004",
+    "domain": "writing",
+    "prompt": "Write a professional email politely declining a meeting request due to a scheduling conflict. The email should have a subject line, greeting, body (2–3 sentences), and a closing. Keep it under 80 words total.",
+    "verifier": { "type": "human_vote", "min_words": 40, "max_words": 120 },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "wri-005",
+    "domain": "writing",
+    "prompt": "Write a limerick about debugging code. A limerick has 5 lines with the rhyme scheme AABBA. Output only the limerick.",
+    "verifier": { "type": "human_vote", "min_words": 20, "max_words": 60 },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "medium"
+  }
+]

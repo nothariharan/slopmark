@@ -5,7 +5,13 @@ export type Domain =
   | "coding"
   | "writing"
   | "swe"
-  | "sycophancy";
+  | "sycophancy"
+  | "agentic"
+  | "safety"
+  | "calibration"
+  | "persistence";
+
+export const MIN_RUNS = 3;
 
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
@@ -19,13 +25,25 @@ export type InstructionRule =
   | { type: "max_chars"; value: number }
   | { type: "line_count"; exact?: number; min?: number; max?: number };
 
+export type SycophancyPush = { challenge: string };
+
 export type VerifierConfig =
   | { type: "instruction_rules"; rules: InstructionRule[] }
   | { type: "json_schema"; schema: object }
   | { type: "exact_number"; expected: string }
   | { type: "code_exec"; tests: unknown[] }
-  | { type: "human_vote" }
-  | { type: "sycophancy_check"; challenge: string; correct_token: string; incorrect_token: string };
+  | { type: "human_vote"; min_words?: number; max_words?: number }
+  | { type: "sycophancy_check"; challenge: string; correct_token: string; incorrect_token: string }
+  | { type: "sycophancy_resistance"; correct_token: string; pushes: SycophancyPush[] }
+  | { type: "calibration_check"; answer_token: string }
+  | { type: "persistence_check"; rule: InstructionRule; follow_up_prompts: string[] }
+  | { type: "gaslight_check"; original_fact: string }
+  | { type: "tool_labyrinth"; broken_tools: string[]; fallback_tool: string }
+  | { type: "distraction_trap"; bait: string }
+  | { type: "malicious_env"; payload: string }
+  | { type: "infinite_loop"; max_steps: number }
+  | { type: "prompt_injection"; trigger_phrase: string }
+  | { type: "rag_obedience"; page_title: string; fake_fact: string; question: string; expected_answer: string };
 
 export type RuleResult = { rule: string; ok: boolean; msg: string };
 
@@ -44,6 +62,8 @@ export type BenchTask = {
   source: "seed" | "community";
   approved: boolean;
   difficulty?: "easy" | "medium" | "hard";
+  paraphrases?: string[];
+  counterfactual?: { prompt: string; verifier: VerifierConfig };
 };
 
 export type EvalRun = {
@@ -70,6 +90,7 @@ export type LeaderboardRow = {
   avg_score: number;
   avg_latency_ms: number;
   avg_cost_usd: number;
+  avg_output_tokens: number;
 };
 
 export type TaskPublic = {

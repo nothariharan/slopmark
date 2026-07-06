@@ -6,7 +6,9 @@ import type {
   LeaderboardRow,
   TaskPublic,
 } from "../types";
-import * as json from "./json-store";
+import { MIN_RUNS } from "../types";
+import * as local from "./sqlite-store";
+import type { ReviewItem } from "./sqlite-store";
 
 function sb() {
   const url = process.env.SUPABASE_URL;
@@ -17,32 +19,32 @@ function sb() {
 
 export async function getTasks(domain: Domain, difficulty?: string): Promise<BenchTask[]> {
   const c = sb();
-  if (!c) return json.getTasks(domain, difficulty);
+  if (!c) return local.getTasks(domain, difficulty);
 
   let q = c.from("tasks").select("*").eq("domain", domain).eq("approved", true);
   if (difficulty) q = q.eq("difficulty", difficulty);
   const { data, error } = await q;
 
-  if (error || !data?.length) return json.getTasks(domain, difficulty);
+  if (error || !data?.length) return local.getTasks(domain, difficulty);
   return (data as BenchTask[]).filter((t) => !difficulty || t.difficulty === difficulty);
 }
 
 export async function getTask(id: string): Promise<BenchTask | null> {
   const c = sb();
-  if (!c) return json.getTask(id);
+  if (!c) return local.getTask(id);
 
   const { data } = await c.from("tasks").select("*").eq("id", id).maybeSingle();
-  if (!data) return json.getTask(id);
+  if (!data) return local.getTask(id);
   return data as BenchTask;
 }
 
 export function toPublic(t: BenchTask): TaskPublic {
-  return json.toPublic(t);
+  return local.toPublic(t);
 }
 
 export async function addRun(run: EvalRun) {
   const c = sb();
-  if (!c) return json.addRun(run);
+  if (!c) return local.addRun(run);
 
   const { error } = await c.from("eval_runs").insert({
     id: run.id,
@@ -60,12 +62,19 @@ export async function addRun(run: EvalRun) {
     created_at: run.created_at,
   });
 
-  if (error) return json.addRun(run);
+  if (error) return local.addRun(run);
+}
+
+export async function updateRun(id: string, score: number, passed: boolean) {
+  const c = sb();
+  if (!c) return local.updateRun(id, score, passed);
+
+  await c.from("eval_runs").update({ score, passed }).eq("id", id);
 }
 
 export async function listRuns(limit = 10): Promise<EvalRun[]> {
   const c = sb();
-  if (!c) return json.listRuns(limit);
+  if (!c) return local.listRuns(limit);
 
   const { data, error } = await c
     .from("eval_runs")
@@ -73,21 +82,60 @@ export async function listRuns(limit = 10): Promise<EvalRun[]> {
     .order("created_at", { ascending: false })
     .limit(limit);
 
-  if (error || !data) return json.listRuns(limit);
+  if (error || !data) return local.listRuns(limit);
   return data as EvalRun[];
 }
 
 export async function getLeaderboard(domain: Domain): Promise<LeaderboardRow[]> {
   const c = sb();
-  if (!c) return json.getLeaderboard(domain);
+  if (!c) return local.getLeaderboard(domain);
 
   const { data, error } = await c
     .from("model_leaderboard")
     .select("*")
     .eq("domain", domain)
+    .gte("runs", MIN_RUNS)
     .order("pass_rate", { ascending: false })
     .order("avg_score", { ascending: false });
 
-  if (error || !data) return json.getLeaderboard(domain);
-  return data as LeaderboardRow[];
+  if (error || !data) return local.getLeaderboard(domain);
+  return (data as LeaderboardRow[]).filter((r) => r.runs >= MIN_RUNS);
+}
+
+export async function getLeaderboardAggregate(): Promise<LeaderboardRow[]> {
+  const c = sb();
+  if (!c) return local.getLeaderboardAggregate();
+
+  // Supabase: fall back to local aggregate since view is domain-specific
+  return local.getLeaderboardAggregate();
+}
+
+export async function addReviewItem(item: ReviewItem) {
+  const c = sb();
+  if (!c) return local.addReviewItem(item);
+
+  const { error } = await c.from("review_queue").insert(item);
+  if (error) return local.addReviewItem(item);
+}
+
+export async function getReviewItems(limit = 20): Promise<ReviewItem[]> {
+  const c = sb();
+  if (!c) return local.getReviewItems(limit);
+
+  const { data, error } = await c
+    .from("review_queue")
+    .select("*")
+    .eq("status", "pending")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !data) return local.getReviewItems(limit);
+  return data as ReviewItem[];
+}
+
+export async function voteReview(id: string, score: number, runId: string) {
+  const c = sb();
+  if (!c) return local.voteReview(id, score, runId);
+  // fall through to local for the full vote logic
+  return local.voteReview(id, score, runId);
 }

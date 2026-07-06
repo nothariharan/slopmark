@@ -62,3 +62,24 @@ export async function runModelMultiTurn(messages: ChatMessage[], slug: string) {
 export function pasteMeta(): RunMeta {
   return { latency_ms: 0, input_tokens: 0, output_tokens: 0, cost_usd: 0 };
 }
+
+export async function runModelStream(prompt: string, slug: string) {
+  if (!process.env.OPENROUTER_API_KEY) {
+    throw new Error("missing OPENROUTER_API_KEY");
+  }
+
+  const t0 = Date.now();
+  const stream = await mk().chat.completions.create({
+    model: slug,
+    temperature: temp,
+    max_tokens: maxTok,
+    stream: true,
+    stream_options: { include_usage: true },
+    messages: [
+      { role: "system", content: sysPrompt },
+      { role: "user", content: prompt },
+    ],
+  });
+
+  return { stream, t0 };
+}
