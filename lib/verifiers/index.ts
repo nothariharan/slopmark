@@ -12,6 +12,7 @@ import { verifyProcedural } from "./procedural";
 import { verifyRefusal } from "./refusal";
 import { verifyHierarchy } from "./hierarchy";
 import { verifyHtml } from "./html";
+import { verifyRegexCraft } from "./regex";
 
 export function runVerifier(out: string, cfg: VerifierConfig): VerifierResult {
   switch (cfg.type) {
@@ -57,6 +58,8 @@ export function runVerifier(out: string, cfg: VerifierConfig): VerifierResult {
       return verifyHierarchy(out, cfg);
     case "html_contract":
       return verifyHtml(out, cfg.rules);
+    case "regex_craft":
+      return verifyRegexCraft(out, cfg.tests);
     default:
       return { passed: false, score: 0, details: "unknown verifier type" };
   }

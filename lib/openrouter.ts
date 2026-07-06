@@ -43,12 +43,21 @@ function mk(cfg: ProviderConfig) {
 
 export async function runModel(prompt: string, slug: string, harnessMode: HarnessMode = "standard") {
   const { provider, model } = resolveProvider(slug);
+  return runModelDirect(prompt, model, provider, harnessMode);
+}
 
+export async function runModelDirect(
+  prompt: string,
+  model: string,
+  provider: ProviderConfig,
+  harnessMode: HarnessMode = "standard",
+  maxTokens = maxTok,
+) {
   const t0 = Date.now();
   const res = await mk(provider).chat.completions.create({
     model,
     temperature: temp,
-    max_tokens: maxTok,
+    max_tokens: maxTokens,
     messages: [
       { role: "system", content: systemPromptFor(harnessMode) },
       { role: "user", content: prompt },
@@ -119,6 +128,24 @@ export async function runModelStream(prompt: string, slug: string, harnessMode: 
 export async function smokeTestProvider(slug: string): Promise<{ ok: boolean; error?: string }> {
   try {
     const res = await runModel('Reply with exactly the word "pong". Nothing else.', slug);
+    const ok = res.output.trim().toLowerCase().includes("pong");
+    return ok ? { ok: true } : { ok: false, error: `unexpected output: ${res.output.slice(0, 80)}` };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "smoke test failed" };
+  }
+}
+
+export async function smokeTestDirect(
+  model: string,
+  provider: ProviderConfig,
+): Promise<{ ok: boolean; error?: string }> {
+  try {
+    const res = await runModelDirect(
+      'Reply with exactly the word "pong". Nothing else.',
+      model,
+      provider,
+      "zero_context",
+    );
     const ok = res.output.trim().toLowerCase().includes("pong");
     return ok ? { ok: true } : { ok: false, error: `unexpected output: ${res.output.slice(0, 80)}` };
   } catch (e) {

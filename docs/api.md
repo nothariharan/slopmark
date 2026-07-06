@@ -86,6 +86,24 @@ used by `/goal` minigames — not part of the benchmark eval pipeline.
 
 ---
 
+## realshot (live)
+
+BYOK agent duels. see [realshot duels](/docs/realshot) for full docs.
+
+### POST /api/realshot/duel
+
+- body: `{ agentA, agentB, category?, harnessMode?, seed?, taskId? }`
+- each agent: `{ name, baseURL, apiKey, model }`
+- response: `{ duelId, category, harnessMode, seed, task, agentA, agentB, winner }`
+- rate limit: 10/min per IP
+
+### PUT /api/realshot/duel
+
+- body: `{ name, baseURL, apiKey, model }` — smoke test (pong prompt)
+- response: `{ ok: true }` or `{ ok: false, error }`
+
+---
+
 ## auth & rate limits (planned)
 
 > explain: what doesn't exist yet

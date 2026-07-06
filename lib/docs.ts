@@ -52,6 +52,12 @@ export const docPages: DocPage[] = [
     file: "api.md",
   },
   {
+    slug: "realshot",
+    title: "realshot duels",
+    desc: "BYOK agent battles, one-shot tasks, auto winner",
+    file: "realshot.md",
+  },
+  {
     slug: "zero-context",
     title: "zero context mode",
     desc: "no system prompt, structural HTML contracts",
@@ -84,6 +90,7 @@ const linkMap: Record<string, string> = {
   "./metrics.md": "/docs/metrics",
   "./api.md": "/docs/api",
   "./zero-context.md": "/docs/zero-context",
+  "./realshot.md": "/docs/realshot",
   "ARCHITECTURE.md": "/docs/architecture",
   "JUDGING.md": "/docs/judging",
   "deepswe.md": "/docs/deepswe",
@@ -94,6 +101,7 @@ const linkMap: Record<string, string> = {
   "metrics.md": "/docs/metrics",
   "api.md": "/docs/api",
   "zero-context.md": "/docs/zero-context",
+  "realshot.md": "/docs/realshot",
 };
 
 export function getDoc(slug: string) {

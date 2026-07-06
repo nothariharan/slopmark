@@ -53,7 +53,8 @@ export type VerifierConfig =
   | { type: "procedural_answer"; expected: string; mode: "contains" | "exact_number" | "time" | "yes_no" }
   | { type: "refusal_check"; should_refuse: boolean; forbidden_tokens?: string[] }
   | { type: "hierarchy_check"; rules: InstructionRule[]; system_override?: string }
-  | { type: "html_contract"; rules: HtmlRule[] };
+  | { type: "html_contract"; rules: HtmlRule[] }
+  | { type: "regex_craft"; tests: { text: string; should_match: boolean }[] };
 
 export type HtmlRule =
   | { type: "contains_tag"; tag: string; min_count?: number }

@@ -21,6 +21,7 @@ function check(ip: string, max: number): { ok: boolean; retryIn?: number } {
 
 export function checkRunLimit(ip: string) { return check(ip, MAX_RUN); }
 export function checkSuiteLimit(ip: string) { return check(ip, MAX_SUITE); }
+export function checkDuelLimit(ip: string) { return check(ip, 10); }
 
 export function getIp(req: Request): string {
   const forwarded = req.headers.get("x-forwarded-for");

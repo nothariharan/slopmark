@@ -15,6 +15,7 @@ most importantly no more ' trust me bro benchmark '
 - **procedural** — 75 seeded instances (direction, sequence, time, calendar, palindrome)
 - **refusal** + **hierarchy** + **calibration** + **persistence** domains
 - **zero context** — HTML one-shot tasks with no system prompt (`zero_ctx` domain)
+- **realshot** — BYOK agent duels at `/realshot` (one-shot tasks, auto-scored winner)
 - contamination probes (paraphrase + counterfactual) on supported tasks
 - custom task suites API, baseline script, BYOK provider smoke test
 - `POST /api/eval/run` — single task eval (optional `harnessMode`)
@@ -36,8 +37,9 @@ npm run dev
 
 open http://localhost:3000/bench ( custom port is fine too )
 
-paste mode works without an api key. set `OPENROUTER_API_KEY` in `.env` to run live models.
+for head-to-head agent duels with your own API keys, open http://localhost:3000/realshot
 
+paste mode works without an api key. set `OPENROUTER_API_KEY` in `.env` to run live models on `/bench`.
 optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persistence. without it, runs save to `data/eval-runs.json`.
 
 ---
@@ -49,6 +51,8 @@ optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persiste
 | `/api/tasks?domain=instruction` | GET | list tasks (optional `difficulty` filter) |
 | `/api/eval/run` | POST | `{ taskId, modelSlug }` or `{ taskId, output }` — optional `harnessMode` |
 | `/api/eval/suite` | POST | `{ modelSlug, domain }` — all tasks in a domain |
+| `/api/realshot/duel` | POST | BYOK duel — `{ agentA, agentB, category?, harnessMode?, seed?, taskId? }` |
+| `/api/realshot/duel` | PUT | smoke test one agent — `{ name, baseURL, apiKey, model }` |
 | `/api/leaderboard?domain=instruction` | GET | model stats |
 | `/api/runs` | GET | recent runs |
 | `/api/goal/challenge` | POST | `{ prompt, modelSlug }` — single model call for goal games |
@@ -76,6 +80,7 @@ on-site docs at `/docs`.
 - [scoring & verifiers](/docs/judging)
 - [harness](/docs/harness)
 - [zero context mode](/docs/zero-context)
+- [realshot duels](/docs/realshot)
 - [tasks & contamination](/docs/tasks)
 - [metrics & leaderboard](/docs/metrics)
 - [api](/docs/api)

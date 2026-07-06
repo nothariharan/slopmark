@@ -61,6 +61,30 @@ async function main() {
   });
   check("procedural paste eval", pr.passed === true);
 
+  console.log("\n=== realshot ===");
+  const { pickRealshotTask, resolveRealshotTask } = await import("../lib/realshot/tasks");
+  const { verifyHtml } = await import("../lib/verifiers/html");
+  const { verifyRegexCraft } = await import("../lib/verifiers/regex");
+
+  for (const cat of ["html", "extract", "regex", "constraint", "procedural", "json"] as const) {
+    const picked = await pickRealshotTask(cat, 12345);
+    check(`pick ${cat} task`, !!picked.task.prompt && !!picked.task.verifier);
+  }
+
+  const rematch = await resolveRealshotTask("rs-extract-01");
+  check("resolve rs-extract-01", rematch?.task.id === "rs-extract-01");
+
+  const landing = await resolveRealshotTask("rs-html-01");
+  if (landing?.task.verifier.type === "html_contract") {
+    const sample = `<!DOCTYPE html><html><head><title>Slopmark</title></head><body><header>Slopmark</header><nav><a>1</a><a>2</a><a>3</a></nav><main><h1>hi</h1></main><footer>2026</footer></body></html>`;
+    check("html verifier on landing sample", verifyHtml(sample, landing.task.verifier.rules).passed);
+  }
+
+  check(
+    "regex verifier sample",
+    verifyRegexCraft("#[0-9A-Fa-f]{6}", [{ text: "#FF00AA", should_match: true }]).passed,
+  );
+
   console.log(`\n=== done: ${ok} passed, ${fail} failed ===\n`);
   process.exit(fail > 0 ? 1 : 0);
 }

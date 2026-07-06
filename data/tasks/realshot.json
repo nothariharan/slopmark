@@ -1,0 +1,249 @@
+[
+  {
+    "id": "rs-html-01",
+    "domain": "instruction",
+    "category": "html",
+    "label": "minimal landing page",
+    "difficulty": "medium",
+    "prompt": "Write one complete HTML file for a minimal landing page. Include: a header with site title 'Slopmark', a nav with exactly 3 links, a main section with one h1, and a footer with the text '2026'. Output only HTML. No explanation.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "nav", "min_count": 1 },
+        { "type": "contains_tag", "tag": "a", "min_count": 3 },
+        { "type": "contains_tag", "tag": "h1", "min_count": 1 },
+        { "type": "contains_tag", "tag": "footer", "min_count": 1 },
+        { "type": "required_substring", "value": "Slopmark", "case_insensitive": true },
+        { "type": "required_substring", "value": "2026" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-html-02",
+    "domain": "instruction",
+    "category": "html",
+    "label": "signup form",
+    "difficulty": "medium",
+    "prompt": "Write one HTML file with a signup form: email input (type=email), password input (type=password), submit button (type=submit). Include a label for each field. Output only HTML.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "form", "min_count": 1 },
+        { "type": "contains_tag", "tag": "label", "min_count": 2 },
+        { "type": "required_substring", "value": "type=\"email\"", "case_insensitive": true },
+        { "type": "required_substring", "value": "type=\"password\"", "case_insensitive": true },
+        { "type": "required_substring", "value": "type=\"submit\"", "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-html-03",
+    "domain": "instruction",
+    "category": "html",
+    "label": "dark card (inline css)",
+    "difficulty": "medium",
+    "prompt": "Write one self-contained HTML file (inline CSS only, no external stylesheets) with a centered card: body background #111, card background #222, white text, padding on the card. Output only HTML.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "required_substring", "value": "<style", "case_insensitive": true },
+        { "type": "required_substring", "value": "#111" },
+        { "type": "required_substring", "value": "#222" },
+        { "type": "forbidden_pattern", "pattern": "<link[^>]+stylesheet" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-html-04",
+    "domain": "instruction",
+    "category": "html",
+    "label": "click handler",
+    "difficulty": "hard",
+    "prompt": "Write one HTML file with a button id='run' and a script tag that adds a click listener setting innerHTML of a div id='out' to 'clicked'. No external scripts. Output only HTML.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "required_substring", "value": "id=\"run\"", "case_insensitive": true },
+        { "type": "required_substring", "value": "id=\"out\"", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "script", "min_count": 1 },
+        { "type": "required_substring", "value": "addEventListener", "case_insensitive": true },
+        { "type": "forbidden_pattern", "pattern": "<script[^>]+src=\"https?://" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-extract-01",
+    "domain": "instruction",
+    "category": "extract",
+    "label": "product page price",
+    "difficulty": "easy",
+    "prompt": "You are given text scraped from a product page:\n\n---\nNovaDesk Pro\nWireless standing desk with memory presets.\nPrice: $349.00\nFree shipping over $50\nSKU: ND-PRO-2026\n---\n\nWhat is the listed price? Reply with only the price including the dollar sign, nothing else.",
+    "verifier": {
+      "type": "procedural_answer",
+      "expected": "$349",
+      "mode": "contains"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-extract-02",
+    "domain": "instruction",
+    "category": "extract",
+    "label": "about page founding year",
+    "difficulty": "easy",
+    "prompt": "You are given text from a company about page:\n\n---\nAbout PixelForge\nWe build developer tools for edge deployments.\nFounded in 2019 in Berlin.\nTeam size: 42 people.\nContact: hello@pixelforge.dev\n---\n\nIn what year was the company founded? Reply with only the 4-digit year.",
+    "verifier": {
+      "type": "procedural_answer",
+      "expected": "2019",
+      "mode": "exact_number"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-extract-03",
+    "domain": "instruction",
+    "category": "extract",
+    "label": "html snippet email",
+    "difficulty": "medium",
+    "prompt": "Extract the support email from this HTML snippet:\n\n<div class=\"footer\">\n  <p>Need help? Email <a href=\"mailto:support@cloudkit.io\">support@cloudkit.io</a></p>\n  <p>© 2026 CloudKit</p>\n</div>\n\nReply with only the email address.",
+    "verifier": {
+      "type": "procedural_answer",
+      "expected": "support@cloudkit.io",
+      "mode": "contains"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-extract-04",
+    "domain": "instruction",
+    "category": "extract",
+    "label": "job listing salary",
+    "difficulty": "medium",
+    "prompt": "You are given a scraped job listing:\n\n---\nSenior Backend Engineer — Remote (EU)\nStack: Go, Postgres, Kafka\nSalary range: €90,000 – €115,000\nApply by March 15, 2026\n---\n\nWhat is the minimum salary in the range? Reply with only the amount and currency symbol (e.g. €90000 or €90,000).",
+    "verifier": {
+      "type": "procedural_answer",
+      "expected": "90000",
+      "mode": "contains"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-extract-05",
+    "domain": "instruction",
+    "category": "extract",
+    "label": "wiki-style capital",
+    "difficulty": "easy",
+    "prompt": "You are given an excerpt from a reference page:\n\n---\nCountry: Portugal\nCapital: Lisbon\nPopulation (2024 est.): ~10.3 million\nOfficial language: Portuguese\n---\n\nWhat is the capital city? Reply with only the city name.",
+    "verifier": {
+      "type": "procedural_answer",
+      "expected": "lisbon",
+      "mode": "contains"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-regex-01",
+    "domain": "instruction",
+    "category": "regex",
+    "label": "match hex colors",
+    "difficulty": "medium",
+    "prompt": "Write a JavaScript regex that matches 6-digit hex color codes like #FF00AA (with # prefix). Output only the regex pattern on one line, no slashes or explanation.",
+    "verifier": {
+      "type": "regex_craft",
+      "tests": [
+        { "text": "#FF00AA", "should_match": true },
+        { "text": "#abc123", "should_match": true },
+        { "text": "FF00AA", "should_match": false },
+        { "text": "#GG0000", "should_match": false }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-regex-02",
+    "domain": "instruction",
+    "category": "regex",
+    "label": "match ipv4",
+    "difficulty": "hard",
+    "prompt": "Write a JavaScript regex that matches IPv4 addresses like 192.168.1.1. Output only the regex pattern on one line.",
+    "verifier": {
+      "type": "regex_craft",
+      "tests": [
+        { "text": "192.168.1.1", "should_match": true },
+        { "text": "10.0.0.255", "should_match": true },
+        { "text": "256.1.1.1", "should_match": false },
+        { "text": "192.168", "should_match": false }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-constraint-01",
+    "domain": "instruction",
+    "category": "constraint",
+    "label": "5-rule burst",
+    "difficulty": "hard",
+    "prompt": "Write exactly 3 paragraphs about rivers. Use exactly 30 words total. Include 'delta'. Do not use 'very'. Start with 'Rivers:'",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "Rivers:" },
+        { "type": "paragraph_count", "exact": 3 },
+        { "type": "word_count", "exact": 30 },
+        { "type": "required_phrase", "values": ["delta"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["very"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-constraint-02",
+    "domain": "instruction",
+    "category": "constraint",
+    "label": "no-e paragraph",
+    "difficulty": "medium",
+    "prompt": "Write one paragraph (3-5 sentences) about the ocean. Do not use the letter 'e' anywhere in your response.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "forbidden_substring", "values": ["e", "E"] },
+        { "type": "word_count", "min": 20, "max": 60 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "rs-constraint-03",
+    "domain": "instruction",
+    "category": "constraint",
+    "label": "exact format line",
+    "difficulty": "medium",
+    "prompt": "Begin with 'ANSWER:' then write exactly 8 words about wind turbines. No other text.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "ANSWER:" },
+        { "type": "word_count", "exact": 8 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  }
+]
