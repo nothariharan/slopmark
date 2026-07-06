@@ -233,6 +233,36 @@ statistical sample size at ±3% confidence: ~171 tasks split equally between ben
 
 ---
 
+## behavioral probes / goal games (live)
+
+the `/goal` section runs short interactive challenges against specific documented failure modes. these aren't formal benchmark tasks — they don't aggregate to the leaderboard — but they target real capability gaps that the structured eval pipeline misses or measures only in aggregate.
+
+**why this is useful alongside the formal pipeline:** the formal eval produces pass rates across many tasks. the behavioral probes show you a specific model failing on a specific instance, right now, with a ground-truth answer you can verify yourself. they're different uses.
+
+**games currently live:**
+
+| game | failure mode targeted | verifier |
+|---|---|---|
+| stump | multi-constraint instruction following | instruction rule checker (same as bench) |
+| sycophancy roulette | sycophantic capitulation under adversarial pressure | correct token present / incorrect token absent |
+| ascii duel | spatial generation, token-based "drawing" limitations | none — subjective comparison |
+| letter counter | character-level counting vs token-based approximation | JS character count (exact) |
+| logic trap | cognitive reflection / System 1 override | correct token check |
+| winograd | pronoun resolution using world knowledge | correct token check |
+| direction tracker | sequential state tracking with modular arithmetic | exact answer match |
+| object tracker | object permanence / world state update across moves | exact answer match |
+| anagram | character-level manipulation vs token-level pattern matching | word equality |
+| number sequence | pattern recognition for non-obvious rules | exact number match |
+| palindrome | character-level symmetry detection | yes/no match against JS reverse check |
+| time adder | AM/PM transitions, minute carry-over arithmetic | parsed time equality |
+| calendar hop | modular day-of-week arithmetic over variable N | day name match |
+
+**contamination resistance:** all procedurally generated games produce instances that weren't in any training dataset — the specific combination of starting conditions and parameters is generated at runtime. fixed tasks (logic trap, winograd, palindrome set) are known to models in aggregate but still surface real failure rates, especially on smaller models.
+
+**the verification guarantee:** every game either uses the same verifier as the formal eval pipeline (stump), a deterministic JS check (letter counter, calendar hop, time adder, palindrome), or an exact string match. no subjective scoring. the ascii duel is the only exception — it's inherently comparative and unscored, which is why it doesn't contribute to the session score.
+
+---
+
 ## writing & creative (later)
 
 no deterministic verifier exists for open-ended writing quality. this domain requires human review.

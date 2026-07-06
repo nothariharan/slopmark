@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Nav } from "@/components/Nav";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { models } from "@/lib/models";
@@ -1542,6 +1541,423 @@ function SequenceGame({ onResult }: { onResult: (w: "you" | "ai") => void }) {
   );
 }
 
+// --- Palindrome ---
+type PalindromeTask = { text: string; isPalindrome: boolean; explanation: string };
+const PALINDROME_TASKS: PalindromeTask[] = [
+  { text: "racecar", isPalindrome: true, explanation: "r-a-c-e-c-a-r reversed is r-a-c-e-c-a-r — same" },
+  { text: "level", isPalindrome: true, explanation: "l-e-v-e-l reversed is l-e-v-e-l — same" },
+  { text: "hello", isPalindrome: false, explanation: "h-e-l-l-o reversed is o-l-l-e-h — different" },
+  { text: "deified", isPalindrome: true, explanation: "d-e-i-f-i-e-d reversed is d-e-i-f-i-e-d — same" },
+  { text: "kayak", isPalindrome: true, explanation: "k-a-y-a-k reversed is k-a-y-a-k — same" },
+  { text: "kayaks", isPalindrome: false, explanation: "k-a-y-a-k-s reversed is s-k-a-y-a-k — different" },
+  { text: "refer", isPalindrome: true, explanation: "r-e-f-e-r reversed is r-e-f-e-r — same" },
+  { text: "defied", isPalindrome: false, explanation: "d-e-f-i-e-d reversed is d-e-i-f-e-d — positions 3 and 4 swap" },
+  { text: "civic", isPalindrome: true, explanation: "c-i-v-i-c reversed is c-i-v-i-c — same" },
+  { text: "aibohphobia", isPalindrome: true, explanation: "the fear of palindromes is itself a palindrome — a-i-b-o-h-p-h-o-b-i-a reversed is identical" },
+  { text: "rotator", isPalindrome: true, explanation: "r-o-t-a-t-o-r reversed is r-o-t-a-t-o-r — same" },
+  { text: "stressed", isPalindrome: false, explanation: "stressed reversed is desserts — completely different word, not a palindrome" },
+  { text: "noon", isPalindrome: true, explanation: "n-o-o-n reversed is n-o-o-n — same" },
+  { text: "almost", isPalindrome: false, explanation: "a-l-m-o-s-t reversed is t-s-o-m-l-a — different" },
+  { text: "repaper", isPalindrome: true, explanation: "r-e-p-a-p-e-r reversed is r-e-p-a-p-e-r — same" },
+];
+
+// --- Time Adder ---
+type TimeResult = { h: number; m: number; ampm: "AM" | "PM" };
+
+function computeAddTime(startH: number, startM: number, startAmPm: "AM" | "PM", addH: number, addM: number): TimeResult {
+  const startH24 = startAmPm === "AM" ? startH % 12 : (startH % 12) + 12;
+  let totalMins = startH24 * 60 + startM + addH * 60 + addM;
+  totalMins = totalMins % (24 * 60);
+  const h24 = Math.floor(totalMins / 60);
+  const m = totalMins % 60;
+  const ampm: "AM" | "PM" = h24 < 12 ? "AM" : "PM";
+  const h = h24 % 12 === 0 ? 12 : h24 % 12;
+  return { h, m, ampm };
+}
+
+function parseTimeOutput(s: string): TimeResult | null {
+  const match = s.match(/(\d{1,2}):(\d{2})\s*(am|pm)/i);
+  if (!match) return null;
+  const h = parseInt(match[1]);
+  const m = parseInt(match[2]);
+  const ampm = match[3].toUpperCase() as "AM" | "PM";
+  if (h < 1 || h > 12 || m < 0 || m > 59) return null;
+  return { h, m, ampm };
+}
+
+function timesEqual(a: TimeResult, b: TimeResult): boolean {
+  return a.h === b.h && a.m === b.m && a.ampm === b.ampm;
+}
+
+function formatTime(t: TimeResult): string {
+  return `${t.h}:${String(t.m).padStart(2, "0")} ${t.ampm}`;
+}
+
+type TimeTask = { question: string; answer: TimeResult; startStr: string; addStr: string };
+
+function makeTimeTask(): TimeTask {
+  const startH = Math.floor(Math.random() * 11) + 1;
+  const startM = [0, 15, 30, 45][Math.floor(Math.random() * 4)];
+  const startAmPm: "AM" | "PM" = Math.random() > 0.5 ? "AM" : "PM";
+  const addH = Math.floor(Math.random() * 4) + 1;
+  const addM = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50][Math.floor(Math.random() * 10)];
+  const answer = computeAddTime(startH, startM, startAmPm, addH, addM);
+  const startStr = `${startH}:${String(startM).padStart(2, "0")} ${startAmPm}`;
+  const addStr = `${addH} hour${addH !== 1 ? "s" : ""} and ${addM} minutes`;
+  return {
+    question: `The time is ${startStr}. You add ${addStr}. What time is it now? Answer in this exact format: H:MM AM or H:MM PM (example: 3:45 PM).`,
+    answer,
+    startStr,
+    addStr,
+  };
+}
+
+// --- Calendar Hop ---
+const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const CALENDAR_DIFFICULTY = [
+  { label: "easy (7–30 days)", minDays: 7, maxDays: 30 },
+  { label: "medium (31–100 days)", minDays: 31, maxDays: 100 },
+  { label: "hard (101–400 days)", minDays: 101, maxDays: 400 },
+];
+
+type CalendarTask = { question: string; answer: string; startDay: string; days: number };
+
+function makeCalendarTask(diffIdx: number): CalendarTask {
+  const { minDays, maxDays } = CALENDAR_DIFFICULTY[diffIdx];
+  const startDayIdx = Math.floor(Math.random() * 7);
+  const days = Math.floor(Math.random() * (maxDays - minDays + 1)) + minDays;
+  const endDayIdx = (startDayIdx + days) % 7;
+  return {
+    question: `If today is ${DAY_NAMES[startDayIdx]}, what day of the week will it be in exactly ${days} days? Answer with just the day name.`,
+    answer: DAY_NAMES[endDayIdx].toLowerCase(),
+    startDay: DAY_NAMES[startDayIdx],
+    days,
+  };
+}
+
+function PalindromeGame({ onResult }: { onResult: (w: "you" | "ai") => void }) {
+  const [model, setModel] = useState<string>(models[0].slug);
+  const [taskIdx, setTaskIdx] = useState(0);
+  const [aiOutput, setAiOutput] = useState<string | null>(null);
+  const [latency, setLatency] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [scored, setScored] = useState(false);
+  const [err, setErr] = useState("");
+
+  const task = PALINDROME_TASKS[taskIdx];
+
+  function nextTask() {
+    setTaskIdx((i) => (i + 1) % PALINDROME_TASKS.length);
+    setAiOutput(null);
+    setScored(false);
+    setErr("");
+  }
+
+  const aiCorrect =
+    aiOutput !== null &&
+    ((task.isPalindrome && aiOutput.toLowerCase().includes("yes")) ||
+      (!task.isPalindrome && aiOutput.toLowerCase().includes("no")));
+
+  async function run() {
+    setBusy(true);
+    setErr("");
+    setAiOutput(null);
+    setScored(false);
+    try {
+      const prompt = `Is "${task.text}" a palindrome (reads the same forwards and backwards)? Answer with just "yes" or "no".`;
+      const data = await runChallenge(prompt, model);
+      setAiOutput(data.output);
+      setLatency(data.meta.latency_ms);
+      const out = data.output.toLowerCase();
+      const correct = (task.isPalindrome && out.includes("yes")) || (!task.isPalindrome && out.includes("no"));
+      if (!scored) { onResult(correct ? "ai" : "you"); setScored(true); }
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold">palindrome check</h2>
+        <p className="text-sm text-zinc-400">
+          LLMs tokenize words into subword chunks — they can&apos;t reliably scan character by character.
+          near-palindromes and longer words trip them. humans just read it backwards.
+        </p>
+      </div>
+
+      <Card className="space-y-2">
+        <label className="text-sm text-zinc-400">model</label>
+        <select value={model} onChange={(e) => setModel(e.target.value)}
+          className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+          {models.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
+        </select>
+      </Card>
+
+      <Card className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-zinc-500">word {taskIdx + 1} / {PALINDROME_TASKS.length}</p>
+          <button onClick={nextTask} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">next →</button>
+        </div>
+        <div className="rounded bg-zinc-900 px-4 py-4 text-center">
+          <p className="text-2xl font-mono font-bold tracking-widest text-zinc-100">{task.text}</p>
+        </div>
+        <p className="text-sm text-zinc-400">is this a palindrome?</p>
+      </Card>
+
+      <Button onClick={run} disabled={busy} className="w-full">
+        {busy ? "checking…" : "ask the ai →"}
+      </Button>
+
+      {err && <p className="text-sm text-red-400">{err}</p>}
+
+      {aiOutput !== null && (
+        <div className="space-y-3">
+          <div className={`rounded-lg border p-4 ${aiCorrect ? "border-zinc-700 bg-zinc-900" : "border-red-800 bg-red-950/20"}`}>
+            <div className="flex items-center justify-between">
+              <p className={`font-semibold ${aiCorrect ? "text-zinc-200" : "text-red-300"}`}>
+                {aiCorrect ? "ai got it right" : "ai got it wrong — you win"}
+              </p>
+              <span className="text-xs text-zinc-500">{latency}ms</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">ai said</p>
+              <p className={`text-sm font-medium ${aiCorrect ? "text-emerald-300" : "text-red-300"}`}>{aiOutput}</p>
+            </Card>
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">correct answer</p>
+              <p className="text-sm font-medium text-zinc-100">{task.isPalindrome ? "yes" : "no"}</p>
+            </Card>
+          </div>
+          <Card className="space-y-1">
+            <p className="text-xs text-zinc-500">why</p>
+            <p className="text-sm text-zinc-300">{task.explanation}</p>
+          </Card>
+          <Button onClick={nextTask} variant="outline" className="w-full">next word →</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TimeAdderGame({ onResult }: { onResult: (w: "you" | "ai") => void }) {
+  const [model, setModel] = useState<string>(models[0].slug);
+  const [task, setTask] = useState(() => makeTimeTask());
+  const [aiOutput, setAiOutput] = useState<string | null>(null);
+  const [latency, setLatency] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [scored, setScored] = useState(false);
+  const [err, setErr] = useState("");
+
+  function newTask() {
+    setTask(makeTimeTask());
+    setAiOutput(null);
+    setScored(false);
+    setErr("");
+  }
+
+  const parsedAi = aiOutput ? parseTimeOutput(aiOutput) : null;
+  const aiCorrect = parsedAi !== null && timesEqual(parsedAi, task.answer);
+
+  async function run() {
+    setBusy(true);
+    setErr("");
+    setAiOutput(null);
+    setScored(false);
+    try {
+      const data = await runChallenge(task.question, model);
+      setAiOutput(data.output);
+      setLatency(data.meta.latency_ms);
+      const parsed = parseTimeOutput(data.output);
+      const correct = parsed !== null && timesEqual(parsed, task.answer);
+      if (!scored) { onResult(correct ? "ai" : "you"); setScored(true); }
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold">time adder</h2>
+        <p className="text-sm text-zinc-400">
+          add a time interval to a clock time. models trip on AM/PM transitions and minute carry-over.
+          a task crossing noon or midnight reliably breaks smaller models.
+        </p>
+      </div>
+
+      <Card className="space-y-2">
+        <label className="text-sm text-zinc-400">model</label>
+        <select value={model} onChange={(e) => setModel(e.target.value)}
+          className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+          {models.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
+        </select>
+      </Card>
+
+      <Card className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-zinc-500">randomly generated</p>
+          <button onClick={newTask} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">regenerate →</button>
+        </div>
+        <div className="rounded bg-zinc-900 px-4 py-3">
+          <p className="text-base font-medium leading-relaxed text-zinc-100">{task.question}</p>
+        </div>
+        <p className="text-xs text-zinc-600">{task.startStr} + {task.addStr}</p>
+      </Card>
+
+      <Button onClick={run} disabled={busy} className="w-full">
+        {busy ? "calculating…" : "ask the ai →"}
+      </Button>
+
+      {err && <p className="text-sm text-red-400">{err}</p>}
+
+      {aiOutput !== null && (
+        <div className="space-y-3">
+          <div className={`rounded-lg border p-4 ${aiCorrect ? "border-zinc-700 bg-zinc-900" : "border-red-800 bg-red-950/20"}`}>
+            <div className="flex items-center justify-between">
+              <p className={`font-semibold ${aiCorrect ? "text-zinc-200" : "text-red-300"}`}>
+                {aiCorrect ? "ai got it right" : "ai got it wrong — you win"}
+              </p>
+              <span className="text-xs text-zinc-500">{latency}ms</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">ai answered</p>
+              <p className={`text-sm font-medium ${aiCorrect ? "text-emerald-300" : "text-red-300"}`}>{aiOutput}</p>
+            </Card>
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">correct answer</p>
+              <p className="text-sm font-bold text-zinc-100">{formatTime(task.answer)}</p>
+            </Card>
+          </div>
+          <Button onClick={newTask} variant="outline" className="w-full">new task →</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CalendarHopGame({ onResult }: { onResult: (w: "you" | "ai") => void }) {
+  const [model, setModel] = useState<string>(models[0].slug);
+  const [diffIdx, setDiffIdx] = useState(0);
+  const [task, setTask] = useState(() => makeCalendarTask(0));
+  const [aiOutput, setAiOutput] = useState<string | null>(null);
+  const [latency, setLatency] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [scored, setScored] = useState(false);
+  const [err, setErr] = useState("");
+
+  function newTask(di = diffIdx) {
+    setTask(makeCalendarTask(di));
+    setAiOutput(null);
+    setScored(false);
+    setErr("");
+  }
+
+  function changeDiff(di: number) {
+    setDiffIdx(di);
+    newTask(di);
+  }
+
+  const aiCorrect = aiOutput !== null && aiOutput.toLowerCase().includes(task.answer);
+
+  async function run() {
+    setBusy(true);
+    setErr("");
+    setAiOutput(null);
+    setScored(false);
+    try {
+      const data = await runChallenge(task.question, model);
+      setAiOutput(data.output);
+      setLatency(data.meta.latency_ms);
+      const correct = data.output.toLowerCase().includes(task.answer);
+      if (!scored) { onResult(correct ? "ai" : "you"); setScored(true); }
+    } catch (e: unknown) {
+      setErr(e instanceof Error ? e.message : "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <h2 className="text-lg font-semibold">calendar hop</h2>
+        <p className="text-sm text-zinc-400">
+          figure out what day of the week it is after N days. pure modular arithmetic.
+          models miscalculate on larger N — they lose track of the 7-day cycle rather than dividing by 7 and taking the remainder.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <Card className="space-y-2">
+          <label className="text-sm text-zinc-400">model</label>
+          <select value={model} onChange={(e) => setModel(e.target.value)}
+            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+            {models.map((m) => <option key={m.slug} value={m.slug}>{m.name}</option>)}
+          </select>
+        </Card>
+        <Card className="space-y-2">
+          <label className="text-sm text-zinc-400">difficulty</label>
+          <select value={diffIdx} onChange={(e) => changeDiff(Number(e.target.value))}
+            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm">
+            {CALENDAR_DIFFICULTY.map((d, i) => <option key={i} value={i}>{d.label}</option>)}
+          </select>
+        </Card>
+      </div>
+
+      <Card className="space-y-3">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-zinc-500">randomly generated</p>
+          <button onClick={() => newTask()} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">regenerate →</button>
+        </div>
+        <div className="rounded bg-zinc-900 px-4 py-3">
+          <p className="text-sm leading-relaxed">{task.question}</p>
+        </div>
+        <p className="text-xs text-zinc-600">{task.startDay} + {task.days} days → {task.days} mod 7 = {task.days % 7} extra days</p>
+      </Card>
+
+      <Button onClick={run} disabled={busy} className="w-full">
+        {busy ? "computing…" : "ask the ai →"}
+      </Button>
+
+      {err && <p className="text-sm text-red-400">{err}</p>}
+
+      {aiOutput !== null && (
+        <div className="space-y-3">
+          <div className={`rounded-lg border p-4 ${aiCorrect ? "border-zinc-700 bg-zinc-900" : "border-red-800 bg-red-950/20"}`}>
+            <div className="flex items-center justify-between">
+              <p className={`font-semibold ${aiCorrect ? "text-zinc-200" : "text-red-300"}`}>
+                {aiCorrect ? "ai got it right" : "ai got it wrong — you win"}
+              </p>
+              <span className="text-xs text-zinc-500">{latency}ms</span>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">ai said</p>
+              <p className={`text-sm font-medium ${aiCorrect ? "text-emerald-300" : "text-red-300"}`}>{aiOutput}</p>
+            </Card>
+            <Card className="space-y-1">
+              <p className="text-xs text-zinc-500">correct answer</p>
+              <p className="text-sm font-medium capitalize text-zinc-100">{task.answer}</p>
+            </Card>
+          </div>
+          <Button onClick={() => newTask()} variant="outline" className="w-full">new task →</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const GAMES = [
   { id: "stump", label: "stump" },
   { id: "roulette", label: "roulette" },
@@ -1553,6 +1969,9 @@ const GAMES = [
   { id: "object", label: "object tracker" },
   { id: "anagram", label: "anagram" },
   { id: "sequence", label: "sequence" },
+  { id: "palindrome", label: "palindrome" },
+  { id: "time", label: "time adder" },
+  { id: "calendar", label: "calendar hop" },
 ] as const;
 
 type GameId = (typeof GAMES)[number]["id"];
@@ -1570,7 +1989,6 @@ export default function GoalPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <Nav />
       <main className="mx-auto max-w-5xl space-y-5 p-4">
         <div className="flex items-end justify-between pt-2">
           <div className="space-y-1">
@@ -1623,8 +2041,15 @@ export default function GoalPage() {
           {game === "object" && <ObjectTrackerGame onResult={onResult} />}
           {game === "anagram" && <AnagramGame onResult={onResult} />}
           {game === "sequence" && <SequenceGame onResult={onResult} />}
+          {game === "palindrome" && <PalindromeGame onResult={onResult} />}
+          {game === "time" && <TimeAdderGame onResult={onResult} />}
+          {game === "calendar" && <CalendarHopGame onResult={onResult} />}
         </div>
       </main>
     </div>
   );
 }
+
+
+
+// note: used AI here to generate teh questions etc lets be honest man aint no one writing those many questions lol 
