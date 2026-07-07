@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { listProceduralTasks, resolveProceduralTask } from "../lib/tasks/procedural";
 import { verifyProcedural } from "../lib/verifiers/procedural";
 import { verifyRefusal } from "../lib/verifiers/refusal";
@@ -5,6 +7,25 @@ import { taskPoolVersion } from "../lib/task-pool";
 import { harnessVersion } from "../lib/harness";
 import * as store from "../lib/store";
 import { evalTask } from "../lib/eval";
+
+function loadEnvLocal() {
+  try {
+    const raw = fs.readFileSync(path.join(process.cwd(), ".env.local"), "utf8");
+    for (const line of raw.split("\n")) {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) continue;
+      const eq = trimmed.indexOf("=");
+      if (eq <= 0) continue;
+      const key = trimmed.slice(0, eq).trim();
+      const val = trimmed.slice(eq + 1).trim();
+      if (!process.env[key]) process.env[key] = val;
+    }
+  } catch {
+    /* no .env.local */
+  }
+}
+
+loadEnvLocal();
 
 async function main() {
   let ok = 0;
@@ -84,6 +105,14 @@ async function main() {
     "regex verifier sample",
     verifyRegexCraft("#[0-9A-Fa-f]{6}", [{ text: "#FF00AA", should_match: true }]).passed,
   );
+
+  if (process.env.AIMLAPI_KEY) {
+    const { smokeTestProvider } = await import("../lib/openrouter");
+    const pong = await smokeTestProvider("aiml/openai/gpt-4o-mini");
+    check("aiml pong smoke", pong.ok);
+  } else {
+    console.log("  skip  aiml pong (no AIMLAPI_KEY)");
+  }
 
   console.log(`\n=== done: ${ok} passed, ${fail} failed ===\n`);
   process.exit(fail > 0 ? 1 : 0);

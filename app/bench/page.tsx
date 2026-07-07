@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { models } from "@/lib/models";
+import { aimlTestModels, defaultBenchSlug, models } from "@/lib/models";
 import type { Domain, EvalRun, HarnessMode, RuleResult, TaskPublic } from "@/lib/types";
 
 type EvalRes = {
@@ -43,7 +43,7 @@ export default function BenchPage() {
   const [difficulty, setDifficulty] = useState<DifficultyFilter>("");
   const [tasks, setTasks] = useState<TaskPublic[]>([]);
   const [taskId, setTaskId] = useState("");
-  const [model, setModel] = useState<string>(models[0].slug);
+  const [model, setModel] = useState<string>(defaultBenchSlug);
   const [paste, setPaste] = useState("");
   const [res, setRes] = useState<EvalRes | null>(null);
   const [turn1Output, setTurn1Output] = useState<string | null>(null);
@@ -252,11 +252,20 @@ export default function BenchPage() {
             value={model}
             onChange={(e) => setModel(e.target.value)}
           >
-            {models.map((m) => (
-              <option key={m.slug} value={m.slug}>
-                {m.name}
-              </option>
-            ))}
+            <optgroup label="aiml — low-tier testing">
+              {aimlTestModels.map((m) => (
+                <option key={m.slug} value={m.slug}>
+                  {m.name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="openrouter — needs OPENROUTER_API_KEY">
+              {models.map((m) => (
+                <option key={m.slug} value={m.slug}>
+                  {m.name}
+                </option>
+              ))}
+            </optgroup>
           </select>
 
           <div className="flex flex-wrap gap-2">

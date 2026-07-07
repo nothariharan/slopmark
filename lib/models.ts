@@ -1,3 +1,5 @@
+import { aimlTestModels } from "./aimlapi";
+
 export const models = [
   { name: "claude 3.5 haiku", slug: "anthropic/claude-3.5-haiku" },
   { name: "claude 3.5 sonnet", slug: "anthropic/claude-3.5-sonnet" },
@@ -8,3 +10,8 @@ export const models = [
   { name: "mistral 7b", slug: "mistralai/mistral-7b-instruct" },
   { name: "qwen 2.5 7b", slug: "qwen/qwen-2.5-7b-instruct" },
 ] as const;
+
+export { aimlTestModels };
+
+/** default bench slug when AIML is configured — cheap, not Claude */
+export const defaultBenchSlug = aimlTestModels[0].slug;

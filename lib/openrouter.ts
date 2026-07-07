@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { aimlProvider, assertAimlModelAllowed } from "./aimlapi";
 import { maxTok, systemPromptFor, temp } from "./harness";
 import type { ChatMessage, HarnessMode, RunMeta } from "./types";
 
@@ -23,6 +24,13 @@ function customProvider(): ProviderConfig | null {
 }
 
 export function resolveProvider(modelSlug: string): { provider: ProviderConfig; model: string } {
+  if (modelSlug.startsWith("aiml/")) {
+    const aiml = aimlProvider();
+    if (!aiml) throw new Error("AIMLAPI_KEY not set");
+    const model = modelSlug.slice("aiml/".length);
+    assertAimlModelAllowed(model);
+    return { provider: aiml, model };
+  }
   if (modelSlug.startsWith("custom/")) {
     const custom = customProvider();
     if (!custom) throw new Error("custom provider not configured — set CUSTOM_API_BASE and CUSTOM_API_KEY");

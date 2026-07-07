@@ -52,6 +52,12 @@ export const docPages: DocPage[] = [
     file: "api.md",
   },
   {
+    slug: "aimlapi",
+    title: "aiml api testing",
+    desc: "cheap live model runs via AIMLAPI_KEY",
+    file: "aimlapi.md",
+  },
+  {
     slug: "realshot",
     title: "realshot duels",
     desc: "BYOK agent battles, one-shot tasks, auto winner",
@@ -91,6 +97,7 @@ const linkMap: Record<string, string> = {
   "./api.md": "/docs/api",
   "./zero-context.md": "/docs/zero-context",
   "./realshot.md": "/docs/realshot",
+  "./aimlapi.md": "/docs/aimlapi",
   "ARCHITECTURE.md": "/docs/architecture",
   "JUDGING.md": "/docs/judging",
   "deepswe.md": "/docs/deepswe",
@@ -102,6 +109,7 @@ const linkMap: Record<string, string> = {
   "api.md": "/docs/api",
   "zero-context.md": "/docs/zero-context",
   "realshot.md": "/docs/realshot",
+  "aimlapi.md": "/docs/aimlapi",
 };
 
 export function getDoc(slug: string) {

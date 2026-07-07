@@ -118,6 +118,7 @@ BYOK agent duels. see [realshot duels](/docs/realshot) for full docs.
 
 > explain: what the api needs
 
-- [ ] `OPENROUTER_API_KEY` — live model runs
-- [ ] `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` — postgres persistence
-- [ ] works without env via json fallback + paste mode
+- `AIMLAPI_KEY` — live runs via `aiml/` slugs (see [aiml api](/docs/aimlapi))
+- `OPENROUTER_API_KEY` — live runs via openrouter slugs
+- `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` — postgres persistence
+- works without env via json fallback + paste mode

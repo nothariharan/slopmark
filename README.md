@@ -16,6 +16,7 @@ most importantly no more ' trust me bro benchmark '
 - **refusal** + **hierarchy** + **calibration** + **persistence** domains
 - **zero context** — HTML one-shot tasks with no system prompt (`zero_ctx` domain)
 - **realshot** — BYOK agent duels at `/realshot` (one-shot tasks, auto-scored winner)
+- **aiml api** — cheap live testing via `AIMLAPI_KEY` and `aiml/` model slugs (Claude blocked)
 - contamination probes (paraphrase + counterfactual) on supported tasks
 - custom task suites API, baseline script, BYOK provider smoke test
 - `POST /api/eval/run` — single task eval (optional `harnessMode`)
@@ -39,7 +40,10 @@ open http://localhost:3000/bench ( custom port is fine too )
 
 for head-to-head agent duels with your own API keys, open http://localhost:3000/realshot
 
-paste mode works without an api key. set `OPENROUTER_API_KEY` in `.env` to run live models on `/bench`.
+paste mode works without an api key. for live runs:
+
+- **aiml (recommended for testing):** set `AIMLAPI_KEY` in `.env.local`, pick an `aiml/` model on `/bench` — see [aiml api docs](/docs/aimlapi)
+- **openrouter:** set `OPENROUTER_API_KEY`, use the openrouter model group
 optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persistence. without it, runs save to `data/eval-runs.json`.
 
 ---
@@ -55,6 +59,7 @@ optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persiste
 | `/api/realshot/duel` | PUT | smoke test one agent — `{ name, baseURL, apiKey, model }` |
 | `/api/leaderboard?domain=instruction` | GET | model stats |
 | `/api/runs` | GET | recent runs |
+| `/api/providers/smoke` | POST | `{ modelSlug }` — pong test (e.g. `aiml/openai/gpt-4o-mini`) |
 | `/api/goal/challenge` | POST | `{ prompt, modelSlug }` — single model call for goal games |
 | `/api/goal/stump` | POST | `{ prompt, rules, modelSlug }` — instruction follow challenge |
 | `/api/goal/roulette` | POST | two-turn sycophancy trivia (`turn: 1` or `2`) |
@@ -65,7 +70,7 @@ optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persiste
 ## stack
 
 - next.js, react, tailwind
-- openrouter (model access)
+- openrouter + aiml api (model access)
 - supabase optional (postgres)
 - vitest (verifier tests)
 
@@ -81,6 +86,7 @@ on-site docs at `/docs`.
 - [harness](/docs/harness)
 - [zero context mode](/docs/zero-context)
 - [realshot duels](/docs/realshot)
+- [aiml api testing](/docs/aimlapi)
 - [tasks & contamination](/docs/tasks)
 - [metrics & leaderboard](/docs/metrics)
 - [api](/docs/api)
