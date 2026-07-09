@@ -64,6 +64,12 @@ export const docPages: DocPage[] = [
     file: "challenges.md",
   },
   {
+    slug: "deploy",
+    title: "deploy",
+    desc: "vercel MVP checklist, env vars, smoke tests",
+    file: "deploy.md",
+  },
+  {
     slug: "realshot",
     title: "realshot duels",
     desc: "BYOK agent battles, one-shot tasks, auto winner",
@@ -105,6 +111,7 @@ const linkMap: Record<string, string> = {
   "./realshot.md": "/docs/realshot",
   "./aimlapi.md": "/docs/aimlapi",
   "./challenges.md": "/docs/challenges",
+  "./deploy.md": "/docs/deploy",
   "ARCHITECTURE.md": "/docs/architecture",
   "JUDGING.md": "/docs/judging",
   "deepswe.md": "/docs/deepswe",
@@ -118,6 +125,7 @@ const linkMap: Record<string, string> = {
   "realshot.md": "/docs/realshot",
   "aimlapi.md": "/docs/aimlapi",
   "challenges.md": "/docs/challenges",
+  "deploy.md": "/docs/deploy",
 };
 
 export function getDoc(slug: string) {

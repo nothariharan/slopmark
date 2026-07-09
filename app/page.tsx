@@ -22,6 +22,9 @@ export default function Home() {
             <Link href="/leaderboard">
               <Button variant="outline">leaderboard</Button>
             </Link>
+            <Link href="/challenges">
+              <Button variant="outline">view challenges</Button>
+            </Link>
           </div>
         </section>
 

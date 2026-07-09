@@ -93,3 +93,19 @@ api prefers sqlite; falls back to committed json if db is empty.
 ## devlog screenshot
 
 the infographic lives at `#challenge-infographic` on the challenge page — bar chart, category heatmap, model cards. screenshot that block for your devlog.
+
+---
+
+## production (vercel)
+
+deployed api routes read from committed json via `lib/challenges/store-json.ts` — no sqlite on serverless. see [deploy](/docs/deploy).
+
+---
+
+## roadmap
+
+| phase | feature |
+|---|---|
+| 2 | BYOK solo eval on `/bench` via optional `provider` in `POST /api/eval/run` |
+| 3 | challenge builder + `POST /api/challenges` + supabase persistence |
+| 4 | background jobs + redis rate limits |

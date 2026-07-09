@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listChallengeSlugs, loadChallengeResults } from "@/lib/challenges/store";
+import { listChallengeSlugs, loadChallengeResults } from "@/lib/challenges/store-json";
 
 export async function GET() {
   const slugs = await listChallengeSlugs();

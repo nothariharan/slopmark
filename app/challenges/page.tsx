@@ -30,6 +30,32 @@ export default function ChallengesPage() {
           persisted benchmark sessions — revisit every model run
         </p>
 
+        <div className="mt-8 grid gap-3 sm:grid-cols-2">
+          <Link
+            href="/challenge/niche-sprint-v1"
+            className="block border border-emerald-900/50 bg-emerald-950/20 p-5 transition hover:border-emerald-700"
+          >
+            <p className="text-xs uppercase tracking-widest text-emerald-500/80">featured</p>
+            <h2 className="mt-1 font-medium">Niche Sprint v1</h2>
+            <p className="mt-1 text-sm text-zinc-500">6 models · 10 stupid tasks · full infographic</p>
+          </Link>
+          <Link
+            href="/realshot"
+            className="block border border-zinc-800 bg-zinc-950 p-5 transition hover:border-zinc-600"
+          >
+            <p className="text-xs uppercase tracking-widest text-zinc-500">BYOK</p>
+            <h2 className="mt-1 font-medium">realshot duels</h2>
+            <p className="mt-1 text-sm text-zinc-500">test your own API key on one-shot tasks</p>
+          </Link>
+        </div>
+
+        <p className="mt-6 text-sm text-zinc-600">
+          how challenges work →{" "}
+          <Link href="/docs/challenges" className="text-zinc-400 hover:text-zinc-200">
+            docs
+          </Link>
+        </p>
+
         <div className="mt-10 space-y-4">
           {items.length === 0 && (
             <p className="text-zinc-600 text-sm">no challenges yet. run scripts/run-challenge.ts</p>
