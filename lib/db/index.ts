@@ -55,6 +55,41 @@ sqlite.exec(`
     approved INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL
   );
+
+  CREATE TABLE IF NOT EXISTS challenges (
+    slug TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    subtitle TEXT NOT NULL,
+    description TEXT NOT NULL,
+    harness_mode TEXT NOT NULL DEFAULT 'zero_context',
+    manifest_json TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'complete',
+    completed_at TEXT,
+    created_at TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS challenge_runs (
+    id TEXT PRIMARY KEY,
+    challenge_slug TEXT NOT NULL,
+    task_id TEXT NOT NULL,
+    task_label TEXT NOT NULL,
+    task_category TEXT NOT NULL,
+    task_prompt TEXT NOT NULL,
+    model_slug TEXT NOT NULL,
+    model_label TEXT NOT NULL,
+    output TEXT NOT NULL,
+    passed INTEGER NOT NULL,
+    score INTEGER NOT NULL,
+    details TEXT NOT NULL,
+    latency_ms INTEGER NOT NULL,
+    input_tokens INTEGER NOT NULL,
+    output_tokens INTEGER NOT NULL,
+    error TEXT,
+    created_at TEXT NOT NULL
+  );
+
+  CREATE INDEX IF NOT EXISTS challenge_runs_slug_idx ON challenge_runs (challenge_slug);
+  CREATE INDEX IF NOT EXISTS challenge_runs_model_idx ON challenge_runs (challenge_slug, model_slug);
 `);
 
 try {

@@ -13,6 +13,9 @@ export async function Nav() {
           slopmark
         </Link>
         <nav className="flex gap-6 text-sm text-zinc-400 items-center">
+          <Link href="/challenges" className="hover:text-zinc-100 transition-colors">
+            challenges
+          </Link>
           <Link href="/realshot" className="hover:text-zinc-100 transition-colors">
             realshot
           </Link>

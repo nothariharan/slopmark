@@ -58,6 +58,12 @@ export const docPages: DocPage[] = [
     file: "aimlapi.md",
   },
   {
+    slug: "challenges",
+    title: "benchmark challenges",
+    desc: "fixed niche sprints, sql persistence, revisit infographic",
+    file: "challenges.md",
+  },
+  {
     slug: "realshot",
     title: "realshot duels",
     desc: "BYOK agent battles, one-shot tasks, auto winner",
@@ -98,6 +104,7 @@ const linkMap: Record<string, string> = {
   "./zero-context.md": "/docs/zero-context",
   "./realshot.md": "/docs/realshot",
   "./aimlapi.md": "/docs/aimlapi",
+  "./challenges.md": "/docs/challenges",
   "ARCHITECTURE.md": "/docs/architecture",
   "JUDGING.md": "/docs/judging",
   "deepswe.md": "/docs/deepswe",
@@ -110,6 +117,7 @@ const linkMap: Record<string, string> = {
   "zero-context.md": "/docs/zero-context",
   "realshot.md": "/docs/realshot",
   "aimlapi.md": "/docs/aimlapi",
+  "challenges.md": "/docs/challenges",
 };
 
 export function getDoc(slug: string) {
@@ -130,3 +138,7 @@ function fixLinks(md: string) {
   }
   return out;
 }
+
+
+
+// js a file to manage all my docs file instead of js routing them to keep it clean i generally do it this way so yeah 

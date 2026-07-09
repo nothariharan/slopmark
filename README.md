@@ -17,6 +17,7 @@ most importantly no more ' trust me bro benchmark '
 - **zero context** — HTML one-shot tasks with no system prompt (`zero_ctx` domain)
 - **realshot** — BYOK agent duels at `/realshot` (one-shot tasks, auto-scored winner)
 - **aiml api** — cheap live testing via `AIMLAPI_KEY` and `aiml/` model slugs (Claude blocked)
+- **challenges** — fixed niche sprints at `/challenges` (sql + json persistence, infographic per session)
 - contamination probes (paraphrase + counterfactual) on supported tasks
 - custom task suites API, baseline script, BYOK provider smoke test
 - `POST /api/eval/run` — single task eval (optional `harnessMode`)
@@ -39,6 +40,8 @@ npm run dev
 open http://localhost:3000/bench ( custom port is fine too )
 
 for head-to-head agent duels with your own API keys, open http://localhost:3000/realshot
+
+revisit a completed challenge session: http://localhost:3000/challenge/niche-sprint-v1 — see [challenges docs](/docs/challenges)
 
 paste mode works without an api key. for live runs:
 

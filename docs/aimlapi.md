@@ -29,10 +29,10 @@ prefix models with `aiml/` in bench, baseline scripts, or API calls:
 | bench label | slug | aiml model id |
 |---|---|---|
 | gpt-4o mini (aiml) | `aiml/openai/gpt-4o-mini` | `openai/gpt-4o-mini` |
-| llama 3.1 8b (aiml) | `aiml/meta-llama/llama-3.1-8b-instruct` | `meta-llama/llama-3.1-8b-instruct` |
-| mistral 7b (aiml) | `aiml/mistralai/mistral-7b-instruct` | `mistralai/mistral-7b-instruct` |
-| qwen 2.5 7b (aiml) | `aiml/qwen/qwen-2.5-7b-instruct` | `qwen/qwen-2.5-7b-instruct` |
-| gemini 2.0 flash (aiml) | `aiml/google/gemini-2.0-flash` | `google/gemini-2.0-flash` |
+| llama 3.1 8b (aiml) | `aiml/aion-labs/aion-rp-llama-3.1-8b` | `aion-labs/aion-rp-llama-3.1-8b` |
+| ministral 3b (aiml) | `aiml/mistralai/ministral-3b-2512` | `mistralai/ministral-3b-2512` |
+| qwen 2.5 7b (aiml) | `aiml/Qwen/Qwen2.5-7B-Instruct-Turbo` | `Qwen/Qwen2.5-7B-Instruct-Turbo` |
+| gemini 2.5 flash (aiml) | `aiml/google/gemini-2.5-flash` | `google/gemini-2.5-flash` |
 
 defined in `lib/aimlapi.ts`. cross-check ids at [aimlapi.com/models](https://aimlapi.com/models) if a call fails.
 

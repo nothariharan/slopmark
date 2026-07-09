@@ -1,0 +1,86 @@
+{
+  "slug": "niche-sprint-v1",
+  "title": "Niche Sprint v1",
+  "subtitle": "6 low-tier models · 10 one-shot challenges",
+  "description": "A fixed mixed challenge across procedural reasoning, extract-from-text, HTML contracts, constraint bursts, and JSON schema. Same tasks for every model. Zero context harness. Run via AIML API — model IDs verified against /v1/models (June 2026).",
+  "harness_mode": "zero_context",
+  "tasks": [
+    {
+      "id": "proc-direction-easy-3",
+      "label": "compass 3 turns",
+      "category": "procedural"
+    },
+    {
+      "id": "proc-sequence-5",
+      "label": "number sequence",
+      "category": "procedural"
+    },
+    {
+      "id": "proc-calendar-medium-2",
+      "label": "calendar hop",
+      "category": "procedural"
+    },
+    {
+      "id": "proc-palindrome-1",
+      "label": "palindrome check",
+      "category": "procedural"
+    },
+    {
+      "id": "rs-extract-01",
+      "label": "scrape price",
+      "category": "extract"
+    },
+    {
+      "id": "rs-extract-03",
+      "label": "scrape email",
+      "category": "extract"
+    },
+    {
+      "id": "rs-html-02",
+      "label": "signup form html",
+      "category": "html"
+    },
+    {
+      "id": "rs-constraint-03",
+      "label": "ANSWER: 8 words",
+      "category": "constraint"
+    },
+    {
+      "id": "json-01",
+      "label": "name + age json",
+      "category": "json"
+    },
+    {
+      "id": "rs-regex-01",
+      "label": "hex color regex",
+      "category": "regex"
+    }
+  ],
+  "models": [
+    {
+      "slug": "aiml/openai/gpt-4o-mini",
+      "label": "GPT-4o Mini"
+    },
+    {
+      "slug": "aiml/deepseek/deepseek-chat",
+      "label": "DeepSeek V3"
+    },
+    {
+      "slug": "aiml/aion-labs/aion-rp-llama-3.1-8b",
+      "label": "Llama 3.1 8B"
+    },
+    {
+      "slug": "aiml/mistralai/ministral-3b-2512",
+      "label": "Ministral 3B"
+    },
+    {
+      "slug": "aiml/Qwen/Qwen2.5-7B-Instruct-Turbo",
+      "label": "Qwen 2.5 7B"
+    },
+    {
+      "slug": "aiml/google/gemini-2.5-flash",
+      "label": "Gemini 2.5 Flash"
+    }
+  ],
+  "created_at": "2026-07-09T00:00:00.000Z"
+}

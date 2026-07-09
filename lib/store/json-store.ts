@@ -55,6 +55,11 @@ export async function getTask(id: string): Promise<BenchTask | null> {
   if (id.startsWith("proc-")) {
     return resolveProceduralTask(id);
   }
+  if (id.startsWith("rs-")) {
+    const { resolveRealshotTask } = await import("../realshot/tasks");
+    const resolved = await resolveRealshotTask(id);
+    return resolved?.task ?? null;
+  }
   const prefix = id.split("-")[0];
   const domainMap: Record<string, Domain> = {
     ins: "instruction",

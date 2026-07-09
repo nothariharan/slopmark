@@ -50,3 +50,35 @@ export const communityTasks = sqliteTable("community_tasks", {
   approved: integer("approved", { mode: "boolean" }).notNull().default(false),
   created_at: text("created_at").notNull(),
 });
+
+export const challenges = sqliteTable("challenges", {
+  slug: text("slug").primaryKey(),
+  title: text("title").notNull(),
+  subtitle: text("subtitle").notNull(),
+  description: text("description").notNull(),
+  harness_mode: text("harness_mode").notNull().default("zero_context"),
+  manifest_json: text("manifest_json").notNull(),
+  status: text("status").notNull().default("complete"),
+  completed_at: text("completed_at"),
+  created_at: text("created_at").notNull(),
+});
+
+export const challengeRuns = sqliteTable("challenge_runs", {
+  id: text("id").primaryKey(),
+  challenge_slug: text("challenge_slug").notNull(),
+  task_id: text("task_id").notNull(),
+  task_label: text("task_label").notNull(),
+  task_category: text("task_category").notNull(),
+  task_prompt: text("task_prompt").notNull(),
+  model_slug: text("model_slug").notNull(),
+  model_label: text("model_label").notNull(),
+  output: text("output").notNull(),
+  passed: integer("passed", { mode: "boolean" }).notNull(),
+  score: integer("score").notNull(),
+  details: text("details").notNull(),
+  latency_ms: integer("latency_ms").notNull(),
+  input_tokens: integer("input_tokens").notNull(),
+  output_tokens: integer("output_tokens").notNull(),
+  error: text("error"),
+  created_at: text("created_at").notNull(),
+});

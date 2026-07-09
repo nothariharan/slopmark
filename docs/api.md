@@ -104,6 +104,29 @@ BYOK agent duels. see [realshot duels](/docs/realshot) for full docs.
 
 ---
 
+## challenges (live)
+
+fixed niche sprints — persisted sessions with infographic UI. see [benchmark challenges](/docs/challenges) for full docs.
+
+### GET /api/challenges
+
+- response: `{ challenges: [{ slug, title, subtitle, status, completed_at, task_count, model_count }] }`
+- lists manifests from `data/challenges/*/manifest.json`
+
+### GET /api/challenges/{slug}
+
+- response: full `ChallengeResults` — `{ manifest, runs, summaries, completed_at }`
+- prefers sqlite (`challenges` + `challenge_runs` tables); falls back to committed `data/challenges/{slug}/results.json`
+
+### CLI: `npm run challenge`
+
+- runs `scripts/run-challenge.ts [slug]` — smoke-tests models, evals all task×model combos, saves sqlite + json
+- default slug: `niche-sprint-v1`
+- requires `AIMLAPI_KEY` in `.env.local`
+- view results: `/challenge/{slug}`
+
+---
+
 ## auth & rate limits (planned)
 
 > explain: what doesn't exist yet

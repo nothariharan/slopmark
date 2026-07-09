@@ -88,6 +88,42 @@ select
 from eval_runs
 group by model_slug, domain;
 
+-- benchmark challenges (persisted sessions)
+create table if not exists challenges (
+  slug text primary key,
+  title text not null,
+  subtitle text not null,
+  description text not null,
+  harness_mode text not null default 'zero_context',
+  manifest_json jsonb not null,
+  status text not null default 'complete',
+  completed_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists challenge_runs (
+  id uuid primary key default gen_random_uuid(),
+  challenge_slug text not null references challenges(slug) on delete cascade,
+  task_id text not null,
+  task_label text not null,
+  task_category text not null,
+  task_prompt text not null,
+  model_slug text not null,
+  model_label text not null,
+  output text not null,
+  passed boolean not null,
+  score numeric not null,
+  details text not null,
+  latency_ms integer not null default 0,
+  input_tokens integer not null default 0,
+  output_tokens integer not null default 0,
+  error text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists challenge_runs_slug_idx on challenge_runs (challenge_slug);
+create index if not exists challenge_runs_model_idx on challenge_runs (challenge_slug, model_slug);
+
 -- row level security
 alter table eval_runs enable row level security;
 alter table custom_suites enable row level security;

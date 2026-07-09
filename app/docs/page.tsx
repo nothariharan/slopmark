@@ -7,7 +7,7 @@ export default function DocsPage() {
       <main className="mx-auto max-w-5xl p-4">
         <h1 className="mb-2 text-2xl font-semibold">docs</h1>
         <p className="mb-8 text-sm text-zinc-400">
-          how slopmark benches models — scoring, domains, harness, api
+          how slopmark benches models — scoring, domains, harness, challenges, api
         </p>
 
         <div className="grid gap-3 sm:grid-cols-2">

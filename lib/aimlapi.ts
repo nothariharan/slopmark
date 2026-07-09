@@ -8,10 +8,11 @@ export const AIML_BLOCKED = [/claude/i, /anthropic/i];
 /** low-tier models approved for slopmark testing via aiml/ slugs */
 export const aimlTestModels = [
   { name: "gpt-4o mini (aiml)", slug: "aiml/openai/gpt-4o-mini", model: "openai/gpt-4o-mini" },
-  { name: "llama 3.1 8b (aiml)", slug: "aiml/meta-llama/llama-3.1-8b-instruct", model: "meta-llama/llama-3.1-8b-instruct" },
-  { name: "mistral 7b (aiml)", slug: "aiml/mistralai/mistral-7b-instruct", model: "mistralai/mistral-7b-instruct" },
-  { name: "qwen 2.5 7b (aiml)", slug: "aiml/qwen/qwen-2.5-7b-instruct", model: "qwen/qwen-2.5-7b-instruct" },
-  { name: "gemini 2.0 flash (aiml)", slug: "aiml/google/gemini-2.0-flash", model: "google/gemini-2.0-flash" },
+  { name: "llama 3.1 8b (aiml)", slug: "aiml/aion-labs/aion-rp-llama-3.1-8b", model: "aion-labs/aion-rp-llama-3.1-8b" },
+  { name: "ministral 3b (aiml)", slug: "aiml/mistralai/ministral-3b-2512", model: "mistralai/ministral-3b-2512" },
+  { name: "qwen 2.5 7b (aiml)", slug: "aiml/Qwen/Qwen2.5-7B-Instruct-Turbo", model: "Qwen/Qwen2.5-7B-Instruct-Turbo" },
+  { name: "gemini 2.5 flash (aiml)", slug: "aiml/google/gemini-2.5-flash", model: "google/gemini-2.5-flash" },
+  { name: "deepseek v3 (aiml)", slug: "aiml/deepseek/deepseek-chat", model: "deepseek/deepseek-chat" },
 ] as const;
 
 export function aimlProvider() {
