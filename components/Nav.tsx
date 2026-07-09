@@ -3,8 +3,12 @@ import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/login/actions";
 
 export async function Nav() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  let user: { email?: string } | null = null;
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    const supabase = await createClient();
+    const { data: { user: u } } = await supabase.auth.getUser();
+    user = u;
+  }
 
   return (
     <header className="border-b border-zinc-900 bg-black">
