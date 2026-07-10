@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ByokAgentForm, EMPTY_BYOK } from "@/components/ByokAgentForm";
+import type { ByokAgent } from "@/lib/byok";
 import { aimlTestModels, defaultBenchSlug, models } from "@/lib/models";
 import type { Domain, EvalRun, HarnessMode, RuleResult, TaskPublic } from "@/lib/types";
 
@@ -38,6 +40,19 @@ const DOMAINS: { label: string; value: Domain }[] = [
 const DIFFICULTIES = ["", "easy", "medium", "hard"] as const;
 type DifficultyFilter = (typeof DIFFICULTIES)[number];
 
+const STORAGE_BYOK = "bench-byok-agent";
+
+function loadByok(): ByokAgent {
+  if (typeof window === "undefined") return { ...EMPTY_BYOK };
+  try {
+    const raw = sessionStorage.getItem(STORAGE_BYOK);
+    if (raw) return JSON.parse(raw) as ByokAgent;
+  } catch {
+    /* ignore */
+  }
+  return { ...EMPTY_BYOK };
+}
+
 export default function BenchPage() {
   const [domain, setDomain] = useState<Domain>("instruction");
   const [difficulty, setDifficulty] = useState<DifficultyFilter>("");
@@ -51,8 +66,22 @@ export default function BenchPage() {
   const [runs, setRuns] = useState<EvalRun[]>([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [useByok, setUseByok] = useState(false);
+  const [byok, setByok] = useState<ByokAgent>(EMPTY_BYOK);
+  const [testing, setTesting] = useState(false);
+  const [testOk, setTestOk] = useState<boolean | null>(null);
 
   const harnessMode: HarnessMode = domain === "zero_ctx" ? "zero_context" : "standard";
+
+  useEffect(() => {
+    setByok(loadByok());
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(STORAGE_BYOK, JSON.stringify(byok));
+    }
+  }, [byok]);
 
   const prompt = tasks.find((t) => t.id === taskId)?.prompt ?? "";
 
@@ -82,6 +111,24 @@ export default function BenchPage() {
     setRuns(d.runs ?? []);
   }
 
+  async function testByok() {
+    setTesting(true);
+    setTestOk(null);
+    try {
+      const r = await fetch("/api/realshot/duel", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(byok),
+      });
+      const d = await r.json();
+      setTestOk(!!d.ok);
+    } catch {
+      setTestOk(false);
+    } finally {
+      setTesting(false);
+    }
+  }
+
   async function runOne(withPaste = false) {
     setBusy(true);
     setErr("");
@@ -93,7 +140,8 @@ export default function BenchPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           taskId,
-          modelSlug: withPaste ? undefined : model,
+          modelSlug: withPaste || useByok ? undefined : model,
+          provider: !withPaste && useByok ? byok : undefined,
           output: withPaste ? paste : undefined,
           stream: isStream,
           harnessMode,
@@ -166,7 +214,12 @@ export default function BenchPage() {
       const r = await fetch("/api/eval/suite", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ modelSlug: model, domain, harnessMode }),
+        body: JSON.stringify({
+          modelSlug: useByok ? undefined : model,
+          provider: useByok ? byok : undefined,
+          domain,
+          harnessMode,
+        }),
       });
       const d = await r.json();
       if (!r.ok) throw new Error(d.error ?? "suite failed");
@@ -246,33 +299,54 @@ export default function BenchPage() {
             <p className="rounded bg-zinc-900 p-3 text-sm text-zinc-300">{prompt}</p>
           )}
 
-          <label className="block text-sm text-zinc-400">model</label>
-          <select
-            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-          >
-            <optgroup label="aiml — low-tier testing">
-              {aimlTestModels.map((m) => (
-                <option key={m.slug} value={m.slug}>
-                  {m.name}
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="openrouter — needs OPENROUTER_API_KEY">
-              {models.map((m) => (
-                <option key={m.slug} value={m.slug}>
-                  {m.name}
-                </option>
-              ))}
-            </optgroup>
-          </select>
+          <label className="flex items-center gap-2 text-sm text-zinc-400">
+            <input
+              type="checkbox"
+              checked={useByok}
+              onChange={(e) => setUseByok(e.target.checked)}
+            />
+            use my own API key (BYOK)
+          </label>
+
+          {useByok ? (
+            <ByokAgentForm
+              agent={byok}
+              onChange={setByok}
+              onTest={testByok}
+              testing={testing}
+              testOk={testOk}
+            />
+          ) : (
+            <>
+              <label className="block text-sm text-zinc-400">model</label>
+              <select
+                className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+              >
+                <optgroup label="aiml — low-tier testing">
+                  {aimlTestModels.map((m) => (
+                    <option key={m.slug} value={m.slug}>
+                      {m.name}
+                    </option>
+                  ))}
+                </optgroup>
+                <optgroup label="openrouter — needs OPENROUTER_API_KEY">
+                  {models.map((m) => (
+                    <option key={m.slug} value={m.slug}>
+                      {m.name}
+                    </option>
+                  ))}
+                </optgroup>
+              </select>
+            </>
+          )}
 
           <div className="flex flex-wrap gap-2">
-            <Button disabled={busy || !taskId} onClick={() => runOne(false)}>
+            <Button disabled={busy || !taskId || (useByok && !byok.apiKey)} onClick={() => runOne(false)}>
               run task
             </Button>
-            <Button variant="outline" disabled={busy || !tasks.length} onClick={runAll}>
+            <Button variant="outline" disabled={busy || !tasks.length || (useByok && !byok.apiKey)} onClick={runAll}>
               run full suite
             </Button>
           </div>

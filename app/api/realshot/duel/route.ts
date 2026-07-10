@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { validateByokAgent, providerConfig } from "@/lib/byok";
 import { runRealshotDuel } from "@/lib/realshot/duel";
 import type { RealshotCategory } from "@/lib/realshot/types";
 import { smokeTestDirect } from "@/lib/openrouter";
@@ -6,17 +7,7 @@ import type { HarnessMode } from "@/lib/types";
 import { checkDuelLimit, getIp } from "@/lib/rate-limit";
 
 function validateAgent(a: unknown, label: string) {
-  if (!a || typeof a !== "object") throw new Error(`${label} required`);
-  const o = a as Record<string, unknown>;
-  if (!o.name || !o.baseURL || !o.apiKey || !o.model) {
-    throw new Error(`${label} needs name, baseURL, apiKey, model`);
-  }
-  return {
-    name: String(o.name),
-    baseURL: String(o.baseURL),
-    apiKey: String(o.apiKey),
-    model: String(o.model),
-  };
+  return validateByokAgent(a, label);
 }
 
 export async function POST(req: Request) {

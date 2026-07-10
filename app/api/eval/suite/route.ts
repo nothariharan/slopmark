@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { validateByokAgent } from "@/lib/byok";
 import { evalSuite } from "@/lib/eval";
 import { checkSuiteLimit, getIp } from "@/lib/rate-limit";
 import type { Domain, HarnessMode } from "@/lib/types";
@@ -15,15 +16,16 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const modelSlug = body.modelSlug as string;
+    const modelSlug = body.modelSlug as string | undefined;
     const domain = (body.domain ?? "instruction") as Domain;
     const harnessMode = body.harnessMode as HarnessMode | undefined;
+    const provider = body.provider ? validateByokAgent(body.provider) : undefined;
 
-    if (!modelSlug) {
-      return NextResponse.json({ error: "modelSlug required" }, { status: 400 });
+    if (!modelSlug && !provider) {
+      return NextResponse.json({ error: "modelSlug or provider required" }, { status: 400 });
     }
 
-    const res = await evalSuite(modelSlug, domain, harnessMode);
+    const res = await evalSuite(modelSlug ?? "", domain, harnessMode, provider);
     return NextResponse.json(res);
   } catch (e) {
     const msg = e instanceof Error ? e.message : "suite failed";

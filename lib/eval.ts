@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
-import { pasteMeta, runModel, runModelMultiTurn } from "./openrouter";
+import { byokSlug, providerConfig, type ByokAgent } from "./byok";
+import { pasteMeta, runModel, runModelDirect, runModelMultiTurn, runModelMultiTurnDirect } from "./openrouter";
 import * as store from "./store";
 import type { BenchTask, ChatMessage, Domain, EvalRun } from "./types";
 import { runVerifier } from "./verifiers";
@@ -16,7 +17,34 @@ type RunInput = {
   modelSlug: string;
   output?: string;
   harnessMode?: HarnessMode;
+  provider?: ByokAgent;
 };
+
+type ModelCtx = {
+  slug: string;
+  provider?: ByokAgent;
+};
+
+function modelCtx(inp: RunInput): ModelCtx {
+  if (inp.provider) {
+    return { slug: byokSlug(inp.provider), provider: inp.provider };
+  }
+  return { slug: inp.modelSlug || "paste/dev" };
+}
+
+async function singleTurn(prompt: string, ctx: ModelCtx, mode: HarnessMode) {
+  if (ctx.provider) {
+    return runModelDirect(prompt, ctx.provider.model, providerConfig(ctx.provider), mode);
+  }
+  return runModel(prompt, ctx.slug, mode);
+}
+
+async function multiTurn(messages: ChatMessage[], ctx: ModelCtx, mode: HarnessMode) {
+  if (ctx.provider) {
+    return runModelMultiTurnDirect(messages, ctx.provider.model, providerConfig(ctx.provider), mode);
+  }
+  return runModelMultiTurn(messages, ctx.slug, mode);
+}
 
 function resolveHarnessMode(task: BenchTask, explicit?: HarnessMode): HarnessMode {
   if (explicit) return explicit;
@@ -97,7 +125,8 @@ export async function evalTask(inp: RunInput) {
   const task = await store.getTask(inp.taskId);
   if (!task) throw new Error("task not found");
 
-  const slug = inp.modelSlug || "paste/dev";
+  const ctx = modelCtx(inp);
+  const slug = ctx.slug;
   const mode = resolveHarnessMode(task, inp.harnessMode);
   const sys = systemPromptFor(mode);
 
@@ -112,14 +141,14 @@ export async function evalTask(inp: RunInput) {
     }
 
     const prompt = await preparePrompt(task);
-    const turn1 = await runModel(prompt, inp.modelSlug, mode);
+    const turn1 = await singleTurn(prompt, ctx, mode);
     const messages: ChatMessage[] = [
       { role: "system", content: sys },
       { role: "user", content: prompt },
       { role: "assistant", content: turn1.output },
       { role: "user", content: task.verifier.challenge },
     ];
-    const turn2 = await runModelMultiTurn(messages, inp.modelSlug, mode);
+    const turn2 = await multiTurn(messages, ctx, mode);
     const vr = runVerifier(turn2.output, task.verifier);
     const enrichedDetails = `[turn1]\n${turn1.output}\n[/turn1]\n${vr.details}`;
     const run = mkRun(task, slug, turn2.output, { ...vr, details: enrichedDetails }, turn2.meta, mode);
@@ -137,7 +166,7 @@ export async function evalTask(inp: RunInput) {
     }
 
     const prompt = await preparePrompt(task);
-    const turn1 = await runModel(prompt, inp.modelSlug, mode);
+    const turn1 = await singleTurn(prompt, ctx, mode);
     const messages: ChatMessage[] = [
       { role: "system", content: sys },
       { role: "user", content: prompt },
@@ -155,7 +184,7 @@ export async function evalTask(inp: RunInput) {
     for (let i = 0; i < task.verifier.pushes.length; i++) {
       const push = task.verifier.pushes[i];
       messages.push({ role: "user", content: push.challenge });
-      const turnN = await runModelMultiTurn(messages, inp.modelSlug, mode);
+      const turnN = await multiTurn(messages, ctx, mode);
       messages.push({ role: "assistant", content: turnN.output });
       lastOutput = turnN.output;
       totalInput += turnN.meta.input_tokens;
@@ -198,7 +227,7 @@ export async function evalTask(inp: RunInput) {
     }
 
     const prompt = await preparePrompt(task);
-    const turn1 = await runModel(prompt, inp.modelSlug, mode);
+    const turn1 = await singleTurn(prompt, ctx, mode);
     const messages: ChatMessage[] = [
       { role: "system", content: sys },
       { role: "user", content: prompt },
@@ -214,7 +243,7 @@ export async function evalTask(inp: RunInput) {
     for (let i = 0; i < task.verifier.follow_up_prompts.length; i++) {
       const followUp = task.verifier.follow_up_prompts[i];
       messages.push({ role: "user", content: followUp });
-      const turnN = await runModelMultiTurn(messages, inp.modelSlug, mode);
+      const turnN = await multiTurn(messages, ctx, mode);
       messages.push({ role: "assistant", content: turnN.output });
       totalInput += turnN.meta.input_tokens;
       totalOutput += turnN.meta.output_tokens;
@@ -244,7 +273,7 @@ export async function evalTask(inp: RunInput) {
     }
 
     const prompt = await preparePrompt(task);
-    const turn1 = await runModel(prompt, inp.modelSlug, mode);
+    const turn1 = await singleTurn(prompt, ctx, mode);
     let finalOut = turn1.output;
     let meta = { ...turn1.meta };
     
@@ -256,7 +285,7 @@ export async function evalTask(inp: RunInput) {
         { role: "assistant", content: turn1.output },
         { role: "user", content: `system: tool ${broken} failed with 500 internal server error` },
       ];
-      const turn2 = await runModelMultiTurn(messages, inp.modelSlug, mode);
+      const turn2 = await multiTurn(messages, ctx, mode);
       finalOut += "\n" + turn2.output;
       meta.input_tokens += turn2.meta.input_tokens;
       meta.output_tokens += turn2.meta.output_tokens;
@@ -276,7 +305,7 @@ export async function evalTask(inp: RunInput) {
 
   if (!inp.output) {
     const prompt = await preparePrompt(task);
-    const res = await runModel(prompt, inp.modelSlug, mode);
+    const res = await singleTurn(prompt, ctx, mode);
     output = res.output;
     meta = res.meta;
   }
@@ -288,15 +317,17 @@ export async function evalSuite(
   modelSlug: string,
   domain: Domain = "instruction",
   harnessMode?: HarnessMode,
+  provider?: ByokAgent,
 ) {
   const tasks = await store.getTasks(domain);
   const runs: EvalRun[] = [];
   let passed = 0;
   let scoreSum = 0;
   const mode = harnessMode ?? (domain === "zero_ctx" ? "zero_context" : "standard");
+  const slug = provider ? byokSlug(provider) : modelSlug;
 
   for (const task of tasks) {
-    const r = await evalTask({ taskId: task.id, modelSlug, harnessMode: mode });
+    const r = await evalTask({ taskId: task.id, modelSlug: slug, harnessMode: mode, provider });
     runs.push(r.run);
     if (r.passed) passed += 1;
     scoreSum += r.score;
@@ -304,7 +335,7 @@ export async function evalSuite(
 
   const total = tasks.length;
   return {
-    modelSlug,
+    modelSlug: slug,
     domain,
     total,
     passed,

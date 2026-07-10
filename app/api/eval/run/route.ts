@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { validateByokAgent, byokSlug, providerConfig } from "@/lib/byok";
 import { evalTask, preparePrompt } from "@/lib/eval";
 import * as store from "@/lib/store";
-import { runModelStream } from "@/lib/openrouter";
+import { runModelStream, runModelStreamDirect } from "@/lib/openrouter";
 import { runVerifier } from "@/lib/verifiers";
 import { checkRunLimit, getIp } from "@/lib/rate-limit";
 import { harnessLabel } from "@/lib/harness";
@@ -26,24 +27,36 @@ export async function POST(req: Request) {
     const output = body.output as string | undefined;
     const stream = body.stream as boolean | undefined;
     const harnessMode = body.harnessMode as HarnessMode | undefined;
+    const provider = body.provider ? validateByokAgent(body.provider) : undefined;
 
     if (!taskId) return NextResponse.json({ error: "taskId required" }, { status: 400 });
-    if (!output && !modelSlug) return NextResponse.json({ error: "modelSlug or output required" }, { status: 400 });
+    if (!output && !modelSlug && !provider) {
+      return NextResponse.json({ error: "modelSlug, provider, or output required" }, { status: 400 });
+    }
+
+    const slug = provider ? byokSlug(provider) : (modelSlug ?? "paste/dev");
 
     if (!stream || output) {
-      const res = await evalTask({ taskId, modelSlug: modelSlug ?? "paste/dev", output, harnessMode });
+      const res = await evalTask({
+        taskId,
+        modelSlug: slug,
+        output,
+        harnessMode,
+        provider,
+      });
       return NextResponse.json(res);
     }
 
     // streaming mode
     const task = await store.getTask(taskId);
     if (!task) return NextResponse.json({ error: "task not found" }, { status: 404 });
-    const slug = modelSlug ?? "paste/dev";
     const mode: HarnessMode =
       harnessMode ?? (task.domain === "zero_ctx" ? "zero_context" : "standard");
 
     const prompt = await preparePrompt(task);
-    const { stream: oaiStream, t0 } = await runModelStream(prompt, slug, mode);
+    const { stream: oaiStream, t0 } = provider
+      ? await runModelStreamDirect(prompt, provider.model, providerConfig(provider), mode)
+      : await runModelStream(prompt, slug, mode);
 
     const encoder = new TextEncoder();
     const readable = new ReadableStream({

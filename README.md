@@ -18,6 +18,8 @@ most importantly no more ' trust me bro benchmark '
 - **realshot** — BYOK agent duels at `/realshot` (one-shot tasks, auto-scored winner)
 - **aiml api** — cheap live testing via `AIMLAPI_KEY` and `aiml/` model slugs (Claude blocked)
 - **challenges** — fixed niche sprints at `/challenges` (sql + json persistence, infographic per session)
+- **BYOK bench** — `/bench` with your own API key (phase 2)
+- **challenge builder** — `/challenges/new` ad-hoc BYOK sprints (phase 3)
 - contamination probes (paraphrase + counterfactual) on supported tasks
 - custom task suites API, baseline script, BYOK provider smoke test
 - `POST /api/eval/run` — single task eval (optional `harnessMode`)

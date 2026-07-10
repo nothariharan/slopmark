@@ -85,7 +85,15 @@ export async function runModelDirect(
 
 export async function runModelMultiTurn(messages: ChatMessage[], slug: string, harnessMode: HarnessMode = "standard") {
   const { provider, model } = resolveProvider(slug);
+  return runModelMultiTurnDirect(messages, model, provider, harnessMode);
+}
 
+export async function runModelMultiTurnDirect(
+  messages: ChatMessage[],
+  model: string,
+  provider: ProviderConfig,
+  harnessMode: HarnessMode = "standard",
+) {
   const t0 = Date.now();
   const msgs =
     messages[0]?.role === "system"
@@ -115,7 +123,15 @@ export function pasteMeta(): RunMeta {
 
 export async function runModelStream(prompt: string, slug: string, harnessMode: HarnessMode = "standard") {
   const { provider, model } = resolveProvider(slug);
+  return runModelStreamDirect(prompt, model, provider, harnessMode);
+}
 
+export async function runModelStreamDirect(
+  prompt: string,
+  model: string,
+  provider: ProviderConfig,
+  harnessMode: HarnessMode = "standard",
+) {
   const t0 = Date.now();
   const stream = await mk(provider).chat.completions.create({
     model,

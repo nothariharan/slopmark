@@ -21,7 +21,7 @@ base url: `/api` (same origin as next app)
 
 > explain: score one task with a model or pasted output
 
-- [ ] body: `{ taskId, modelSlug }` OR `{ taskId, output }` for paste mode
+- [ ] body: `{ taskId, modelSlug }` OR `{ taskId, output }` for paste mode OR `{ taskId, provider }` for BYOK
 - [ ] response: `{ passed, score, details, rules?, output, meta, run }`
 - [ ] errors: missing key, task not found, missing OPENROUTER_API_KEY
 - [ ] example curl commands (placeholder)
@@ -124,6 +124,17 @@ fixed niche sprints — persisted sessions with infographic UI. see [benchmark c
 - default slug: `niche-sprint-v1`
 - requires `AIMLAPI_KEY` in `.env.local`
 - view results: `/challenge/{slug}`
+
+### POST /api/challenges/run (ad-hoc BYOK)
+
+- body: `{ title, tasks[], models: [{ label, provider }] }` — max 15 tasks, 6 models
+- response: full `ChallengeResults` (not persisted on serverless)
+- ui: `/challenges/new`
+
+### POST /api/eval/run — BYOK
+
+- optional `provider: { name?, baseURL, apiKey, model }` instead of `modelSlug`
+- keys are not stored server-side
 
 ---
 

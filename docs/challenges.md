@@ -102,6 +102,39 @@ deployed api routes read from committed json via `lib/challenges/store-json.ts` 
 
 ---
 
+## phase 2 — BYOK bench (live)
+
+`/bench` now has a **use my own API key** toggle. keys stay in `sessionStorage` — sent per request only.
+
+`POST /api/eval/run` accepts optional `provider`:
+
+```json
+{
+  "taskId": "json-01",
+  "provider": {
+    "name": "my model",
+    "baseURL": "https://api.aimlapi.com/v1",
+    "apiKey": "…",
+    "model": "openai/gpt-4o-mini"
+  },
+  "harnessMode": "zero_context"
+}
+```
+
+`POST /api/eval/suite` also accepts `provider` for full-domain BYOK sweeps.
+
+test connection uses the same pong smoke as realshot (`PUT /api/realshot/duel`).
+
+---
+
+## phase 3 — build your own sprint (ad-hoc)
+
+`/challenges/new` — pick preset tasks, add 1–6 BYOK models, run, get the same infographic inline.
+
+`POST /api/challenges/run` — ad-hoc challenge (max 15 tasks × 6 models). returns full `ChallengeResults` json. download from the ui — not persisted on vercel unless you commit json locally.
+
+---
+
 ## roadmap
 
 | phase | feature |
