@@ -104,6 +104,32 @@ top scores: GPT-OSS 120B + GLM 5.1 at 100%; GLM 5.2 / DeepSeek V4 Pro / Kimi K2.
 
 ---
 
+## game night v1
+
+| | |
+|---|---|
+| slug | `game-night-v1` |
+| models | 5 Fireworks serverless (same lineup as drawing contest) |
+| tasks | 10 party-game instruction contracts (`ins-game-*`) |
+| harness | `zero_context` |
+| view | `/challenge/game-night-v1` |
+
+### scoreboard
+
+| rank | model | pass rate |
+|---:|---|---:|
+| 1 | GPT-OSS 120B | **90%** (9/10) |
+| 2 | DeepSeek V4 Pro | 60% |
+| 3 | Kimi K2.6 | 30% |
+| 4 | GLM 5.2 | 20% |
+| 5 | GLM 5.1 | 10% |
+
+unlike drawing contest (~90–100% across the board), game night spreads hard — models leak chain-of-thought into answers under zero context (one-word / ALL CAPS / haiku contracts expose narrators). GPT-OSS’s only miss: empty output on the no-letter-`e` pizza lipogram.
+
+tasks live in `data/tasks/instruction.json` as `ins-game-*`.
+
+---
+
 ## production (vercel)
 
 deployed api routes read from committed json via `lib/challenges/store-json.ts` — no sqlite on serverless. see [deploy](/docs/deploy).

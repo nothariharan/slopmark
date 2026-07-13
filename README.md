@@ -10,16 +10,16 @@ most importantly no more ' trust me bro benchmark '
 
 ## what works (v0)
 
-- **instruction follow** — 181 seed tasks, rule-based verifier
+- **instruction follow** — 191 seed tasks (incl. game-night party contracts), rule-based verifier
 - **json** + **math** + **sycophancy** domains (seed tasks, deterministic verifiers)
 - **procedural** — 75 seeded instances (direction, sequence, time, calendar, palindrome)
 - **refusal** + **hierarchy** + **calibration** + **persistence** domains
 - **zero context** — HTML one-shot tasks with no system prompt (`zero_ctx` domain)
 - **realshot** — BYOK agent duels at `/realshot` (one-shot tasks, auto-scored winner)
 - **aiml api** — cheap live testing via `AIMLAPI_KEY` and `aiml/` model slugs (Claude blocked)
-- **fireworks** — `FIREWORKS_API_KEY` + `fireworks/` model slugs (drawing contest used this)
+- **fireworks** — `FIREWORKS_API_KEY` + `fireworks/` model slugs (drawing + game night)
 - **drawing** — SVG one-shot tasks + `html_contract` anatomy checks (`/docs/drawing`)
-- **challenges** — fixed niche sprints at `/challenges` (sql + json persistence, infographic per session)
+- **challenges** — fixed niche sprints at `/challenges` (niche sprint, drawing contest, game night)
 - **sessions wall** — `/sessions` + leaderboard folds committed challenge/session JSON (survives Vercel)
 - **BYOK bench** — `/bench` with your own API key (phase 2)
 - **challenge builder** — `/challenges/new` ad-hoc BYOK sprints (phase 3)
@@ -31,7 +31,7 @@ most importantly no more ' trust me bro benchmark '
 - `/bench` eval console (run task, run suite, paste-to-score dev mode)
 - `/leaderboard` benchmark rankings (sessions view default)
 - `/goal` minigames vs live models (stump, roulette, direction tracker, object tracker, anagram, sequence, and more)
-- **live:** https://slopmark.vercel.app — try `/challenge/drawing-contest-v1`
+- **live:** https://slopmark.vercel.app — try `/challenge/game-night-v1` and `/challenge/drawing-contest-v1`
 
 ---
 
