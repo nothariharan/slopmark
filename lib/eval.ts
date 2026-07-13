@@ -7,7 +7,7 @@ import { runVerifier } from "./verifiers";
 import { checkTurnPersistence, verifyPersistence } from "./verifiers/persistence";
 import { buildHierarchyPrompt } from "./verifiers/hierarchy";
 import { mergeVerifierResults, runRobustnessProbes } from "./contamination";
-import { harnessLabel, systemPromptFor } from "./harness";
+import { harnessLabel, maxTokFor, systemPromptFor } from "./harness";
 import { taskPoolVersion } from "./task-pool";
 import type { HarnessMode } from "./types";
 import type { ReviewItem } from "./store/sqlite-store";
@@ -32,11 +32,11 @@ function modelCtx(inp: RunInput): ModelCtx {
   return { slug: inp.modelSlug || "paste/dev" };
 }
 
-async function singleTurn(prompt: string, ctx: ModelCtx, mode: HarnessMode) {
+async function singleTurn(prompt: string, ctx: ModelCtx, mode: HarnessMode, maxTokens?: number) {
   if (ctx.provider) {
-    return runModelDirect(prompt, ctx.provider.model, providerConfig(ctx.provider), mode);
+    return runModelDirect(prompt, ctx.provider.model, providerConfig(ctx.provider), mode, maxTokens);
   }
-  return runModel(prompt, ctx.slug, mode);
+  return runModel(prompt, ctx.slug, mode, maxTokens);
 }
 
 async function multiTurn(messages: ChatMessage[], ctx: ModelCtx, mode: HarnessMode) {
@@ -305,7 +305,7 @@ export async function evalTask(inp: RunInput) {
 
   if (!inp.output) {
     const prompt = await preparePrompt(task);
-    const res = await singleTurn(prompt, ctx, mode);
+    const res = await singleTurn(prompt, ctx, mode, maxTokFor(task.domain));
     output = res.output;
     meta = res.meta;
   }

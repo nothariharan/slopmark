@@ -75,6 +75,7 @@ export async function getTask(id: string): Promise<BenchTask | null> {
     per: "persistence",
     ref: "refusal",
     zctx: "zero_ctx",
+    draw: "drawing",
   };
   const domain = domainMap[prefix] ?? "instruction";
   const tasks = await getTasks(domain);
@@ -112,6 +113,7 @@ export async function getLeaderboard(domain: Domain): Promise<LeaderboardRow[]> 
 
   for (const r of memRuns) {
     if (r.domain !== domain) continue;
+    if (r.model_slug.startsWith("paste/")) continue;
     const cur = map.get(r.model_slug) ?? {
       model_slug: r.model_slug,
       domain,
@@ -149,6 +151,7 @@ export async function getLeaderboardAggregate(): Promise<LeaderboardRow[]> {
   const map = new Map<string, LeaderboardRow>();
 
   for (const r of memRuns) {
+    if (r.model_slug.startsWith("paste/")) continue;
     const cur = map.get(r.model_slug) ?? {
       model_slug: r.model_slug,
       domain: "instruction" as Domain,

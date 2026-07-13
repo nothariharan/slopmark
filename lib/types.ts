@@ -13,9 +13,10 @@ export type Domain =
   | "procedural"
   | "refusal"
   | "hierarchy"
-  | "zero_ctx";
+  | "zero_ctx"
+  | "drawing";
 
-export const MIN_RUNS = 10;
+export const MIN_RUNS = 3;
 
 export type HarnessMode = "standard" | "zero_context";
 

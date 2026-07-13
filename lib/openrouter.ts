@@ -16,11 +16,28 @@ function openRouterProvider(): ProviderConfig {
   };
 }
 
+function fireworksProvider(): ProviderConfig | null {
+  const key = process.env.FIREWORKS_API_KEY;
+  if (!key) return null;
+  return { baseURL: "https://api.fireworks.ai/inference/v1", apiKey: key };
+}
+
 function customProvider(): ProviderConfig | null {
   const base = process.env.CUSTOM_API_BASE;
   const key = process.env.CUSTOM_API_KEY;
   if (!base || !key) return null;
   return { baseURL: base, apiKey: key };
+}
+
+// on a public deploy we dont want randoms burning our key on any model they type.
+// set OPENROUTER_ALLOWLIST to a comma list to lock it down; empty = allow all (local dev)
+function assertOpenRouterModelAllowed(model: string) {
+  const raw = process.env.OPENROUTER_ALLOWLIST?.trim();
+  if (!raw) return;
+  const allowed = raw.split(",").map((s) => s.trim()).filter(Boolean);
+  if (!allowed.includes(model)) {
+    throw new Error(`model ${model} not on the allowlist`);
+  }
 }
 
 export function resolveProvider(modelSlug: string): { provider: ProviderConfig; model: string } {
@@ -31,6 +48,14 @@ export function resolveProvider(modelSlug: string): { provider: ProviderConfig; 
     assertAimlModelAllowed(model);
     return { provider: aiml, model };
   }
+  if (modelSlug.startsWith("fireworks/")) {
+    const fw = fireworksProvider();
+    if (!fw) throw new Error("FIREWORKS_API_KEY not set");
+    const rest = modelSlug.slice("fireworks/".length);
+    // short slugs like fireworks/glm-5p1 expand to the full account path
+    const model = rest.includes("/") ? rest : `accounts/fireworks/models/${rest}`;
+    return { provider: fw, model };
+  }
   if (modelSlug.startsWith("custom/")) {
     const custom = customProvider();
     if (!custom) throw new Error("custom provider not configured — set CUSTOM_API_BASE and CUSTOM_API_KEY");
@@ -38,6 +63,7 @@ export function resolveProvider(modelSlug: string): { provider: ProviderConfig; 
   }
   const or = openRouterProvider();
   if (!or.apiKey) throw new Error("missing OPENROUTER_API_KEY");
+  assertOpenRouterModelAllowed(modelSlug);
   return { provider: or, model: modelSlug };
 }
 
@@ -49,9 +75,14 @@ function mk(cfg: ProviderConfig) {
   });
 }
 
-export async function runModel(prompt: string, slug: string, harnessMode: HarnessMode = "standard") {
+export async function runModel(
+  prompt: string,
+  slug: string,
+  harnessMode: HarnessMode = "standard",
+  maxTokens = maxTok,
+) {
   const { provider, model } = resolveProvider(slug);
-  return runModelDirect(prompt, model, provider, harnessMode);
+  return runModelDirect(prompt, model, provider, harnessMode, maxTokens);
 }
 
 export async function runModelDirect(

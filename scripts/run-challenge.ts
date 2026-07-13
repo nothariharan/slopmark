@@ -35,7 +35,13 @@ async function main() {
   const slug = process.argv[2] ?? "niche-sprint-v1";
   const manifest = await loadManifest(slug);
   if (!manifest) throw new Error(`challenge manifest not found: ${slug}`);
-  if (!process.env.AIMLAPI_KEY) throw new Error("AIMLAPI_KEY not set in .env.local");
+
+  // only demand the keys the manifest actually needs
+  const slugs = manifest.models.map((m) => m.slug);
+  if (slugs.some((s) => s.startsWith("aiml/")) && !process.env.AIMLAPI_KEY)
+    throw new Error("AIMLAPI_KEY not set in .env.local");
+  if (slugs.some((s) => s.startsWith("fireworks/")) && !process.env.FIREWORKS_API_KEY)
+    throw new Error("FIREWORKS_API_KEY not set in .env.local");
 
   console.log(`\n=== challenge: ${manifest.title} ===`);
   console.log(`${manifest.tasks.length} tasks × ${manifest.models.length} models\n`);

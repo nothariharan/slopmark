@@ -1,0 +1,196 @@
+[
+  {
+    "id": "draw-house-1",
+    "domain": "drawing",
+    "prompt": "Draw a simple house as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a 200x200 viewBox, a <rect> for the walls, a <polygon> for the roof, a <rect> for the door, and at least one <circle> or <rect> window. Every shape must have a fill attribute. No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "rect", "min_count": 2 },
+        { "type": "contains_tag", "tag": "polygon" },
+        { "type": "attribute_exists", "tag": "rect", "attr": "fill" },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "draw-cat-face-1",
+    "domain": "drawing",
+    "prompt": "Draw a cat face as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, one large <circle> for the head, two <circle> eyes (so at least 3 circles total), two <polygon> triangle ears, and at least one <line> or <path> for whiskers. No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "circle", "min_count": 3 },
+        { "type": "contains_tag", "tag": "polygon", "min_count": 2 },
+        { "type": "attribute_exists", "tag": "circle", "attr": "fill" },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "draw-snowman-1",
+    "domain": "drawing",
+    "prompt": "Draw a snowman as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, exactly three stacked <circle> elements for the body (at least 3 circles), a <rect> hat, and a <polygon> carrot nose. Every circle needs a fill attribute. No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "circle", "min_count": 3 },
+        { "type": "contains_tag", "tag": "rect" },
+        { "type": "contains_tag", "tag": "polygon" },
+        { "type": "attribute_exists", "tag": "circle", "attr": "fill" },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "draw-bicycle-1",
+    "domain": "drawing",
+    "prompt": "Draw a bicycle as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, two <circle> wheels with stroke attributes, at least three <line> elements for the frame, and a <path> or <rect> for the seat. No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "circle", "min_count": 2 },
+        { "type": "attribute_exists", "tag": "circle", "attr": "stroke" },
+        { "type": "contains_tag", "tag": "line", "min_count": 3 },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "draw-rocket-1",
+    "domain": "drawing",
+    "prompt": "Draw a rocket ship launching as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, a <rect> or <path> body, a <polygon> nose cone, two <polygon> fins (at least 3 polygons total including the nose), a <circle> window, and a <path> or <polygon> flame with fill=\"orange\" (the literal word orange). No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "polygon", "min_count": 3 },
+        { "type": "contains_tag", "tag": "circle" },
+        { "type": "required_substring", "value": "orange", "case_insensitive": true },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "draw-smiley-grid-1",
+    "domain": "drawing",
+    "prompt": "Draw a 2x2 grid of four smiley faces as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, at least 4 large <circle> heads plus 8 <circle> eyes (12 circles minimum), and at least 4 <path> elements for the smiles using arc or quadratic curves. Each head circle needs a fill attribute. No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "circle", "min_count": 12 },
+        { "type": "contains_tag", "tag": "path", "min_count": 4 },
+        { "type": "attribute_exists", "tag": "circle", "attr": "fill" },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "hard"
+  },
+  {
+    "id": "draw-traffic-light-1",
+    "domain": "drawing",
+    "prompt": "Draw a traffic light as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, one <rect> housing with fill attribute, and exactly three <circle> lights — one with fill=\"red\", one with fill=\"yellow\", one with fill=\"green\" (the fill values must literally be the words red, yellow, green). No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "rect" },
+        { "type": "contains_tag", "tag": "circle", "min_count": 3 },
+        { "type": "required_substring", "value": "\"red\"" },
+        { "type": "required_substring", "value": "\"yellow\"" },
+        { "type": "required_substring", "value": "\"green\"" },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "draw-fish-tank-1",
+    "domain": "drawing",
+    "prompt": "Draw a fish tank with two fish as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, a <rect> tank with a blue fill (the word blue or a #hex starting with #0 or #1 or #2 or #3 or #4), two <ellipse> or <circle> fish bodies, two <polygon> tails, and at least three <circle> bubbles. No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "rect" },
+        { "type": "contains_tag", "tag": "polygon", "min_count": 2 },
+        { "type": "contains_tag", "tag": "circle", "min_count": 3 },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "hard"
+  },
+  {
+    "id": "draw-pixel-heart-1",
+    "domain": "drawing",
+    "prompt": "Draw a pixel-art heart as an SVG using only <rect> squares (like 8-bit art). Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, at least 12 <rect> elements all the same size arranged into a heart shape, every rect with fill=\"red\" or a red hex color, and no <circle>, <ellipse> or <path> elements at all. No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "rect", "min_count": 12 },
+        { "type": "attribute_exists", "tag": "rect", "attr": "fill" },
+        { "type": "forbidden_pattern", "pattern": "<(circle|ellipse|path)[\\s>]" },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "hard"
+  },
+  {
+    "id": "draw-sunset-scene-1",
+    "domain": "drawing",
+    "prompt": "Draw a sunset over mountains as an SVG. Output ONLY the SVG markup, no explanation, no code fences. Requirements: a viewBox attribute, a <linearGradient> in <defs> for the sky, a <circle> sun, at least two <polygon> mountains, and a <rect> using the gradient via fill=\"url(#...)\". No <script> tags.",
+    "verifier": {
+      "type": "html_contract",
+      "rules": [
+        { "type": "contains_tag", "tag": "svg" },
+        { "type": "required_substring", "value": "viewBox", "case_insensitive": true },
+        { "type": "contains_tag", "tag": "linearGradient" },
+        { "type": "contains_tag", "tag": "circle" },
+        { "type": "contains_tag", "tag": "polygon", "min_count": 2 },
+        { "type": "required_substring", "value": "url(#", "case_insensitive": true },
+        { "type": "forbidden_pattern", "pattern": "<script" }
+      ]
+    },
+    "source": "seed",
+    "approved": true,
+    "difficulty": "hard"
+  }
+]

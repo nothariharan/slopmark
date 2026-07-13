@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChallengeInfographic } from "@/components/ChallengeInfographic";
+import { SvgThumb, extractSvg } from "@/components/SvgOutput";
 import type { ChallengeResults, ChallengeRunRow } from "@/lib/challenges/types";
 
 export default function ChallengePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -52,6 +53,8 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
 
         <ChallengeInfographic data={data} />
 
+        <DrawingGallery data={data} />
+
         <section className="mt-16">
           <h2 className="mb-6 text-xl font-medium">per-model breakdown</h2>
           <div className="space-y-3">
@@ -84,6 +87,45 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
         </section>
       </main>
     </div>
+  );
+}
+
+/** when the runs are drawings, show them — a grid of model art per task */
+function DrawingGallery({ data }: { data: ChallengeResults }) {
+  const drawn = data.runs.filter((r) => !r.error && extractSvg(r.output));
+  if (!drawn.length) return null;
+
+  const tasks = data.manifest.tasks.filter((t) => drawn.some((r) => r.task_id === t.id));
+
+  return (
+    <section className="mt-16">
+      <h2 className="text-xl font-medium">the gallery</h2>
+      <p className="mt-1 text-sm text-zinc-500">
+        every drawing, rendered exactly as the model coded it. judge them.
+      </p>
+      <div className="mt-8 space-y-10">
+        {tasks.map((t) => (
+          <div key={t.id}>
+            <h3 className="mb-3 font-mono text-sm text-zinc-400">{t.label}</h3>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              {data.manifest.models.map((m) => {
+                const run = drawn.find((r) => r.task_id === t.id && r.model_label === m.label);
+                return run ? (
+                  <SvgThumb key={m.slug} output={run.output} label={m.label} passed={run.passed} />
+                ) : (
+                  <div
+                    key={m.slug}
+                    className="flex aspect-square items-center justify-center border border-dashed border-zinc-900 text-[11px] text-zinc-700"
+                  >
+                    {m.label}: no drawing
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

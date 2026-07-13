@@ -1,0 +1,82 @@
+{
+  "slug": "drawing-contest-v1",
+  "title": "Drawing Contest v1",
+  "subtitle": "5 Fireworks models · 10 SVG drawing challenges",
+  "description": "Models are told to draw — a house, a cat, a snowman, a rocket, pixel-art hearts — as raw SVG markup. No canvas, no image model, just code that has to render into a picture. A deterministic verifier checks the anatomy of each drawing: right shapes, right counts, right fills, no cheating with <script>. Zero context harness, temperature 0, run via Fireworks serverless.",
+  "harness_mode": "zero_context",
+  "tasks": [
+    {
+      "id": "draw-house-1",
+      "label": "a simple house",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-cat-face-1",
+      "label": "cat face",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-snowman-1",
+      "label": "snowman",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-bicycle-1",
+      "label": "bicycle",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-rocket-1",
+      "label": "rocket launch",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-traffic-light-1",
+      "label": "traffic light",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-smiley-grid-1",
+      "label": "2x2 smiley grid",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-fish-tank-1",
+      "label": "fish tank",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-pixel-heart-1",
+      "label": "pixel-art heart",
+      "category": "drawing"
+    },
+    {
+      "id": "draw-sunset-scene-1",
+      "label": "sunset over mountains",
+      "category": "drawing"
+    }
+  ],
+  "models": [
+    {
+      "slug": "fireworks/gpt-oss-120b",
+      "label": "GPT-OSS 120B"
+    },
+    {
+      "slug": "fireworks/glm-5p1",
+      "label": "GLM 5.1"
+    },
+    {
+      "slug": "fireworks/glm-5p2",
+      "label": "GLM 5.2"
+    },
+    {
+      "slug": "fireworks/deepseek-v4-pro",
+      "label": "DeepSeek V4 Pro"
+    },
+    {
+      "slug": "fireworks/kimi-k2p6",
+      "label": "Kimi K2.6"
+    }
+  ],
+  "created_at": "2026-07-13T00:00:00.000Z"
+}

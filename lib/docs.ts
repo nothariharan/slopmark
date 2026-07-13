@@ -82,6 +82,12 @@ export const docPages: DocPage[] = [
     file: "zero-context.md",
   },
   {
+    slug: "drawing",
+    title: "drawing domain",
+    desc: "models draw SVGs, rules check the anatomy",
+    file: "drawing.md",
+  },
+  {
     slug: "architecture",
     title: "architecture",
     desc: "layers, data flow, file map",
