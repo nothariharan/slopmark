@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { arenaVotes } from "@/lib/db/schema";
+import { sqliteAvailable } from "@/lib/db";
 import { randomUUID } from "crypto";
 
 export async function POST(req: Request) {
@@ -12,17 +11,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "missing fields" }, { status: 400 });
     }
 
-    // store the vote
+    if (!sqliteAvailable) {
+      // vercel has no durable sqlite — accept the vote so the UI doesn't scream
+      return NextResponse.json({ success: true, persisted: false });
+    }
+
+    const { db } = await import("@/lib/db");
+    const { arenaVotes } = await import("@/lib/db/schema");
+
     await db.insert(arenaVotes).values({
       id: randomUUID(),
       task_id: taskId,
       model_a: modelA,
       model_b: modelB,
       winner,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, persisted: true });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "vote failed";
     return NextResponse.json({ error: msg }, { status: 500 });

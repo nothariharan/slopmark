@@ -1,11 +1,34 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
-import * as schema from './schema';
+import * as schema from "./schema";
 
-const sqlite = new Database('data/local.db');
+/**
+ * sqlite is for local/cli only. on vercel the filesystem is ephemeral and
+ * better-sqlite3 native bindings are a footgun — routes that need persistence
+ * must read committed JSON (challenges/sessions) or supabase instead.
+ */
+export const sqliteAvailable = !process.env.VERCEL;
 
-// ensure all tables exist without requiring drizzle-kit push in dev
-sqlite.exec(`
+type Db = import("drizzle-orm/better-sqlite3").BetterSQLite3Database<typeof schema>;
+
+function initDb(): Db {
+  if (!sqliteAvailable) {
+    return new Proxy({} as Db, {
+      get(_target, prop) {
+        // avoid looking like a thenable to async code
+        if (prop === "then") return undefined;
+        throw new Error("sqlite unavailable on vercel serverless");
+      },
+    });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const Database = require("better-sqlite3") as typeof import("better-sqlite3");
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { drizzle } = require("drizzle-orm/better-sqlite3") as typeof import("drizzle-orm/better-sqlite3");
+
+  const sqlite = new Database("data/local.db");
+
+  // ensure all tables exist without requiring drizzle-kit push in dev
+  sqlite.exec(`
   CREATE TABLE IF NOT EXISTS eval_runs (
     id TEXT PRIMARY KEY,
     task_id TEXT NOT NULL,
@@ -92,10 +115,13 @@ sqlite.exec(`
   CREATE INDEX IF NOT EXISTS challenge_runs_model_idx ON challenge_runs (challenge_slug, model_slug);
 `);
 
-try {
-  sqlite.exec(`ALTER TABLE eval_runs ADD COLUMN upvotes INTEGER NOT NULL DEFAULT 0;`);
-} catch {
-  // column likely exists
+  try {
+    sqlite.exec(`ALTER TABLE eval_runs ADD COLUMN upvotes INTEGER NOT NULL DEFAULT 0;`);
+  } catch {
+    // column likely exists
+  }
+
+  return drizzle(sqlite, { schema });
 }
 
-export const db = drizzle(sqlite, { schema });
+export const db = initDb();
