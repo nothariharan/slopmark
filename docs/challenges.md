@@ -86,13 +86,21 @@ task ids can be procedural (`proc-*`), realshot (`rs-*`), or domain tasks (`json
 | json export | `data/challenges/{slug}/results.json` | git-tracked revisit without db |
 | supabase | `supabase/schema.sql` | production postgres when linked |
 
-api prefers sqlite; falls back to committed json if db is empty.
+api prefers committed json for public deploys; sqlite is for local CLI runs.
 
 ---
 
-## devlog screenshot
+## drawing contest v1
 
-the infographic lives at `#challenge-infographic` on the challenge page — bar chart, category heatmap, model cards. screenshot that block for your devlog.
+| | |
+|---|---|
+| slug | `drawing-contest-v1` |
+| models | 5 Fireworks serverless (`fireworks/` slugs) |
+| tasks | 10 SVG drawing contracts |
+| harness | `zero_context`, 4000 max tokens |
+| view | `/challenge/drawing-contest-v1` (gallery renders every drawing) |
+
+top scores: GPT-OSS 120B + GLM 5.1 at 100%; GLM 5.2 / DeepSeek V4 Pro / Kimi K2.6 at 90% (rocket flame color). see [drawing docs](/docs/drawing).
 
 ---
 
