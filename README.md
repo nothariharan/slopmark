@@ -17,17 +17,21 @@ most importantly no more ' trust me bro benchmark '
 - **zero context** — HTML one-shot tasks with no system prompt (`zero_ctx` domain)
 - **realshot** — BYOK agent duels at `/realshot` (one-shot tasks, auto-scored winner)
 - **aiml api** — cheap live testing via `AIMLAPI_KEY` and `aiml/` model slugs (Claude blocked)
+- **fireworks** — `FIREWORKS_API_KEY` + `fireworks/` model slugs (drawing contest used this)
+- **drawing** — SVG one-shot tasks + `html_contract` anatomy checks (`/docs/drawing`)
 - **challenges** — fixed niche sprints at `/challenges` (sql + json persistence, infographic per session)
+- **sessions wall** — `/sessions` + leaderboard folds committed challenge/session JSON (survives Vercel)
 - **BYOK bench** — `/bench` with your own API key (phase 2)
 - **challenge builder** — `/challenges/new` ad-hoc BYOK sprints (phase 3)
 - contamination probes (paraphrase + counterfactual) on supported tasks
 - custom task suites API, baseline script, BYOK provider smoke test
 - `POST /api/eval/run` — single task eval (optional `harnessMode`)
 - `POST /api/eval/suite` — full domain suite for one model
-- `GET /api/leaderboard` — per-model pass rate and avg score (min 10 runs)
+- `GET /api/leaderboard` — per-model pass rate and avg score (min 3 runs for live board; session board from JSON)
 - `/bench` eval console (run task, run suite, paste-to-score dev mode)
-- `/leaderboard` benchmark rankings
+- `/leaderboard` benchmark rankings (sessions view default)
 - `/goal` minigames vs live models (stump, roulette, direction tracker, object tracker, anagram, sequence, and more)
+- **live:** https://slopmark.vercel.app — try `/challenge/drawing-contest-v1`
 
 ---
 
@@ -45,11 +49,14 @@ for head-to-head agent duels with your own API keys, open http://localhost:3000/
 
 revisit a completed challenge session: http://localhost:3000/challenge/niche-sprint-v1 — see [challenges docs](/docs/challenges)
 
+drawing contest gallery: http://localhost:3000/challenge/drawing-contest-v1 — see [drawing docs](/docs/drawing)
+
 paste mode works without an api key. for live runs:
 
 - **aiml (recommended for testing):** set `AIMLAPI_KEY` in `.env.local`, pick an `aiml/` model on `/bench` — see [aiml api docs](/docs/aimlapi)
+- **fireworks:** set `FIREWORKS_API_KEY`, use `fireworks/` slugs (e.g. `fireworks/gpt-oss-120b`)
 - **openrouter:** set `OPENROUTER_API_KEY`, use the openrouter model group
-optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persistence. without it, runs save to `data/eval-runs.json`.
+optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persistence. without it, runs save to `data/eval-runs.json`. no login required — auth UI was removed.
 
 ---
 
