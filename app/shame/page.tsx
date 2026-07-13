@@ -78,21 +78,21 @@ export default function ShamePage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-sm font-mono text-zinc-300 bg-zinc-900 px-2 py-1">{r.model_slug}</span>
-                    <span className="text-xs text-zinc-500">Domain: {r.domain}</span>
-                    <span className="text-xs text-red-500 ml-auto">Score: {r.score}</span>
+                    <span className="text-xs text-zinc-500">{r.domain}</span>
+                    <span className="text-xs text-red-500 ml-auto">score {r.score}</span>
                   </div>
                   
                   <div className="space-y-4">
                     <div>
-                      <p className="text-xs text-zinc-500 mb-2">Model Output:</p>
-                      <pre className="whitespace-pre-wrap text-sm text-zinc-300 bg-black border border-zinc-900 p-4 rounded-none">
+                      <p className="text-xs text-zinc-500 mb-2">model output</p>
+                      <pre className="max-h-48 overflow-auto whitespace-pre-wrap text-sm text-zinc-300 bg-black border border-zinc-900 p-4 rounded-none">
                         {r.output}
                       </pre>
                     </div>
-                    
+
                     <div>
-                      <p className="text-xs text-zinc-500 mb-2">Verifier Details:</p>
-                      <pre className="whitespace-pre-wrap text-xs text-zinc-400 font-mono">
+                      <p className="text-xs text-zinc-500 mb-2">verifier details</p>
+                      <pre className="max-h-32 overflow-auto whitespace-pre-wrap text-xs text-zinc-400 font-mono">
                         {r.details}
                       </pre>
                     </div>
@@ -106,3 +106,6 @@ export default function ShamePage() {
     </div>
   );
 }
+
+
+// just another approach on doingsomething new like a shame approach to be specific not reall y much fo an idea yet but yeah 
