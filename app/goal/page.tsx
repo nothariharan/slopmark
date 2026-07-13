@@ -1988,7 +1988,7 @@ export default function GoalPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen bg-black text-zinc-100">
       <main className="mx-auto max-w-5xl space-y-5 p-4">
         <div className="flex items-end justify-between pt-2">
           <div className="space-y-1">

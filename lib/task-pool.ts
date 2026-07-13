@@ -17,3 +17,5 @@ export function taskPoolVersion(): string {
     return "unknown";
   }
 }
+
+// simpke O(1) logic vioa has map to chosoe the best task appropriately 

@@ -64,7 +64,7 @@ export default function ArenaPage() {
   }
   // the ui as always subject to change later on
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen bg-black text-zinc-100">
       <main className="mx-auto max-w-6xl p-4">
         <div className="mb-8">
           <h1 className="text-2xl font-semibold">human arena</h1>

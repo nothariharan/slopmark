@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runModel } from "@/lib/openrouter";
 import { verifyInstruction } from "@/lib/verifiers/instruction";
+import { checkRunLimit, getIp } from "@/lib/rate-limit";
 import type { InstructionRule } from "@/lib/types";
 
 function buildPrompt(prompt: string, rules: InstructionRule[]): string {
@@ -27,6 +28,10 @@ function buildPrompt(prompt: string, rules: InstructionRule[]): string {
 
 export async function POST(req: NextRequest) {
   try {
+    const limit = checkRunLimit(getIp(req));
+    if (!limit.ok) {
+      return NextResponse.json({ error: `rate limit — try again in ${limit.retryIn}s` }, { status: 429 });
+    }
     const { prompt, rules, modelSlug } = (await req.json()) as {
       prompt: string;
       rules: InstructionRule[];

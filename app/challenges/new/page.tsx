@@ -140,7 +140,11 @@ export default function NewChallengePage() {
 
         <h1 className="mt-4 text-2xl font-semibold">build a challenge</h1>
         <p className="mt-2 text-sm text-zinc-500">
-          pick tasks, add BYOK models, run ad-hoc. results stay in your browser unless you download json.
+          pick tasks, add BYOK models, run ad-hoc. every run lands on the{" "}
+          <Link href="/sessions" className="text-zinc-300 hover:text-zinc-100">
+            sessions wall
+          </Link>
+          .
         </p>
 
         <Card className="mt-8 space-y-3 border-zinc-800 bg-zinc-950 p-5">
@@ -232,6 +236,11 @@ export default function NewChallengePage() {
             <Button variant="outline" onClick={downloadResults}>
               download results.json
             </Button>
+          )}
+          {results && (
+            <Link href={`/sessions/${results.manifest.slug}`}>
+              <Button variant="outline">view on the wall →</Button>
+            </Link>
           )}
         </div>
 

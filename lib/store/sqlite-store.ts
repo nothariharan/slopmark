@@ -89,7 +89,7 @@ export async function getLeaderboard(domain: Domain): Promise<LeaderboardRow[]> 
         avg_output_tokens: sql<number>`avg(output_tokens)`.as("avg_output_tokens"),
       })
       .from(evalRuns)
-      .where(eq(evalRuns.domain, domain))
+      .where(sql`${evalRuns.domain} = ${domain} and ${evalRuns.model_slug} not like 'paste/%'`)
       .groupBy(evalRuns.model_slug)
       .having(sql`count(*) >= ${MIN_RUNS}`)
       .orderBy(sql`pass_rate desc`, sql`avg_score desc`);
@@ -122,6 +122,7 @@ export async function getLeaderboardAggregate(): Promise<LeaderboardRow[]> {
         avg_output_tokens: sql<number>`avg(output_tokens)`.as("avg_output_tokens"),
       })
       .from(evalRuns)
+      .where(sql`${evalRuns.model_slug} not like 'paste/%'`)
       .groupBy(evalRuns.model_slug)
       .having(sql`count(*) >= ${MIN_RUNS}`)
       .orderBy(sql`pass_rate desc`);
@@ -175,15 +176,23 @@ export async function voteReview(id: string, score: number, runId: string) {
     if (newVoteCount >= FINALIZE_AT) {
       const finalScore = Math.round((newVoteSum / newVoteCount / 5) * 100);
       const passed = finalScore >= 60;
+      // bump atomically so parallel votes dont clobber each other
       await db
         .update(reviewQueue)
-        .set({ vote_sum: newVoteSum, vote_count: newVoteCount, status: "reviewed" })
+        .set({
+          vote_sum: sql`${reviewQueue.vote_sum} + ${score}`,
+          vote_count: sql`${reviewQueue.vote_count} + 1`,
+          status: "reviewed",
+        })
         .where(eq(reviewQueue.id, id));
       await updateRun(runId, finalScore, passed);
     } else {
       await db
         .update(reviewQueue)
-        .set({ vote_sum: newVoteSum, vote_count: newVoteCount })
+        .set({
+          vote_sum: sql`${reviewQueue.vote_sum} + ${score}`,
+          vote_count: sql`${reviewQueue.vote_count} + 1`,
+        })
         .where(eq(reviewQueue.id, id));
     }
   } catch (e) {
@@ -231,10 +240,11 @@ export async function getShameRuns(limit = 20) {
 
 export async function upvoteRun(id: string) {
   try {
-    const [run] = await db.select().from(evalRuns).where(eq(evalRuns.id, id));
-    if (run) {
-      await db.update(evalRuns).set({ upvotes: run.upvotes + 1 }).where(eq(evalRuns.id, id));
-    }
+    // single atomic bump — no read then write, so concurrent clicks all count
+    await db
+      .update(evalRuns)
+      .set({ upvotes: sql`${evalRuns.upvotes} + 1` })
+      .where(eq(evalRuns.id, id));
   } catch (e) {
     console.error("failed to upvote run", e);
   }

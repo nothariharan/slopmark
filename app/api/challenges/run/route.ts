@@ -3,15 +3,8 @@ import { validateByokAgent } from "@/lib/byok";
 import { runChallengeGrid, smokeChallengeModels, type ChallengeModelInput } from "@/lib/challenges/run";
 import type { ChallengeManifest, ChallengeTaskRef } from "@/lib/challenges/types";
 import { checkSuiteLimit, getIp } from "@/lib/rate-limit";
+import { saveSession, sessionSlug } from "@/lib/challenges/sessions";
 import type { HarnessMode } from "@/lib/types";
-
-function slugify(s: string) {
-  return s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 48);
-}
 
 export async function POST(req: Request) {
   try {
@@ -57,7 +50,8 @@ export async function POST(req: Request) {
       throw new Error(`models[${i}] needs slug or provider`);
     });
 
-    const slug = slugify(body.slug ? String(body.slug) : title) || `custom-${Date.now()}`;
+    // always a fresh unique slug so each run becomes its own entry on the wall
+    const slug = sessionSlug(body.slug ? String(body.slug) : title);
 
     const manifest: ChallengeManifest = {
       slug,
@@ -75,6 +69,13 @@ export async function POST(req: Request) {
 
     await smokeChallengeModels(models);
     const results = await runChallengeGrid(manifest, models);
+
+    // persist so it shows up on the sessions wall (best-effort — read-only fs just no-ops)
+    try {
+      await saveSession(results);
+    } catch (e) {
+      console.error("failed to persist session", e);
+    }
 
     return NextResponse.json(results);
   } catch (e) {

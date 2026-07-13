@@ -226,7 +226,7 @@ export default function RealshotPage() {
   const catHint = CATEGORIES.find((c) => c.value === category)?.hint ?? "";
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
+    <div className="min-h-screen bg-black text-zinc-100">
       <main className="mx-auto max-w-6xl space-y-6 p-4">
         <div>
           <h1 className="text-2xl font-semibold">realshot</h1>

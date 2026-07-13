@@ -3,10 +3,16 @@ import { runModel } from "@/lib/openrouter";
 import * as store from "@/lib/store";
 import { models } from "@/lib/models";
 import { randomUUID } from "crypto";
+import { checkDuelLimit, getIp } from "@/lib/rate-limit";
 import type { Domain } from "@/lib/types";
 
 export async function GET(req: Request) {
   try {
+    // this fires two model calls, so meter it like a duel
+    const limit = checkDuelLimit(getIp(req));
+    if (!limit.ok) {
+      return NextResponse.json({ error: `rate limit — try again in ${limit.retryIn}s` }, { status: 429 });
+    }
     const url = new URL(req.url);
     const domain = (url.searchParams.get("domain") ?? "instruction") as Domain;
     

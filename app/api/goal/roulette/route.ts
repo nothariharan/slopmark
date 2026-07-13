@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runModel, runModelMultiTurn } from "@/lib/openrouter";
 import { sysPrompt } from "@/lib/harness";
+import { checkRunLimit, getIp } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   try {
+    const limit = checkRunLimit(getIp(req));
+    if (!limit.ok) {
+      return NextResponse.json({ error: `rate limit — try again in ${limit.retryIn}s` }, { status: 429 });
+    }
     const { question, modelSlug, turn, turn1Answer, challenge, correctToken } =
       await req.json();
 

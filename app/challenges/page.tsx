@@ -31,14 +31,17 @@ export default function ChallengesPage() {
         </p>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <Link
-            href="/challenge/niche-sprint-v1"
-            className="block border border-emerald-900/50 bg-emerald-950/20 p-5 transition hover:border-emerald-700"
-          >
-            <p className="text-xs uppercase tracking-widest text-emerald-500/80">featured</p>
-            <h2 className="mt-1 font-medium">Niche Sprint v1</h2>
-            <p className="mt-1 text-sm text-zinc-500">6 models · 10 stupid tasks · full infographic</p>
-          </Link>
+          {items.slice(0, 2).map((c) => (
+            <Link
+              key={c.slug}
+              href={`/challenge/${c.slug}`}
+              className="block border border-emerald-900/50 bg-emerald-950/20 p-5 transition hover:border-emerald-700"
+            >
+              <p className="text-xs uppercase tracking-widest text-emerald-500/80">featured</p>
+              <h2 className="mt-1 font-medium">{c.title}</h2>
+              <p className="mt-1 text-sm text-zinc-500">{c.subtitle}</p>
+            </Link>
+          ))}
           <Link
             href="/challenges/new"
             className="block border border-zinc-800 bg-zinc-950 p-5 transition hover:border-zinc-600"

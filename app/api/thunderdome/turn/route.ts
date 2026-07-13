@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
 import { runModelStream } from "@/lib/openrouter";
+import { checkRunLimit, getIp } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   try {
+    const limit = checkRunLimit(getIp(req));
+    if (!limit.ok) {
+      return NextResponse.json({ error: `rate limit — try again in ${limit.retryIn}s` }, { status: 429 });
+    }
     const body = await req.json();
     const { modelSlug, messages, sideInstruction } = body;
 

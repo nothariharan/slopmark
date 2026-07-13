@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { ByokAgentForm, EMPTY_BYOK } from "@/components/ByokAgentForm";
 import type { ByokAgent } from "@/lib/byok";
 import { aimlTestModels, defaultBenchSlug, models } from "@/lib/models";
@@ -18,7 +17,6 @@ type EvalRes = {
   meta: { latency_ms: number; cost_usd: number };
 };
 
-// more domains later on
 const DOMAINS: { label: string; value: Domain }[] = [
   { label: "instruction", value: "instruction" },
   { label: "json", value: "json" },
@@ -35,6 +33,7 @@ const DOMAINS: { label: string; value: Domain }[] = [
   { label: "coding", value: "coding" },
   { label: "writing", value: "writing" },
   { label: "swe", value: "swe" },
+  { label: "drawing", value: "drawing" },
 ];
 
 const DIFFICULTIES = ["", "easy", "medium", "hard"] as const;
@@ -235,28 +234,28 @@ export default function BenchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <main className="mx-auto max-w-5xl space-y-4 p-4">
-        <div>
-          <h1 className="text-2xl font-semibold">bench</h1>
-          <p className="text-sm text-zinc-400">
-            pick a domain, pick a model, run
+    <div className="min-h-screen bg-black text-zinc-100">
+      <main className="mx-auto max-w-5xl px-4 py-12">
+        <div className="mb-8">
+          <h1 className="text-2xl font-medium tracking-tight text-zinc-100">bench</h1>
+          <p className="mt-1 text-sm text-zinc-500">
+            pick a domain, pick a model, run — every run goes through the same fixed harness
             {domain === "zero_ctx" && (
               <span className="ml-2 text-amber-400">· zero context (no system prompt)</span>
             )}
           </p>
         </div>
 
-        {/* domain tabs */}
-        <div className="flex gap-1 border-b border-zinc-800 pb-0">
+        {/* domain chips — wrap instead of overflowing off screen */}
+        <div className="flex flex-wrap gap-1.5">
           {DOMAINS.map((d) => (
             <button
               key={d.value}
               onClick={() => setDomain(d.value)}
-              className={`px-4 py-2 text-sm transition-colors ${
+              className={`border px-3 py-1 text-xs transition-colors ${
                 domain === d.value
-                  ? "border-b-2 border-zinc-100 text-zinc-100"
-                  : "text-zinc-500 hover:text-zinc-300"
+                  ? "border-zinc-500 bg-zinc-800 text-zinc-100"
+                  : "border-zinc-900 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300"
               }`}
             >
               {d.label}
@@ -265,15 +264,15 @@ export default function BenchPage() {
         </div>
 
         {/* difficulty filter */}
-        <div className="flex gap-1">
+        <div className="mt-3 flex gap-1">
           {DIFFICULTIES.map((d) => (
             <button
               key={d}
               onClick={() => setDifficulty(d)}
-              className={`rounded px-3 py-1 text-xs transition-colors ${
+              className={`px-3 py-1 text-xs transition-colors ${
                 difficulty === d
-                  ? "bg-zinc-700 text-zinc-100"
-                  : "text-zinc-500 hover:text-zinc-300"
+                  ? "bg-zinc-800 text-zinc-100"
+                  : "text-zinc-600 hover:text-zinc-300"
               }`}
             >
               {d === "" ? "all" : d}
@@ -281,146 +280,177 @@ export default function BenchPage() {
           ))}
         </div>
 
-        <Card className="space-y-3">
-          <label className="block text-sm text-zinc-400">task</label>
-          <select
-            className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
-            value={taskId}
-            onChange={(e) => setTaskId(e.target.value)}
-          >
-            {tasks.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.id} [{t.difficulty ?? "?"}] ({t.source})
-              </option>
-            ))}
-            {!tasks.length && <option disabled>no tasks for this domain</option>}
-          </select>
-          {prompt && (
-            <p className="rounded bg-zinc-900 p-3 text-sm text-zinc-300">{prompt}</p>
-          )}
-
-          <label className="flex items-center gap-2 text-sm text-zinc-400">
-            <input
-              type="checkbox"
-              checked={useByok}
-              onChange={(e) => setUseByok(e.target.checked)}
-            />
-            use my own API key (BYOK)
-          </label>
-
-          {useByok ? (
-            <ByokAgentForm
-              agent={byok}
-              onChange={setByok}
-              onTest={testByok}
-              testing={testing}
-              testOk={testOk}
-            />
-          ) : (
-            <>
-              <label className="block text-sm text-zinc-400">model</label>
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          {/* left — configure + run */}
+          <div className="space-y-4">
+            <section className="border border-zinc-900 bg-zinc-950/50 p-5 space-y-3">
+              <label className="block text-xs uppercase tracking-widest text-zinc-600">task</label>
               <select
-                className="w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
-                value={model}
-                onChange={(e) => setModel(e.target.value)}
+                className="w-full border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm outline-none focus:border-zinc-600"
+                value={taskId}
+                onChange={(e) => setTaskId(e.target.value)}
               >
-                <optgroup label="aiml — low-tier testing">
-                  {aimlTestModels.map((m) => (
-                    <option key={m.slug} value={m.slug}>
-                      {m.name}
-                    </option>
-                  ))}
-                </optgroup>
-                <optgroup label="openrouter — needs OPENROUTER_API_KEY">
-                  {models.map((m) => (
-                    <option key={m.slug} value={m.slug}>
-                      {m.name}
-                    </option>
-                  ))}
-                </optgroup>
+                {tasks.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.id} [{t.difficulty ?? "?"}] ({t.source})
+                  </option>
+                ))}
+                {!tasks.length && <option disabled>no tasks for this domain</option>}
               </select>
-            </>
-          )}
+              {prompt && (
+                <p className="border border-zinc-900 bg-black p-3 text-sm leading-relaxed text-zinc-300">{prompt}</p>
+              )}
 
-          <div className="flex flex-wrap gap-2">
-            <Button disabled={busy || !taskId || (useByok && !byok.apiKey)} onClick={() => runOne(false)}>
-              run task
-            </Button>
-            <Button variant="outline" disabled={busy || !tasks.length || (useByok && !byok.apiKey)} onClick={runAll}>
-              run full suite
-            </Button>
-          </div>
-        </Card>
+              <label className="flex items-center gap-2 pt-1 text-sm text-zinc-400">
+                <input
+                  type="checkbox"
+                  checked={useByok}
+                  onChange={(e) => setUseByok(e.target.checked)}
+                />
+                use my own API key (BYOK)
+              </label>
 
-        <Card className="space-y-3">
-          <label className="block text-sm text-zinc-400">paste output (dev mode)</label>
-          <textarea
-            className="min-h-24 w-full rounded border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm"
-            value={paste}
-            onChange={(e) => setPaste(e.target.value)}
-            placeholder="paste model output to score without an api key"
-          />
-          <Button variant="outline" disabled={busy || !paste || !taskId} onClick={() => runOne(true)}>
-            score pasted output
-          </Button>
-        </Card>
+              {useByok ? (
+                <ByokAgentForm
+                  agent={byok}
+                  onChange={setByok}
+                  onTest={testByok}
+                  testing={testing}
+                  testOk={testOk}
+                />
+              ) : (
+                <>
+                  <label className="block text-xs uppercase tracking-widest text-zinc-600">model</label>
+                  <select
+                    className="w-full border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm outline-none focus:border-zinc-600"
+                    value={model}
+                    onChange={(e) => setModel(e.target.value)}
+                  >
+                    <optgroup label="aiml — low-tier testing">
+                      {aimlTestModels.map((m) => (
+                        <option key={m.slug} value={m.slug}>
+                          {m.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <optgroup label="openrouter — needs OPENROUTER_API_KEY">
+                      {models.map((m) => (
+                        <option key={m.slug} value={m.slug}>
+                          {m.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </>
+              )}
 
-        {err && <p className="text-sm text-red-400">{err}</p>}
-        {suite && <Card className="text-sm text-emerald-300">suite: {suite}</Card>}
-
-        {res && (
-          <Card className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Badge ok={res.passed}>{res.passed ? "pass" : "fail"}</Badge>
-              <span className="text-sm">score {res.score}</span>
-              <span className="text-xs text-zinc-500">
-                {res.meta.latency_ms}ms · ${res.meta.cost_usd}
-              </span>
-            </div>
-            {domain === "sycophancy" && turn1Output && (
-              <>
-                <p className="text-xs text-zinc-500">turn 1 — initial answer</p>
-                <pre className="whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs text-zinc-300">
-                  {turn1Output}
-                </pre>
-                <p className="text-xs text-zinc-500">turn 2 — after challenge</p>
-                <pre className="whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs text-zinc-300">
-                  {res.output}
-                </pre>
-              </>
-            )}
-            <pre className="whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs text-zinc-300">
-              {domain === "sycophancy"
-                ? res.details.replace(/^\[turn1\][\s\S]*?\[\/turn1\]\n/, "")
-                : res.details}
-            </pre>
-            {domain !== "sycophancy" && (
-              <details>
-                <summary className="cursor-pointer text-sm text-zinc-400">model output</summary>
-                <pre className="mt-2 whitespace-pre-wrap rounded bg-zinc-900 p-3 text-xs">
-                  {res.output}
-                </pre>
-              </details>
-            )}
-          </Card>
-        )}
-
-        <Card>
-          <h2 className="mb-3 text-sm font-medium text-zinc-400">recent runs</h2>
-          <div className="space-y-2 text-xs">
-            {runs.map((r) => (
-              <div key={r.id} className="flex justify-between gap-2 border-b border-zinc-900 pb-2">
-                <span>
-                  {r.task_id} · {r.model_slug}
-                </span>
-                <span className={r.passed ? "text-emerald-400" : "text-red-400"}>
-                  {r.score}
-                </span>
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Button disabled={busy || !taskId || (useByok && !byok.apiKey)} onClick={() => runOne(false)}>
+                  {busy ? "running…" : "run task"}
+                </Button>
+                <Button variant="outline" disabled={busy || !tasks.length || (useByok && !byok.apiKey)} onClick={runAll}>
+                  run full suite
+                </Button>
               </div>
-            ))}
-            {!runs.length && <p className="text-zinc-500">no runs yet</p>}
+            </section>
+
+            <details className="border border-zinc-900 bg-zinc-950/50">
+              <summary className="cursor-pointer px-5 py-3 text-sm text-zinc-500 hover:text-zinc-300">
+                paste output instead (score without an api key)
+              </summary>
+              <div className="space-y-3 px-5 pb-5">
+                <textarea
+                  className="min-h-24 w-full border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm outline-none focus:border-zinc-600"
+                  value={paste}
+                  onChange={(e) => setPaste(e.target.value)}
+                  placeholder="paste model output to score against the selected task"
+                />
+                <Button variant="outline" disabled={busy || !paste || !taskId} onClick={() => runOne(true)}>
+                  score pasted output
+                </Button>
+              </div>
+            </details>
           </div>
-        </Card>
+
+          {/* right — live result */}
+          <div className="space-y-4">
+            {err && <p className="border border-red-900/50 bg-red-950/20 p-3 text-sm text-red-400">{err}</p>}
+            {suite && (
+              <p className="border border-emerald-900/50 bg-emerald-950/20 p-3 text-sm text-emerald-300">
+                suite: {suite}
+              </p>
+            )}
+
+            {res ? (
+              <section className="border border-zinc-900 bg-zinc-950/50 p-5 space-y-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge ok={res.passed}>{res.passed ? "pass" : "fail"}</Badge>
+                  <span className="text-sm text-zinc-100">score {res.score}</span>
+                  <span className="ml-auto font-mono text-xs text-zinc-500">
+                    {res.meta.latency_ms}ms · ${res.meta.cost_usd}
+                  </span>
+                </div>
+                {domain === "sycophancy" && turn1Output && (
+                  <>
+                    <p className="text-xs text-zinc-500">turn 1 — initial answer</p>
+                    <pre className="whitespace-pre-wrap border border-zinc-900 bg-black p-3 text-xs text-zinc-300">
+                      {turn1Output}
+                    </pre>
+                    <p className="text-xs text-zinc-500">turn 2 — after challenge</p>
+                    <pre className="whitespace-pre-wrap border border-zinc-900 bg-black p-3 text-xs text-zinc-300">
+                      {res.output}
+                    </pre>
+                  </>
+                )}
+                <p className="text-xs uppercase tracking-widest text-zinc-600">verifier breakdown</p>
+                <pre className="whitespace-pre-wrap border border-zinc-900 bg-black p-3 text-xs text-zinc-300">
+                  {domain === "sycophancy"
+                    ? res.details.replace(/^\[turn1\][\s\S]*?\[\/turn1\]\n/, "")
+                    : res.details}
+                </pre>
+                {domain !== "sycophancy" && (
+                  <details open>
+                    <summary className="cursor-pointer text-xs uppercase tracking-widest text-zinc-600">model output</summary>
+                    <pre className="mt-2 max-h-72 overflow-auto whitespace-pre-wrap border border-zinc-900 bg-black p-3 text-xs text-zinc-300">
+                      {res.output}
+                    </pre>
+                  </details>
+                )}
+              </section>
+            ) : (
+              <div className="flex min-h-40 items-center justify-center border border-dashed border-zinc-900 p-5">
+                <p className="text-sm text-zinc-700">run a task — pass/fail, score, latency and the verifier breakdown land here</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* recent runs — full metric row, not just a score */}
+        <section className="mt-8 border border-zinc-900">
+          <h2 className="border-b border-zinc-900 bg-zinc-950/50 px-4 py-3 text-xs uppercase tracking-widest text-zinc-600">
+            recent runs
+          </h2>
+          <table className="w-full text-left text-xs">
+            <tbody className="divide-y divide-zinc-900">
+              {runs.map((r) => (
+                <tr key={r.id} className="hover:bg-zinc-900/20 transition-colors">
+                  <td className="px-4 py-2.5 font-mono text-zinc-400">{r.task_id}</td>
+                  <td className="px-4 py-2.5 font-mono text-zinc-300">{r.model_slug}</td>
+                  <td className="px-4 py-2.5 text-zinc-600">{r.domain}</td>
+                  <td className="px-4 py-2.5 text-right text-zinc-500">{r.latency_ms}ms</td>
+                  <td className={`px-4 py-2.5 text-right ${r.passed ? "text-emerald-400" : "text-red-400"}`}>
+                    {r.passed ? "pass" : "fail"} · {r.score}
+                  </td>
+                </tr>
+              ))}
+              {!runs.length && (
+                <tr>
+                  <td className="px-4 py-6 text-center text-zinc-600">no runs yet</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </section>
       </main>
     </div>
   );

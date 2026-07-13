@@ -135,7 +135,7 @@ export default function ThunderdomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 p-8">
+    <div className="min-h-screen bg-black text-zinc-100 p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold uppercase tracking-widest text-red-500">Thunderdome</h1>
