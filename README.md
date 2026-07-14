@@ -1,37 +1,122 @@
 # slopmark
 
-a benchmark base for ai models. novel tasks, fixed harness, behavioral verifiers. literally anything 
+<p align="center">
+  <img src="docs/images/banner.png" alt="slopmark banner" width="890" />
+</p>
 
-our moat is **how** we bench: novel tasks, fixed harness, behavioral verifiers, human quality gate. scores you can actually trust as models get smarter. 
+<p align="center">
+  the honest slop detector<br/>
+  <a href="https://slopmark.vercel.app">slopmark.vercel.app</a>
+</p>
 
-most importantly no more ' trust me bro benchmark ' 
+ai models are great at sounding smart and terrible at admitting when they are not
+
+slopmark feeds them tasks with machine-checkable answers runs every model through the same harness and lets a **rule-based verifier** decide who passed
+
+never another llm as judge
 
 ---
 
-## what works (v0)
+## screenshots
 
-- **instruction follow** — 191 seed tasks (incl. game-night party contracts), rule-based verifier
-- **json** + **math** + **sycophancy** domains (seed tasks, deterministic verifiers)
-- **procedural** — 75 seeded instances (direction, sequence, time, calendar, palindrome)
-- **refusal** + **hierarchy** + **calibration** + **persistence** domains
-- **zero context** — HTML one-shot tasks with no system prompt (`zero_ctx` domain)
-- **realshot** — BYOK agent duels at `/realshot` (one-shot tasks, auto-scored winner)
-- **aiml api** — cheap live testing via `AIMLAPI_KEY` and `aiml/` model slugs (Claude blocked)
-- **fireworks** — `FIREWORKS_API_KEY` + `fireworks/` model slugs (drawing + game night)
-- **drawing** — SVG one-shot tasks + `html_contract` anatomy checks (`/docs/drawing`)
-- **challenges** — fixed niche sprints at `/challenges` (niche sprint, drawing contest, game night)
-- **sessions wall** — `/sessions` + leaderboard folds committed challenge/session JSON (survives Vercel)
-- **BYOK bench** — `/bench` with your own API key (phase 2)
-- **challenge builder** — `/challenges/new` ad-hoc BYOK sprints (phase 3)
-- contamination probes (paraphrase + counterfactual) on supported tasks
-- custom task suites API, baseline script, BYOK provider smoke test
-- `POST /api/eval/run` — single task eval (optional `harnessMode`)
-- `POST /api/eval/suite` — full domain suite for one model
-- `GET /api/leaderboard` — per-model pass rate and avg score (min 3 runs for live board; session board from JSON)
-- `/bench` eval console (run task, run suite, paste-to-score dev mode)
-- `/leaderboard` benchmark rankings (sessions view default)
-- `/goal` minigames vs live models (stump, roulette, direction tracker, object tracker, anagram, sequence, and more)
-- **live:** https://slopmark.vercel.app — try `/challenge/game-night-v1` and `/challenge/drawing-contest-v1`
+| home | challenge |
+|---|---|
+| ![home](docs/images/home.png) | ![game night](docs/images/game-night.png) |
+
+| drawing gallery | sessions leaderboard |
+|---|---|
+| ![drawing](docs/images/drawing.png) | ![leaderboard](docs/images/leaderboard.png) |
+
+| hall of shame | niche sprint receipt |
+|---|---|
+| ![shame](docs/images/shame.png) | ![niche sprint](docs/images/niche-sprint.png) |
+
+---
+
+## how it works
+
+one spine for every domain
+
+```mermaid
+flowchart LR
+  T[task] --> H[fixed harness]
+  H --> M[model]
+  M --> V[rule verifier]
+  V --> S[score + receipt]
+```
+
+**novel task** → **same harness** → **behavioral verifier** → **human quality gate**
+
+no vibes scoring  
+no llm-as-judge  
+same prompt wrapper for every model in a run
+
+```mermaid
+flowchart TB
+  subgraph ui [app]
+    Bench["/bench"]
+    Real["/realshot"]
+    Chal["/challenges"]
+    LB["/leaderboard"]
+    Shame["/shame"]
+  end
+
+  subgraph api [api routes]
+    Eval["/api/eval/*"]
+    Duel["/api/realshot/duel"]
+    ChalApi["/api/challenges/*"]
+    Board["/api/leaderboard"]
+  end
+
+  subgraph engine [eval engine]
+    Harness["lib/harness"]
+    Providers["openrouter / aiml / fireworks / byok"]
+    Verifiers["lib/verifiers/*"]
+  end
+
+  subgraph data [persistence]
+    Seeds["data/tasks/*.json"]
+    Challenges["data/challenges/*/results.json"]
+    Sqlite["sqlite local only"]
+    Supa["supabase optional"]
+  end
+
+  Bench --> Eval
+  Real --> Duel
+  Chal --> ChalApi
+  LB --> Board
+  Shame --> Board
+
+  Eval --> Harness
+  Duel --> Harness
+  ChalApi --> Harness
+  Harness --> Providers
+  Harness --> Verifiers
+  Verifiers --> Seeds
+  ChalApi --> Challenges
+  Eval --> Sqlite
+  Eval --> Supa
+```
+
+on vercel sqlite is skipped  
+committed challenge / session json is what survives deploys
+
+---
+
+## what ships
+
+- **domains** — instruction json math procedural refusal hierarchy calibration persistence sycophancy agentic safety coding writing swe zero_ctx drawing
+- **bench** — `/bench` run one task or a full suite paste mode works without a key
+- **byok** — bring your own openai-compatible key for bench realshot and challenge builder
+- **realshot** — head to head agent duels auto scored
+- **challenges** — fixed sprints with revisitable infographics
+  - [niche sprint v1](https://slopmark.vercel.app/challenge/niche-sprint-v1)
+  - [drawing contest v1](https://slopmark.vercel.app/challenge/drawing-contest-v1)
+  - [game night v1](https://slopmark.vercel.app/challenge/game-night-v1)
+- **sessions wall** — `/sessions` plus leaderboard sessions tab
+- **shame** — worst failures from committed results
+- **goal** — stupid minigames vs live models
+- **docs** — full writeups at `/docs`
 
 ---
 
@@ -42,21 +127,60 @@ npm install
 npm run dev
 ```
 
+open [http://localhost:3000](http://localhost:3000)
 
-open http://localhost:3000/bench ( custom port is fine too )
+| route | what |
+|---|---|
+| `/bench` | eval console |
+| `/realshot` | byok duels |
+| `/challenges` | saved sprints |
+| `/challenges/new` | build your own byok grid |
+| `/leaderboard` | sessions + live boards |
+| `/shame` | failure wall |
+| `/docs` | docs site |
 
-for head-to-head agent duels with your own API keys, open http://localhost:3000/realshot
+paste mode on `/bench` needs no key
 
-revisit a completed challenge session: http://localhost:3000/challenge/niche-sprint-v1 — see [challenges docs](/docs/challenges)
+for live calls put keys in `.env.local` see [`.env.example`](.env.example)
 
-drawing contest gallery: http://localhost:3000/challenge/drawing-contest-v1 — see [drawing docs](/docs/drawing)
+```bash
+AIMLAPI_KEY=          # cheap testing  aiml/<model-id>
+FIREWORKS_API_KEY=    # drawing + game night  fireworks/<model-id>
+OPENROUTER_API_KEY=   # openrouter model group
+```
 
-paste mode works without an api key. for live runs:
+optional postgres: `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`  
+without it local runs land in sqlite / json
 
-- **aiml (recommended for testing):** set `AIMLAPI_KEY` in `.env.local`, pick an `aiml/` model on `/bench` — see [aiml api docs](/docs/aimlapi)
-- **fireworks:** set `FIREWORKS_API_KEY`, use `fireworks/` slugs (e.g. `fireworks/gpt-oss-120b`)
-- **openrouter:** set `OPENROUTER_API_KEY`, use the openrouter model group
-optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persistence. without it, runs save to `data/eval-runs.json`. no login required — auth UI was removed.
+---
+
+## eval flow
+
+```mermaid
+sequenceDiagram
+  participant U as ui
+  participant A as api
+  participant H as harness
+  participant P as provider
+  participant V as verifier
+  participant D as store
+
+  U->>A: POST /api/eval/run
+  A->>H: task + model + harnessMode
+  H->>P: chat completion
+  P-->>H: raw output
+  H->>V: verify output
+  V-->>H: passed score details
+  H->>D: persist run
+  H-->>A: result
+  A-->>U: json
+```
+
+cli challenge runner for curated sprints
+
+```bash
+npm run challenge -- niche-sprint-v1
+```
 
 ---
 
@@ -64,56 +188,73 @@ optional: set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` for postgres persiste
 
 | route | method | purpose |
 |---|---|---|
-| `/api/tasks?domain=instruction` | GET | list tasks (optional `difficulty` filter) |
-| `/api/eval/run` | POST | `{ taskId, modelSlug }` or `{ taskId, output }` — optional `harnessMode` |
-| `/api/eval/suite` | POST | `{ modelSlug, domain }` — all tasks in a domain |
-| `/api/realshot/duel` | POST | BYOK duel — `{ agentA, agentB, category?, harnessMode?, seed?, taskId? }` |
-| `/api/realshot/duel` | PUT | smoke test one agent — `{ name, baseURL, apiKey, model }` |
-| `/api/leaderboard?domain=instruction` | GET | model stats |
-| `/api/runs` | GET | recent runs |
-| `/api/providers/smoke` | POST | `{ modelSlug }` — pong test (e.g. `aiml/openai/gpt-4o-mini`) |
-| `/api/goal/challenge` | POST | `{ prompt, modelSlug }` — single model call for goal games |
-| `/api/goal/stump` | POST | `{ prompt, rules, modelSlug }` — instruction follow challenge |
-| `/api/goal/roulette` | POST | two-turn sycophancy trivia (`turn: 1` or `2`) |
-| `/api/goal/draw` | POST | `{ subject, modelSlug }` — ascii art duel |
+| `/api/tasks?domain=instruction` | GET | list tasks |
+| `/api/eval/run` | POST | one task or paste-to-score |
+| `/api/eval/suite` | POST | full domain for one model |
+| `/api/realshot/duel` | POST | byok duel |
+| `/api/realshot/duel` | PUT | smoke test one agent |
+| `/api/challenges` | GET | list challenges |
+| `/api/challenges/[slug]` | GET | challenge results |
+| `/api/challenges/run` | POST | ad-hoc byok sprint |
+| `/api/leaderboard` | GET | `source=sessions` or live domain |
+| `/api/shame` | GET | failure wall |
+| `/api/providers/smoke` | POST | pong test for a model slug |
+
+more detail in [`docs/api.md`](docs/api.md)
+
+---
+
+## repo map
+
+```
+app/                 next routes + api
+components/          ui
+lib/
+  harness.ts         prompt wrapper + run
+  eval.ts            orchestration
+  openrouter.ts      providers (openrouter aiml fireworks custom)
+  verifiers/         rule plugins
+  challenges/        sprint runner + json store
+data/
+  tasks/             seed tasks by domain
+  challenges/        manifests + results.json
+docs/                markdown + readme screenshots
+scripts/             challenge baseline smoke
+```
 
 ---
 
 ## stack
 
-- next.js, react, tailwind
-- openrouter + aiml api (model access)
-- supabase optional (postgres)
-- vitest (verifier tests)
+- next.js react tailwind
+- openrouter aiml fireworks byok
+- sqlite local · supabase optional
+- vitest for verifiers
 
 ---
 
 ## docs
 
-on-site docs at `/docs`.
+| topic | file |
+|---|---|
+| how we bench | [`docs/benchmarks.md`](docs/benchmarks.md) |
+| domains | [`docs/domains.md`](docs/domains.md) |
+| scoring | [`docs/judging.md`](docs/judging.md) |
+| harness | [`docs/harness.md`](docs/harness.md) |
+| zero context | [`docs/zero-context.md`](docs/zero-context.md) |
+| realshot | [`docs/realshot.md`](docs/realshot.md) |
+| aiml | [`docs/aimlapi.md`](docs/aimlapi.md) |
+| drawing | [`docs/drawing.md`](docs/drawing.md) |
+| challenges | [`docs/challenges.md`](docs/challenges.md) |
+| deploy | [`docs/deploy.md`](docs/deploy.md) |
+| api | [`docs/api.md`](docs/api.md) |
 
-- [how we bench](/docs/benchmarks)
-- [domains](/docs/domains)
-- [scoring & verifiers](/docs/judging)
-- [harness](/docs/harness)
-- [zero context mode](/docs/zero-context)
-- [realshot duels](/docs/realshot)
-- [aiml api testing](/docs/aimlapi)
-- [tasks & contamination](/docs/tasks)
-- [metrics & leaderboard](/docs/metrics)
-- [api](/docs/api)
-- [architecture](/docs/architecture)
-- [deepswe template](/docs/deepswe)
+on-site versions live at [slopmark.vercel.app/docs](https://slopmark.vercel.app/docs)
 
+---
 
+## license
 
-
-note to self: still need to flesh out tasks and the non-technical domain specs. going well otherwise. 
-
-
-few other secions that needs tighitenion out overall
-
-sect
-
-
-
+use it break it open issues
+if you ship a fork keep the verifier-first rule
+```
