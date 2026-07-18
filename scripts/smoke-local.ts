@@ -106,12 +106,16 @@ async function main() {
     verifyRegexCraft("#[0-9A-Fa-f]{6}", [{ text: "#FF00AA", should_match: true }]).passed,
   );
 
+  {
+    const { smokeTestProvider } = await import("../lib/openrouter");
+    const pong = await smokeTestProvider("openrouter/free");
+    check("openrouter free pong smoke", pong.ok);
+  }
+
   if (process.env.AIMLAPI_KEY) {
     const { smokeTestProvider } = await import("../lib/openrouter");
     const pong = await smokeTestProvider("aiml/openai/gpt-4o-mini");
     check("aiml pong smoke", pong.ok);
-  } else {
-    console.log("  skip  aiml pong (no AIMLAPI_KEY)");
   }
 
   console.log(`\n=== done: ${ok} passed, ${fail} failed ===\n`);

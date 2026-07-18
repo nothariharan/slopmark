@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runModel } from "@/lib/openrouter";
 import { verifyInstruction } from "@/lib/verifiers/instruction";
-import { checkRunLimit, getIp } from "@/lib/rate-limit";
+import { applyHostLimitCookie, checkLlmLimit } from "@/lib/rate-limit";
 import type { InstructionRule } from "@/lib/types";
 
 function buildPrompt(prompt: string, rules: InstructionRule[]): string {
@@ -28,9 +28,12 @@ function buildPrompt(prompt: string, rules: InstructionRule[]): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const limit = checkRunLimit(getIp(req));
+    const limit = checkLlmLimit(req, { hostFunded: true, kind: "run" });
     if (!limit.ok) {
-      return NextResponse.json({ error: `rate limit — try again in ${limit.retryIn}s` }, { status: 429 });
+      return NextResponse.json(
+        { error: `free host tier — 1 request/minute. try again in ${limit.retryIn}s` },
+        { status: 429 },
+      );
     }
     const { prompt, rules, modelSlug } = (await req.json()) as {
       prompt: string;
@@ -45,7 +48,9 @@ export async function POST(req: NextRequest) {
     const { output, meta } = await runModel(buildPrompt(prompt, rules), modelSlug);
     const result = verifyInstruction(output, rules);
 
-    return NextResponse.json({ output, ...result, meta });
+    const res = NextResponse.json({ output, ...result, meta });
+    applyHostLimitCookie(res, limit);
+    return res;
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : "unknown error";
     return NextResponse.json({ error: msg }, { status: 500 });

@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ByokAgentForm, EMPTY_BYOK } from "@/components/ByokAgentForm";
 import type { ByokAgent } from "@/lib/byok";
-import { aimlTestModels, defaultBenchSlug, models } from "@/lib/models";
+import { aimlTestModels, defaultBenchSlug, openRouterFreeModels } from "@/lib/models";
 import type { Domain, EvalRun, HarnessMode, RuleResult, TaskPublic } from "@/lib/types";
 
 type EvalRes = {
@@ -326,15 +326,15 @@ export default function BenchPage() {
                     value={model}
                     onChange={(e) => setModel(e.target.value)}
                   >
-                    <optgroup label="aiml — low-tier testing">
-                      {aimlTestModels.map((m) => (
+                    <optgroup label="openrouter free — host default (1 req/min)">
+                      {openRouterFreeModels.map((m) => (
                         <option key={m.slug} value={m.slug}>
                           {m.name}
                         </option>
                       ))}
                     </optgroup>
-                    <optgroup label="openrouter — needs OPENROUTER_API_KEY">
-                      {models.map((m) => (
+                    <optgroup label="aiml — needs AIMLAPI_KEY or BYOK">
+                      {aimlTestModels.map((m) => (
                         <option key={m.slug} value={m.slug}>
                           {m.name}
                         </option>
@@ -344,11 +344,16 @@ export default function BenchPage() {
                 </>
               )}
 
+              {!useByok && (
+                <p className="text-xs text-zinc-600">
+                  free host tier: 1 request per minute per tester. enable BYOK to go faster.
+                </p>
+              )}
               <div className="flex flex-wrap gap-2 pt-1">
                 <Button disabled={busy || !taskId || (useByok && !byok.apiKey)} onClick={() => runOne(false)}>
                   {busy ? "running…" : "run task"}
                 </Button>
-                <Button variant="outline" disabled={busy || !tasks.length || (useByok && !byok.apiKey)} onClick={runAll}>
+                <Button variant="outline" disabled={busy || !tasks.length || !useByok || !byok.apiKey} onClick={runAll} title={!useByok ? "full suite needs BYOK — free host tier is 1 req/min" : undefined}>
                   run full suite
                 </Button>
               </div>

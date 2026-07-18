@@ -54,7 +54,7 @@ export const docPages: DocPage[] = [
   {
     slug: "aimlapi",
     title: "aiml api testing",
-    desc: "cheap live model runs via AIMLAPI_KEY",
+    desc: "optional aiml/ slugs via AIMLAPI_KEY (OpenRouter free is the default)",
     file: "aimlapi.md",
   },
   {

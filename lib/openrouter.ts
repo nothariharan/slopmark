@@ -1,5 +1,10 @@
 import OpenAI from "openai";
 import { aimlProvider, assertAimlModelAllowed } from "./aimlapi";
+import {
+  assertHostOpenRouterModelAllowed,
+  OPENROUTER_BASE,
+  openRouterApiKey,
+} from "./openrouter-free";
 import { maxTok, systemPromptFor, temp } from "./harness";
 import type { ChatMessage, HarnessMode, RunMeta } from "./types";
 
@@ -11,8 +16,12 @@ export type ProviderConfig = {
 
 function openRouterProvider(): ProviderConfig {
   return {
-    baseURL: "https://openrouter.ai/api/v1",
-    apiKey: process.env.OPENROUTER_API_KEY ?? "",
+    baseURL: OPENROUTER_BASE,
+    apiKey: openRouterApiKey(),
+    defaultHeaders: {
+      "HTTP-Referer": process.env.OPENROUTER_HTTP_REFERER ?? "https://slopmark.vercel.app",
+      "X-Title": process.env.OPENROUTER_APP_TITLE ?? "slopmark",
+    },
   };
 }
 
@@ -29,21 +38,23 @@ function customProvider(): ProviderConfig | null {
   return { baseURL: base, apiKey: key };
 }
 
-// on a public deploy we dont want randoms burning our key on any model they type.
-// set OPENROUTER_ALLOWLIST to a comma list to lock it down; empty = allow all (local dev)
+// optional extra allowlist override; empty = free models only for host key
 function assertOpenRouterModelAllowed(model: string) {
   const raw = process.env.OPENROUTER_ALLOWLIST?.trim();
-  if (!raw) return;
-  const allowed = raw.split(",").map((s) => s.trim()).filter(Boolean);
-  if (!allowed.includes(model)) {
-    throw new Error(`model ${model} not on the allowlist`);
+  if (raw) {
+    const allowed = raw.split(",").map((s) => s.trim()).filter(Boolean);
+    if (!allowed.includes(model)) {
+      throw new Error(`model ${model} not on the allowlist`);
+    }
+    return;
   }
+  assertHostOpenRouterModelAllowed(model);
 }
 
 export function resolveProvider(modelSlug: string): { provider: ProviderConfig; model: string } {
   if (modelSlug.startsWith("aiml/")) {
     const aiml = aimlProvider();
-    if (!aiml) throw new Error("AIMLAPI_KEY not set");
+    if (!aiml) throw new Error("AIMLAPI_KEY not set — enable BYOK or set AIMLAPI_KEY");
     const model = modelSlug.slice("aiml/".length);
     assertAimlModelAllowed(model);
     return { provider: aiml, model };
@@ -52,7 +63,6 @@ export function resolveProvider(modelSlug: string): { provider: ProviderConfig; 
     const fw = fireworksProvider();
     if (!fw) throw new Error("FIREWORKS_API_KEY not set");
     const rest = modelSlug.slice("fireworks/".length);
-    // short slugs like fireworks/glm-5p1 expand to the full account path
     const model = rest.includes("/") ? rest : `accounts/fireworks/models/${rest}`;
     return { provider: fw, model };
   }
@@ -164,19 +174,33 @@ export async function runModelStreamDirect(
   harnessMode: HarnessMode = "standard",
 ) {
   const t0 = Date.now();
-  const stream = await mk(provider).chat.completions.create({
-    model,
-    temperature: temp,
-    max_tokens: maxTok,
-    stream: true,
-    stream_options: { include_usage: true },
-    messages: [
-      { role: "system", content: systemPromptFor(harnessMode) },
-      { role: "user", content: prompt },
-    ],
-  });
-
-  return { stream, t0 };
+  const client = mk(provider);
+  const messages = [
+    { role: "system" as const, content: systemPromptFor(harnessMode) },
+    { role: "user" as const, content: prompt },
+  ];
+  try {
+    const stream = await client.chat.completions.create({
+      model,
+      temperature: temp,
+      max_tokens: maxTok,
+      stream: true,
+      stream_options: { include_usage: true },
+      messages,
+    });
+    return { stream, t0 };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (!/stream_options|unrecognized|unknown/i.test(msg)) throw e;
+    const stream = await client.chat.completions.create({
+      model,
+      temperature: temp,
+      max_tokens: maxTok,
+      stream: true,
+      messages,
+    });
+    return { stream, t0 };
+  }
 }
 
 /** one canonical task — confirms the endpoint accepts our harness shape */
@@ -207,7 +231,3 @@ export async function smokeTestDirect(
     return { ok: false, error: e instanceof Error ? e.message : "smoke test failed" };
   }
 }
-
-
-
-// openroouter may extend later 

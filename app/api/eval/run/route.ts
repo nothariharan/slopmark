@@ -4,7 +4,7 @@ import { evalTask, preparePrompt } from "@/lib/eval";
 import * as store from "@/lib/store";
 import { runModelStream, runModelStreamDirect } from "@/lib/openrouter";
 import { runVerifier } from "@/lib/verifiers";
-import { checkRunLimit, getIp } from "@/lib/rate-limit";
+import { applyHostLimitCookie, checkLlmLimit } from "@/lib/rate-limit";
 import { harnessLabel } from "@/lib/harness";
 import { taskPoolVersion } from "@/lib/task-pool";
 import type { HarnessMode } from "@/lib/types";
@@ -12,15 +12,6 @@ import { randomUUID } from "crypto";
 
 export async function POST(req: Request) {
   try {
-    const ip = getIp(req);
-    const limit = checkRunLimit(ip);
-    if (!limit.ok) {
-      return NextResponse.json(
-        { error: `rate limit — try again in ${limit.retryIn}s` },
-        { status: 429 }
-      );
-    }
-
     const body = await req.json();
     const taskId = body.taskId as string;
     const modelSlug = body.modelSlug as string | undefined;
@@ -34,6 +25,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "modelSlug, provider, or output required" }, { status: 400 });
     }
 
+    // paste scoring doesn't burn the host key
+    const hostFunded = !provider && !output;
+    const limit = checkLlmLimit(req, { hostFunded, kind: "run" });
+    if (!limit.ok) {
+      return NextResponse.json(
+        {
+          error: hostFunded
+            ? `free host tier — 1 request/minute. try again in ${limit.retryIn}s (or enable BYOK)`
+            : `rate limit — try again in ${limit.retryIn}s`,
+        },
+        { status: 429 },
+      );
+    }
+
     const slug = provider ? byokSlug(provider) : (modelSlug ?? "paste/dev");
 
     if (!stream || output) {
@@ -44,7 +49,9 @@ export async function POST(req: Request) {
         harnessMode,
         provider,
       });
-      return NextResponse.json(res);
+      const json = NextResponse.json(res);
+      if (hostFunded) applyHostLimitCookie(json, limit);
+      return json;
     }
 
     // streaming mode
@@ -109,13 +116,14 @@ export async function POST(req: Request) {
       }
     });
 
-    return new Response(readable, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-      },
-    });
+    const headers: Record<string, string> = {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    };
+    if (hostFunded && limit.setCookie) headers["Set-Cookie"] = limit.setCookie;
+
+    return new Response(readable, { headers });
 
   } catch (e) {
     const msg = e instanceof Error ? e.message : "eval failed";

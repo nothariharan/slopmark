@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import { runModelStream } from "@/lib/openrouter";
-import { checkRunLimit, getIp } from "@/lib/rate-limit";
+import { checkLlmLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
   try {
-    const limit = checkRunLimit(getIp(req));
+    const limit = checkLlmLimit(req, { hostFunded: true, kind: "run" });
     if (!limit.ok) {
-      return NextResponse.json({ error: `rate limit — try again in ${limit.retryIn}s` }, { status: 429 });
+      return NextResponse.json(
+        { error: `free host tier — 1 request/minute. try again in ${limit.retryIn}s` },
+        { status: 429 },
+      );
     }
     const body = await req.json();
     const { modelSlug, messages, sideInstruction } = body;
@@ -56,13 +59,14 @@ Rules:
       }
     });
 
-    return new Response(readable, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
-      },
-    });
+    const headers: Record<string, string> = {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache",
+      Connection: "keep-alive",
+    };
+    if (limit.setCookie) headers["Set-Cookie"] = limit.setCookie;
+
+    return new Response(readable, { headers });
 
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });

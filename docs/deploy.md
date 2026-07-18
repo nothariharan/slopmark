@@ -34,8 +34,8 @@ no environment variables required for the minimal deploy.
 
 | variable | required? | purpose |
 |---|---|---|
-| `AIMLAPI_KEY` | optional | host-funded live `/bench` runs via `aiml/` slugs |
-| `OPENROUTER_API_KEY` | optional | host-funded live `/bench` via openrouter slugs |
+| `OPENROUTER_API_KEY` | optional | host-funded free models (baked fallback exists). locked to `:free` slugs, 1 req/min |
+| `AIMLAPI_KEY` | optional | optional `aiml/` slugs or leave to BYOK |
 | `NEXT_PUBLIC_SUPABASE_URL` | optional | login UI + session refresh |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | optional | login UI + session refresh |
 | `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` | optional | postgres eval persistence |

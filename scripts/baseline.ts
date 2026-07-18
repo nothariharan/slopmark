@@ -2,15 +2,15 @@
 /**
  * run model suites and write data/baselines/latest.json
  * usage: npx tsx scripts/baseline.ts [--domain instruction] [--model slug]
- * needs AIMLAPI_KEY or OPENROUTER_API_KEY in .env.local
- * for cheap runs: --model aiml/openai/gpt-4o-mini
+ * uses OpenRouter free models by default
+ * for cheap runs: --model openrouter/free
  */
 import fs from "fs/promises";
 import path from "path";
 
 import { evalSuite } from "../lib/eval";
 import type { Domain } from "../lib/types";
-import { aimlTestModels, models } from "../lib/models";
+import { aimlTestModels, openRouterFreeModels } from "../lib/models";
 import { harnessVersion } from "../lib/harness";
 import { taskPoolVersion } from "../lib/task-pool";
 
@@ -36,7 +36,7 @@ async function main() {
     ? [modelArg]
     : process.env.AIMLAPI_KEY
       ? aimlTestModels.map((m) => m.slug)
-      : models.map((m) => m.slug);
+      : [openRouterFreeModels[0].slug];
 
   const results: Record<string, Record<string, { passRate: number; avgScore: number; total: number; passed: number }>> = {};
 
