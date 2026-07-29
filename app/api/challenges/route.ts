@@ -18,5 +18,7 @@ export async function GET() {
       });
     }
   }
+  // newest first so fresh sessions like slop-chaos land in the featured strip
+  items.sort((a, b) => b.completed_at.localeCompare(a.completed_at));
   return NextResponse.json({ challenges: items });
 }

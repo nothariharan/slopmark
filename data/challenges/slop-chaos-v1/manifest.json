@@ -1,0 +1,82 @@
+{
+  "slug": "slop-chaos-v1",
+  "title": "Slop Chaos v1",
+  "subtitle": "Fireworks frontier panel · 10 cursed constraint traps · OpenRouter fallback (no Fireworks key)",
+  "description": "No filters. No dignity. Haunted toasters, racoon accountants, goose HR, mayonnaise JSON, and the classic F-count trap — every task is a machine-checkable rule contract designed to make 'smart' models look drunk. Built to pressure-test Kimi K3 (the frontend darling) against other Fireworks serverless heavyweights under zero_context. Same harness, same rules, no LLM judges.",
+  "harness_mode": "zero_context",
+  "tasks": [
+    {
+      "id": "ins-slop-toaster-1",
+      "label": "haunted toaster recall, 17 words, banned glue words",
+      "category": "cursed"
+    },
+    {
+      "id": "ins-slop-raccoon-1",
+      "label": "photosynthesis raccoon, 11 words, no letter e",
+      "category": "lipogram"
+    },
+    {
+      "id": "ins-slop-questions-1",
+      "label": "tie shoes in only questions, taboo words",
+      "category": "format"
+    },
+    {
+      "id": "ins-slop-caps-1",
+      "label": "goose HR ALL CAPS unpaid lunch",
+      "category": "caps"
+    },
+    {
+      "id": "ins-slop-pickle-1",
+      "label": "bureaucracy sandwich NOPE:/:YES pickle",
+      "category": "format"
+    },
+    {
+      "id": "ins-slop-count-1",
+      "label": "letter-F count classic, [n] only",
+      "category": "count"
+    },
+    {
+      "id": "ins-slop-meme-math-1",
+      "label": "9+10 must equal 21 meme",
+      "category": "meme"
+    },
+    {
+      "id": "ins-slop-taboo-soup-1",
+      "label": "tomato soup to alien, heavy taboo",
+      "category": "taboo"
+    },
+    {
+      "id": "ins-slop-yesno-1",
+      "label": "three paragraphs: yes / no / maybe-later",
+      "category": "format"
+    },
+    {
+      "id": "json-slop-mayo-1",
+      "label": "cursed mayonnaise JSON schema",
+      "category": "json"
+    }
+  ],
+  "models": [
+    {
+      "slug": "moonshotai/kimi-k3",
+      "label": "Kimi K3 (via OpenRouter)"
+    },
+    {
+      "slug": "moonshotai/kimi-k2.6",
+      "label": "Kimi K2.6 (via OpenRouter)"
+    },
+    {
+      "slug": "z-ai/glm-5.2",
+      "label": "GLM 5.2 (via OpenRouter)"
+    },
+    {
+      "slug": "deepseek/deepseek-v4-pro",
+      "label": "DeepSeek V4 Pro (via OpenRouter)"
+    },
+    {
+      "slug": "openai/gpt-oss-120b",
+      "label": "GPT-OSS 120B (via OpenRouter)"
+    }
+  ],
+  "created_at": "2026-07-29T00:00:00.000Z"
+}

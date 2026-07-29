@@ -130,6 +130,41 @@ tasks live in `data/tasks/instruction.json` as `ins-game-*`.
 
 ---
 
+## slop chaos v1
+
+| | |
+|---|---|
+| slug | `slop-chaos-v1` |
+| models | Fireworks panel: **Kimi K3**, Kimi K2.6, GLM 5.2, DeepSeek V4 Pro, GPT-OSS 120B (`fireworks/*` slugs). Runner falls back to OpenRouter twins if `FIREWORKS_API_KEY` is unset. |
+| tasks | 10 cursed constraint traps (`ins-slop-*` + `json-slop-mayo-1`) — haunted toaster recalls, racoon lipograms, goose HR ALL CAPS, mayonnaise JSON, classic F-count |
+| harness | `zero_context` |
+| view | `/challenge/slop-chaos-v1` |
+| run | `npm run challenge:slop-chaos` |
+
+designed to show where “frontend kings” like Kimi K3 still trip on stupid, simultaneous formatting contracts. no vibes scoring — rule parser only.
+
+seed prompts also live in `data/tasks/slop_chaos.json` (merged into instruction/json pools for the harness).
+
+### scoreboard (jul 29 2026)
+
+ran via OpenRouter twins (`FIREWORKS_API_KEY` was not in local `.env.local`). re-run with Fireworks when the key is present: `npm run challenge:slop-chaos`.
+
+| rank | model | pass rate |
+|---:|---|---:|
+| 1 | Kimi K3 | **60%** (6/10) |
+| 1 | Kimi K2.6 | **60%** (6/10) |
+| 3 | GPT-OSS 120B | 40% |
+| 4 | GLM 5.2 | 30% |
+| 4 | DeepSeek V4 Pro | 30% |
+
+**universal fails (0/5):** haunted toaster (banned glue words + exact count), racoon lipogram (no letter `e`), shoe-tying questions with taboo words.
+
+**universal passes (5/5):** meme math `21 meme`, yes/no/maybe-later paragraphs.
+
+Kimi K3 still loses hard on multi-constraint lipogram / glue-word bans — the “frontend” model is not a constraint model.
+
+---
+
 ## production (vercel)
 
 deployed api routes read from committed json via `lib/challenges/store-json.ts` — no sqlite on serverless. see [deploy](/docs/deploy).
