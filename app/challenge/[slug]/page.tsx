@@ -49,6 +49,20 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
             harness: {data.manifest.harness_mode} · completed{" "}
             {new Date(data.completed_at).toLocaleString()}
           </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <a
+              href={`/api/export?kind=challenge&slug=${encodeURIComponent(slug)}&format=json`}
+              className="border border-zinc-800 px-3 py-1.5 text-zinc-300 hover:border-zinc-600 hover:text-zinc-100"
+            >
+              export json
+            </a>
+            <a
+              href={`/api/export?kind=challenge&slug=${encodeURIComponent(slug)}&format=csv`}
+              className="border border-zinc-800 px-3 py-1.5 text-zinc-300 hover:border-zinc-600 hover:text-zinc-100"
+            >
+              export csv
+            </a>
+          </div>
         </header>
 
         <ChallengeInfographic data={data} />

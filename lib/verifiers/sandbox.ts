@@ -1,11 +1,10 @@
-import { execSync } from "child_process";
+import { execFileSync, execSync } from "child_process";
 import fs from "fs";
 import path from "path";
 import os from "os";
 import type { VerifierResult } from "../types";
 
 function extractCode(raw: string): string {
-  // strip markdown code fences (```python ... ``` or ``` ... ```)
   const fence = raw.match(/```(?:python|py)?\s*([\s\S]*?)```/);
   if (fence) return fence[1].trim();
   return raw.trim();
@@ -47,6 +46,56 @@ function parseScore(output: string, total: number): { passed: number; total: num
   return { passed: 0, total };
 }
 
+function dockerAvailable(): boolean {
+  try {
+    execSync("docker info", { stdio: "ignore", timeout: 3_000 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function localPython(): string | null {
+  for (const bin of ["python3", "python"]) {
+    try {
+      execFileSync(bin, ["--version"], { stdio: "ignore", timeout: 3_000 });
+      return bin;
+    } catch {
+      /* try next */
+    }
+  }
+  return null;
+}
+
+function scoreFromStdout(stdout: string, testList: string[]): VerifierResult {
+  const { passed, total } = parseScore(stdout, testList.length);
+  const score = total > 0 ? Math.round((passed / total) * 100) : 0;
+  const allPassed = passed === total;
+  const lines = stdout
+    .split("\n")
+    .filter((l) => l.startsWith("PASS") || l.startsWith("FAIL") || l.startsWith("ERROR"))
+    .join("\n");
+  return {
+    passed: allPassed,
+    score,
+    details: `${passed}/${total} tests passed\n${lines}`,
+  };
+}
+
+function runLocalPython(scriptPath: string, testList: string[], note: string): VerifierResult | null {
+  const py = localPython();
+  if (!py) return null;
+  const stdout = execFileSync(py, [scriptPath], {
+    timeout: 10_000,
+    env: { ...process.env, PYTHONDONTWRITEBYTECODE: "1" },
+  }).toString();
+  const scored = scoreFromStdout(stdout, testList);
+  return {
+    ...scored,
+    details: `${scored.details}\n(${note})`,
+  };
+}
+
 export function verifyCodeExec(rawOutput: string, tests: unknown[]): VerifierResult {
   const testList = (tests as string[]).filter((t) => typeof t === "string");
   if (testList.length === 0) {
@@ -61,34 +110,52 @@ export function verifyCodeExec(rawOutput: string, tests: unknown[]): VerifierRes
   const tmpdir = os.tmpdir();
   const scriptDir = fs.mkdtempSync(path.join(tmpdir, "slopmark-"));
   const scriptPath = path.join(scriptDir, "main.py");
-
-  const harness = buildHarness(code, testList);
-  fs.writeFileSync(scriptPath, harness);
+  fs.writeFileSync(scriptPath, buildHarness(code, testList));
 
   try {
-    const cmd = `docker run --rm --network none --memory 128m --cpus 0.5 -v ${scriptDir}:/code python:3.9-slim python /code/main.py`;
-    const stdout = execSync(cmd, { timeout: 10_000 }).toString();
+    if (dockerAvailable()) {
+      try {
+        const cmd = `docker run --rm --network none --memory 128m --cpus 0.5 -v ${scriptDir}:/code python:3.9-slim python /code/main.py`;
+        const stdout = execSync(cmd, { timeout: 10_000 }).toString();
+        return scoreFromStdout(stdout, testList);
+      } catch (dockerErr: unknown) {
+        const err = dockerErr as { stdout?: Buffer; stderr?: Buffer; message?: string };
+        const out = err.stdout?.toString() ?? "";
+        const { passed, total } = parseScore(out, testList.length);
+        // real test output from inside the container — keep it
+        if (total > 0 && (passed > 0 || out.includes("FAIL") || out.includes("ERROR"))) {
+          const score = Math.round((passed / total) * 100);
+          return {
+            passed: false,
+            score,
+            details: `${passed}/${total} tests passed before error\n${out}`,
+          };
+        }
+        // docker itself failed (image/mount) — fall through to local python
+        const local = runLocalPython(
+          scriptPath,
+          testList,
+          `sandbox: local python — docker run failed: ${(err.message ?? "unknown").slice(0, 120)}`,
+        );
+        if (local) return local;
+        throw dockerErr;
+      }
+    }
 
-    const { passed, total } = parseScore(stdout, testList.length);
-    const score = total > 0 ? Math.round((passed / total) * 100) : 0;
-    const allPassed = passed === total;
-
-    const lines = stdout
-      .split("\n")
-      .filter((l) => l.startsWith("PASS") || l.startsWith("FAIL") || l.startsWith("ERROR"))
-      .join("\n");
+    const local = runLocalPython(scriptPath, testList, "sandbox: local python — docker unavailable");
+    if (local) return local;
 
     return {
-      passed: allPassed,
-      score,
-      details: `${passed}/${total} tests passed\n${lines}`,
+      passed: false,
+      score: 0,
+      details:
+        "code_exec skipped — docker and local python unavailable (typical on serverless). run locally with docker or python to score coding/swe tasks.",
     };
   } catch (e: unknown) {
-    const err = e as { stdout?: Buffer; stderr?: Buffer };
+    const err = e as { stdout?: Buffer; stderr?: Buffer; message?: string };
     const out = err.stdout?.toString() ?? "";
-    const errText = err.stderr?.toString() ?? "";
+    const errText = err.stderr?.toString() ?? err.message ?? "";
 
-    // still try to parse score from partial output
     const { passed, total } = parseScore(out, testList.length);
     if (total > 0 && passed > 0) {
       const score = Math.round((passed / total) * 100);

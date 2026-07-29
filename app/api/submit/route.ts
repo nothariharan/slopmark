@@ -1,13 +1,28 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
-import { addCommunityTask } from "@/lib/store/sqlite-store";
+import { addCommunityTask } from "@/lib/store";
+import type { InstructionRule } from "@/lib/types";
 
-// keep the accepted domains tight so junk doesnt land in the pool
 const DOMAINS = new Set([
   "instruction", "json", "math", "coding", "writing", "swe", "sycophancy",
   "agentic", "safety", "calibration", "persistence", "procedural", "refusal",
   "hierarchy", "zero_ctx", "drawing",
 ]);
+
+function buildRule(ruleType: string, ruleVal: string): InstructionRule | null {
+  if (ruleType === "word_count") {
+    const max = parseInt(ruleVal, 10);
+    if (Number.isNaN(max)) return null;
+    return { type: "word_count", max };
+  }
+  if (ruleType === "forbidden_substring") {
+    return { type: "forbidden_substring", values: [ruleVal], case_insensitive: true };
+  }
+  if (ruleType === "required_phrase") {
+    return { type: "required_phrase", values: [ruleVal], case_insensitive: true };
+  }
+  return null;
+}
 
 export async function POST(req: Request) {
   try {
@@ -20,24 +35,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "unknown domain" }, { status: 400 });
     }
 
-    // Convert rule to verifier array
-    let verifierObj = null;
-    if (ruleType === "word_count") verifierObj = { type: "word_count", max: parseInt(ruleVal, 10) };
-    if (ruleType === "forbidden_substring") verifierObj = { type: "forbidden_substring", values: [ruleVal], case_insensitive: true };
-    if (ruleType === "required_phrase") verifierObj = { type: "required_phrase", values: [ruleVal], case_insensitive: true };
-
-    if (!verifierObj) {
+    const rule = buildRule(ruleType, String(ruleVal));
+    if (!rule) {
       return NextResponse.json({ error: "invalid rule" }, { status: 400 });
     }
 
-    const verifier = JSON.stringify([verifierObj]);
-    // random suffix so two submits in the same ms dont collide on the pk
+    // store as a full VerifierConfig, not a bare rule array
+    const verifier = JSON.stringify({ type: "instruction_rules", rules: [rule] });
     const id = `comm-${Date.now().toString(36)}-${randomUUID().slice(0, 8)}`;
 
     await addCommunityTask({ id, domain, prompt, verifier });
 
     return NextResponse.json({ success: true, id });
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message }, { status: 500 });
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : "submission failed";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

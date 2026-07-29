@@ -206,16 +206,12 @@ export async function addCommunityTask(task: {
   prompt: string;
   verifier: string;
 }) {
-  try {
-    await db.insert(communityTasks).values({
-      ...task,
-      source: "community",
-      approved: false,
-      created_at: new Date().toISOString(),
-    });
-  } catch (e) {
-    console.error("failed to add community task", e);
-  }
+  await db.insert(communityTasks).values({
+    ...task,
+    source: "community",
+    approved: false,
+    created_at: new Date().toISOString(),
+  });
 }
 
 export async function getCommunityTasks(approved = false) {

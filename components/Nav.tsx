@@ -3,6 +3,9 @@ import Link from "next/link";
 const LINKS = [
   { href: "/bench", label: "bench" },
   { href: "/playground", label: "playground" },
+  { href: "/realshot", label: "realshot" },
+  { href: "/goal", label: "goal" },
+  { href: "/arena", label: "arena" },
   { href: "/challenges", label: "challenges" },
   { href: "/sessions", label: "sessions" },
   { href: "/leaderboard", label: "leaderboard" },

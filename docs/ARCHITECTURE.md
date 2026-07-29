@@ -100,15 +100,17 @@
 
 ## built vs planned
 
-> explain: honest status checklist
+> honest status checklist — july 2026
 
 - [x] instruction follow + verifier
-- [x] bench ui + leaderboard
+- [x] json, math, coding/swe, sycophancy, calibration, persistence, hierarchy, refusal, agentic, safety, procedural, drawing
+- [x] bench ui + leaderboard + cost/capability charts
 - [x] docs site
-- [ ] supabase wired by default
-- [ ] json, math, coding domains
-- [ ] community task submission
-- [ ] cost-capability chart
+- [x] community task submission + review queue (sqlite local; supabase when configured)
+- [x] challenges, realshot, playground games
+- [ ] supabase wired by default on every deploy
+- [ ] Judge0 / WASM coding sandbox for serverless
+- [ ] durable cross-instance rate limits (KV)
 
 ---
 

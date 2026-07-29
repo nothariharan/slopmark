@@ -71,6 +71,19 @@ create table if not exists review_queue (
   created_at timestamptz not null default now()
 );
 
+-- community task proposals (approve before they enter the seed pool)
+create table if not exists community_tasks (
+  id text primary key,
+  domain text not null,
+  prompt text not null,
+  verifier text not null,
+  source text not null default 'community',
+  approved boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists community_tasks_domain_idx on community_tasks (domain, approved);
+
 create index if not exists eval_runs_domain_model_idx on eval_runs (domain, model_slug);
 create index if not exists eval_runs_created_idx on eval_runs (created_at desc);
 create index if not exists eval_runs_user_idx on eval_runs (user_id);

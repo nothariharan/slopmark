@@ -1,6 +1,6 @@
 # PLAN.md — Slopmark
 
-*last updated: june 2026*
+*last updated: july 2026*
 
 ---
 
@@ -18,7 +18,7 @@ slopmark fixes the **scoring layer**, not the leaderboard chrome.
 
 ---
 
-## what we're building
+## what ships
 
 a multi-domain eval platform where every task runs through the same spine:
 
@@ -26,68 +26,64 @@ a multi-domain eval platform where every task runs through the same spine:
 novel task  →  fixed harness  →  behavioral verifier  →  human quality gate
 ```
 
-v0 ships **instruction follow** only. more domains plug in via verifier plugins.
+never another llm as judge. domains plug in via verifier plugins.
 
 ---
 
 ## four layers
 
 ```
-frontend     /bench, /leaderboard, /docs
-api          /api/tasks, /api/eval/run, /api/eval/suite, /api/leaderboard
-eval engine  openrouter harness + verifier plugins
-data         supabase postgres (optional) or json fallback
+frontend     /bench, /playground, /challenges, /leaderboard, /docs, games
+api          /api/tasks, /api/eval/*, /api/challenges/*, /api/realshot/*, …
+eval engine  openrouter / aiml / fireworks / byok + verifier plugins
+data         committed challenge json · sqlite local · supabase optional
 ```
 
 ---
 
-## domain rollout
+## domain status
 
-| priority | domain | scorer | status |
-|---|---|---|---|
-| 1 | instruction follow | rule parser | **live** |
-| 2 | json / tool use | ajv + schema validation | planned |
-| 3 | math | exact match / sympy | planned |
-| 4 | coding | judge0 hidden tests | planned |
-| 5 | sycophancy / calibration | multi-turn adversarial verifier | planned |
-| 6 | multi-step state tracking | deterministic state comparison | planned |
-| 7 | instruction hierarchy | rule-based precedence check | planned |
-| 8 | refusal calibration | binary refusal checker | planned |
-| 9 | writing | human review workflow | later |
-| 10 | swe | repo behavioral tests | later |
+| domain | scorer | status |
+|---|---|---|
+| instruction follow | instruction_rules | **live** |
+| json / tool use | json_schema (AJV) | **live** |
+| math | exact_number | **live** |
+| coding / swe | code_exec (docker or local python) | **live** (sandbox-dependent) |
+| sycophancy | sycophancy_check / resistance | **live** |
+| calibration | calibration_check | **live** |
+| persistence | persistence_check (multi-turn) | **live** |
+| hierarchy | hierarchy_check | **live** |
+| refusal | refusal_check | **live** |
+| agentic | gaslight / tool / loop / rag | **live** |
+| safety | distraction / malicious / injection | **live** |
+| procedural | procedural_answer (generated) | **live** |
+| drawing / html / regex | html_contract / regex_craft | **live** |
+| writing | human_vote + review queue | **live** (soft) |
+| zero_ctx | standard verifiers + zero harness | **live** |
 
 ---
 
-## harness (fixed for every model)
+## harness (fixed for every model in a run)
 
-- same system prompt, 600 token cap, temperature 0
-- openrouter for all models
+- same system prompt, temperature 0, shared token caps by mode
+- providers: OpenRouter free (host), AIML, Fireworks, BYOK custom
 - log latency, tokens, cost on every run
 
 ---
 
-## build order
+## next build priorities
 
-1. instruction follow verifier + seed tasks
-2. eval api + persistence
-3. bench ui + leaderboard
-4. json domain
-5. math domain
-6. coding domain (judge0)
-7. community task submission + review queue
+1. keep docs honest when verifiers change
+2. Supabase as default persistence on Vercel for submit/review/live boards
+3. stronger coding sandbox path (Judge0 / WASM) when docker unavailable
+4. scheduled baseline re-runs when free model pools rotate
+5. strike stale docs when verifiers change; thicken soft domains; durable KV rate limits when credentials exist
 
 ---
 
 ## success looks like
 
 - models scored on the same task set with reproducible verifiers
-- pass rate and avg score per model per domain
+- pass rate, avg score, cost, and latency per model per domain
 - docs explain how each domain is judged
 - community can submit tasks after human review
-
----
-
-## open questions
-
-1. model pool — 5 openrouter slugs for coverage without blowing budget
-2. task vetting — lightweight review before tasks go live

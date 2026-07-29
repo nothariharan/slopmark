@@ -30,7 +30,7 @@ per model, per domain:
 
 sort order: pass_rate descending, then avg_score descending as tiebreaker.
 
-minimum run threshold before a ranking displays: 10 runs per model per domain. below this, variance is too high to trust the ordering. a model with 3 runs and 100% pass rate is not meaningfully ahead of one with 25 runs and 92% pass rate.
+minimum run threshold before a ranking displays: **3** runs per model per domain (`MIN_RUNS` in `lib/types.ts`). below this, variance is too high to trust the ordering. a model with 3 runs and 100% pass rate is still noisy compared to one with 25 runs and 92% pass rate — treat low-N rankings cautiously.
 
 ---
 
@@ -71,7 +71,7 @@ models are poorly calibrated. a calibrated model would have expressed confidence
 
 empirical data shows consistent overconfidence at lower capability tiers. Qwen2-7B in one study showed 46% accuracy alongside 75.5% expressed confidence. GPT-4o showed 73.8% accuracy with 63% expressed confidence — better calibrated, but still overconfident at the margins. the pattern is common: worse-performing models tend to express higher confidence, not lower.
 
-slopmark doesn't currently measure calibration directly — the benchmark records pass/fail outcomes, not model confidence. a calibration domain (where models state a confidence score alongside each answer and calibration error is the primary metric) is on the roadmap.
+the **calibration** domain asks models for an answer plus a 0–100 confidence. the verifier checks answer correctness and records confidence in `details` for later ECE-style aggregation. full leaderboard ECE charts are still thin — pass/fail + logged confidence ship today.
 
 ---
 
@@ -87,21 +87,22 @@ slopmark doesn't currently measure calibration directly — the benchmark record
 
 ---
 
-## cost-capability view (planned)
+## cost-capability view (live)
 
-x-axis: avg cost per eval run (or per 1M tokens). y-axis: pass rate. filterable by domain.
+x-axis: avg cost per eval run. y-axis: pass rate. shipped on `/leaderboard` via `LeaderboardCharts` (domain + aggregate views).
 
 this is the chart that matters most for practitioners choosing models for production use. not which model is best in absolute terms, but which model gives the best result for a given budget.
 
-a model achieving 88% pass rate at $0.001/run is a categorically different decision from one achieving 90% at $0.05/run. the cost difference is 50x. a 2-point quality improvement doesn't justify that for most applications. the leaderboard should make this tradeoff visible, not leave it to manual calculation.
-
 ---
 
-## exporting results (planned)
+## exporting results (live)
 
-- JSON export of full suite run: task-level results, scores, latency, cost per model
-- CSV export of leaderboard aggregates
-- API access for CI integration: poll leaderboard programmatically, set pass rate thresholds as CI gates
+- `GET /api/export?kind=challenge&slug=<slug>&format=json|csv`
+- `GET /api/export?kind=session&slug=<slug>&format=json|csv`
+- `GET /api/export?kind=challenges` · `GET /api/export?kind=sessions`
+- challenge receipt pages link to json/csv downloads
+
+programmatic suite runs remain via `/api/eval/suite` and `/api/suites`.
 
 ---
 

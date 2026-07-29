@@ -110,4 +110,4 @@ both use the same harness and verifiers — only the provider path changes.
 | `AIMLAPI_KEY not set` | add key to `.env.local`, restart dev server |
 | `model blocked for aiml testing` | pick a non-claude slug from the table above |
 | 401 / invalid model | verify model id on aimlapi.com/models |
-| empty leaderboard | need 10+ runs per model/domain (`MIN_RUNS=10`) |
+| empty leaderboard | need ≥`MIN_RUNS` (3) runs per model/domain |

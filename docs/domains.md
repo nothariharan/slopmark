@@ -57,7 +57,7 @@ statistical sample size at ±3% confidence: ~171 tasks (σ ≈ 0.20, 95% CI).
 
 ---
 
-## json / tool use (planned)
+## json / tool use (live)
 
 structured output is a production-critical capability. 38% of production agent execution failures trace back to JSON parsing issues. of all JSON-related failures, ~80.7% are syntax or structural errors (malformed JSON, wrong keys, wrong types, missing required fields). the remaining ~20% are silent failures — valid JSON with logically inconsistent values. schema validation catches the 80.7%. invariant checks catch the rest.
 
@@ -89,7 +89,7 @@ statistical sample size at ±2% confidence: ~216 tasks (σ ≈ 0.15, 95% CI).
 
 ---
 
-## math (planned)
+## math (live)
 
 the authoritative hard benchmark for math is FrontierMath (Epoch AI). early 2025 evaluations found near-0% baseline across all models on research-level problems. after auditing and correcting the v2 dataset — 42% of original problems contained errors — frontier model performance on Tier 4 (professional research difficulty) reached: Claude Fable 5 at 87.8%, GPT-5.5 Pro at 78.0%, Google AI co-mathematician at 75.6%. smaller and mid-tier models still cluster near the floor. the stratification between model tiers remains sharp in this domain in a way that's rare on other benchmarks.
 
@@ -113,13 +113,13 @@ the authoritative hard benchmark for math is FrontierMath (Epoch AI). early 2025
 
 ---
 
-## coding — function level (planned)
+## coding — function level (live)
 
 LiveCodeBench (continuously updated with fresh competitive programming problems) shows top frontier models at 90-94% pass rate on recent problems. Olympiad-tier hard problems remain near 0% pass@1 across all models. the gap between medium and hard is sharp: best models hit ~53% on medium-difficulty Olympiad problems and near 0% on the hardest tier.
 
 the key design insight from LiveCodeBench: using problems sourced after model training cutoffs eliminates contamination as a confound. old contest problems appear in training data. new ones don't. the score gap between old and new problems for a given model is a direct contamination signal — large gaps suggest old-problem scores are retrieval-inflated.
 
-**verifier:** hidden unit tests, sandboxed execution (Judge0 or equivalent). pass = all tests green. partial score = tests_passed / total_tests.
+**verifier:** hidden unit tests via sandboxed python (docker preferred, local python fallback; skip cleanly on serverless without either). pass = all tests green. partial score = tests_passed / total_tests. Judge0/WASM remains a future hardening path.
 
 **what we test:**
 
@@ -138,7 +138,7 @@ the key design insight from LiveCodeBench: using problems sourced after model tr
 
 ---
 
-## sycophancy / calibration (planned)
+## sycophancy / calibration (live)
 
 one of the least-benchmarked gaps with some of the most concrete empirical data.
 
@@ -162,7 +162,7 @@ statistical sample size at ±3% confidence: ~206 tasks (σ ≈ 0.22, 95% CI).
 
 ---
 
-## multi-step state tracking (planned)
+## persistence / multi-step (live)
 
 sequential operations on a state register. models must track, update, and correctly output a running state across N steps. errors compound — a mistake at step 3 corrupts all subsequent steps.
 
@@ -184,7 +184,7 @@ statistical sample size at ±3.5% confidence: ~181 tasks (σ ≈ 0.24, 95% CI).
 
 ---
 
-## instruction hierarchy (planned)
+## instruction hierarchy (live)
 
 measures whether a model correctly respects system prompt precedence when a user message attempts to override it. also surfaces prompt injection susceptibility — where text embedded in the task tries to redirect model behavior.
 
@@ -211,7 +211,7 @@ statistical sample size at ±3.5% confidence: ~196 tasks (σ ≈ 0.25, 95% CI).
 
 ---
 
-## refusal calibration (planned)
+## refusal calibration (live)
 
 models over-refuse and under-refuse. both failure modes are costly in production and both are measurable. a model that refuses a legitimate clinical question about overdose treatment is not safe — it's miscalibrated in the same way as a model that complies with phishing instructions.
 

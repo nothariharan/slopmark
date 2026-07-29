@@ -54,7 +54,7 @@ regex and counter checks against a list of constraint rules. partial scoring: ru
 
 ---
 
-### json_schema (planned)
+### json_schema (live)
 
 AJV schema validation. structural errors (missing required fields, wrong types, malformed JSON) return `passed: false` with a specific error path. silent failures — valid JSON with logically inconsistent values — require custom invariant functions alongside the schema.
 
@@ -72,35 +72,25 @@ syntax failures are immediate 0. structural errors can produce partial credit at
 
 ---
 
-### exact_number (planned)
+### exact_number (live)
 
-extract the final numeric answer from model output via regex (targeting the last number-like pattern, optionally prefixed by "answer:", "=", "is", or similar). compare against ground truth. route through SymPy for symbolic equivalence if the answer is a non-integer expression.
-
-**SymPy limit:** Richardson's Theorem makes zero-equivalence undecidable for expressions containing nested trigonometric, exponential, or absolute value functions. SymPy's `simplify()` and `equals()` routines can hang or return incorrect results on valid but complex symbolic expressions. the Gruntz algorithm and Risch-Norman algorithm that SymPy uses for limits and integration hit fundamental decidability walls in the general case.
-
-practical mitigation: set a 2-second timeout on SymPy evaluation. on timeout, fall back to numeric comparison with tolerance. flag problems where this fallback fires frequently — they may be underspecified or too complex to score reliably.
-
-**edge cases:** models producing "x ≈ 3.14" when the answer is π, expressing integers in scientific notation, or including units in the answer string. normalize before comparison.
+extract the final numeric answer from model output via regex (targeting the last number-like pattern, optionally prefixed by "answer:", "=", "is", or similar). compare against ground truth as a normalized string/number match.
 
 ---
 
-### code_exec (planned)
+### code_exec (live)
 
-submit model output to Judge0 (or equivalent isolated sandbox). run hidden unit tests. pass = all tests green. partial score = tests_passed / total_tests.
+run model output in an isolated python harness. prefer docker (`python:3.9-slim`, no network, memory/cpu caps). if docker is unavailable, fall back to local `python`/`python3`. on serverless without either, the verifier returns a clear skip failure instead of hanging.
 
-**security requirement:** never execute model-generated code outside a sandboxed environment. model output can contain arbitrary shell commands, network calls, or file system operations. the sandbox must restrict all of these. timeout and memory limits must be enforced per-problem.
+**security:** never execute model-generated code without isolation when docker is present. local-python fallback is for developer machines only.
 
-**known gap:** unit tests verify functional correctness, not efficiency. a model that passes all tests with an O(n³) algorithm on a problem that requires O(n log n) scores the same as an optimal solution. if efficiency matters for a specific task, add explicit complexity constraints to the problem spec and test for them.
-
-**the maintainer gap:** SWE-bench found a 24-point difference between automated test-pass rates and human maintainer merge decisions. unit tests accept patches that introduce regressions, violate code style, or misalign with architecture. for function-level coding tasks this is less severe than for repo-level tasks — single functions have limited surface area for architecture violations. but it's worth knowing the limit.
+**known gap:** unit tests verify functional correctness, not efficiency. Judge0 / WASM remains a future hardening path for multi-tenant prod.
 
 ---
 
-### human_vote (planned)
+### human_vote (live)
 
-for writing and creative tasks. reviewers score on three axes: clarity (is the writing coherent?), factuality (are verifiable claims correct?), instruction adherence (did the model follow all stated constraints?). absolute rubric scoring, not pairwise battle ranking.
-
-minimum two reviews per task before a score is published. scores are averaged across reviewers. disagreements above a threshold flag the task for re-review — high reviewer disagreement usually means the task is ambiguous and should be revised.
+for writing and creative tasks. word-bound checks run automatically; quality scoring goes through the `/review` queue. absolute rubric scoring, not pairwise battle ranking.
 
 ---
 
@@ -121,7 +111,7 @@ suite mode: runs all tasks in a domain for a single model. results aggregate to 
 - pass_rate = passed runs / total runs
 - avg_score = mean of score across all runs
 - sort: pass_rate descending, then avg_score descending
-- minimum run threshold before ranking displays: 10 runs per model per domain (planned)
+- minimum run threshold before ranking displays: `MIN_RUNS` (currently **3**) in `lib/types.ts`
 
 ---
 
@@ -139,6 +129,6 @@ suite mode: runs all tasks in a domain for a single model. results aggregate to 
 
 - verifier config is server-side only — clients receive task prompt and ID, never the scoring rules
 - `approved: true` must be set before a task appears in the API
-- rate limits on `/api/eval/run` prevent automated score farming (planned)
+- rate limits on eval / goal / arena / thunderdome / realshot routes (in-memory + cookie; KV/Upstash still preferred for multi-instance)
 - no hidden test content or expected output is ever returned in API responses
 - verifier runs after harness, never before — prevents any pre-run optimization based on score criteria

@@ -1,0 +1,27 @@
+name: ci-smoke
+
+on:
+  workflow_dispatch:
+  schedule:
+    # weekly — catch drift when deps/tasks break without a full model re-bench
+    - cron: "0 6 * * 1"
+
+jobs:
+  smoke-and-vet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npx tsc --noEmit
+      - run: npm run vet-tasks
+        continue-on-error: true
+      - name: Challenge results present
+        run: |
+          test -f data/challenges/niche-sprint-v1/results.json
+          test -f data/challenges/drawing-contest-v1/results.json
+          test -f data/challenges/game-night-v1/results.json

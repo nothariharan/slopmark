@@ -138,13 +138,14 @@ fixed niche sprints — persisted sessions with infographic UI. see [benchmark c
 
 ---
 
-## auth & rate limits (planned)
+## auth & rate limits
 
-> explain: what doesn't exist yet
+> current behavior — july 2026
 
-- [ ] currently no auth
-- [ ] planned: ip rate limit on eval routes
-- [ ] planned: api keys for programmatic access
+- [x] no end-user auth required for public bench / games
+- [x] in-memory + cookie rate limits on eval, goal, arena, thunderdome, realshot, smoke (`lib/rate-limit.ts`)
+- [ ] durable cross-instance limits (Upstash / Vercel KV) — deferred
+- [ ] api keys for programmatic access — not shipped
 
 ---
 

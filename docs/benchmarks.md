@@ -80,18 +80,16 @@ these are complements, not substitutes. the formal eval tracks capability across
 
 | priority | domain | scorer | status |
 |---|---|---|---|
-| 1 | instruction follow | rule parser | live |
-| 2 | json / tool use | ajv + schema validation | planned |
-| 3 | math | exact match / sympy | planned |
-| 4 | coding | judge0 hidden tests | planned |
-| 5 | sycophancy / calibration | multi-turn adversarial | planned |
-| 6 | multi-step state tracking | deterministic state comparison | planned |
-| 7 | instruction hierarchy | rule-based precedence check | planned |
-| 8 | refusal calibration | binary refusal checker | planned |
-| 9 | writing | human review | later |
-| 10 | swe / repo level | behavioral repo tests | later |
-
-domains are ordered by verifier readiness. any domain where we can't define a deterministic scorer comes after those where we can. writing and swe come last because no clean deterministic scorer exists for them yet.
+| 1 | instruction follow | rule parser | **live** |
+| 2 | json / tool use | ajv + schema validation | **live** |
+| 3 | math | exact match | **live** |
+| 4 | coding / swe | sandboxed python tests | **live** |
+| 5 | sycophancy / calibration | multi-turn / confidence | **live** |
+| 6 | persistence | multi-turn rule hold | **live** |
+| 7 | instruction hierarchy | precedence check | **live** |
+| 8 | refusal calibration | binary refusal checker | **live** |
+| 9 | writing | human review workflow | **live** (soft) |
+| 10 | agentic / safety / procedural / drawing | rule plugins | **live** |
 
 ---
 

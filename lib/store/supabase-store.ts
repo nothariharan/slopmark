@@ -141,3 +141,29 @@ export async function voteReview(id: string, score: number, runId: string) {
   // fall through to local for the full vote logic
   return local.voteReview(id, score, runId);
 }
+
+export async function addCommunityTask(task: {
+  id: string;
+  domain: string;
+  prompt: string;
+  verifier: string;
+}) {
+  const c = sb();
+  if (!c) return local.addCommunityTask(task);
+
+  const { error } = await c.from("community_tasks").insert({
+    ...task,
+    source: "community",
+    approved: false,
+    created_at: new Date().toISOString(),
+  });
+  if (error) {
+    // fall back to sqlite, but surface failure if local also fails
+    try {
+      await local.addCommunityTask(task);
+    } catch (localErr) {
+      const detail = localErr instanceof Error ? localErr.message : String(localErr);
+      throw new Error(`community task persist failed (supabase: ${error.message}; local: ${detail})`);
+    }
+  }
+}
