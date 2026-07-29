@@ -60,7 +60,9 @@ export async function getTask(id: string): Promise<BenchTask | null> {
     const resolved = await resolveRealshotTask(id);
     return resolved?.task ?? null;
   }
-  const prefix = id.split("-")[0];
+
+  // IDs use either hyphen (math-01) or underscore (safety_malicious_001)
+  const token = id.split(/[-_]/)[0] ?? "";
   const domainMap: Record<string, Domain> = {
     ins: "instruction",
     json: "json",
@@ -70,16 +72,48 @@ export async function getTask(id: string): Promise<BenchTask | null> {
     wri: "writing",
     syc: "sycophancy",
     age: "agentic",
+    agentic: "agentic",
     saf: "safety",
+    safety: "safety",
     cal: "calibration",
     per: "persistence",
     ref: "refusal",
+    hir: "hierarchy",
+    hierarchy: "hierarchy",
     zctx: "zero_ctx",
     draw: "drawing",
   };
-  const domain = domainMap[prefix] ?? "instruction";
-  const tasks = await getTasks(domain);
-  return tasks.find((t) => t.id === id) ?? null;
+
+  const guessed = domainMap[token];
+  if (guessed) {
+    const hit = (await getTasks(guessed)).find((t) => t.id === id);
+    if (hit) return hit;
+  }
+
+  // fallback scan — never return null for a listed approved task due to prefix quirks
+  const domains: Domain[] = [
+    "instruction",
+    "json",
+    "math",
+    "coding",
+    "writing",
+    "swe",
+    "sycophancy",
+    "agentic",
+    "safety",
+    "calibration",
+    "persistence",
+    "refusal",
+    "hierarchy",
+    "zero_ctx",
+    "drawing",
+  ];
+  for (const domain of domains) {
+    if (domain === guessed) continue;
+    const hit = (await getTasks(domain)).find((t) => t.id === id);
+    if (hit) return hit;
+  }
+  return null;
 }
 
 export function toPublic(t: BenchTask): TaskPublic {

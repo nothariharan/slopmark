@@ -13,11 +13,32 @@ const parts: Components = {
   ul: ({ children }) => <ul className="mb-4 list-disc space-y-1 pl-5 text-zinc-300">{children}</ul>,
   ol: ({ children }) => <ol className="mb-4 list-decimal space-y-1 pl-5 text-zinc-300">{children}</ol>,
   li: ({ children }) => <li className="leading-7">{children}</li>,
-  a: ({ href, children }) => (
-    <Link href={href ?? "#"} className="text-zinc-100 underline underline-offset-2 hover:text-white">
-      {children}
-    </Link>
-  ),
+  a: ({ href, children }) => {
+    const url = href ?? "#";
+    const external = /^https?:\/\//i.test(url) || url.startsWith("mailto:");
+    const appRoute = url.startsWith("/");
+    if (external) {
+      return (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-zinc-100 underline underline-offset-2 hover:text-white"
+        >
+          {children}
+        </a>
+      );
+    }
+    if (appRoute) {
+      return (
+        <Link href={url} className="text-zinc-100 underline underline-offset-2 hover:text-white">
+          {children}
+        </Link>
+      );
+    }
+    // relative source paths (../lib/...) — show as code, don't client-navigate into a 404
+    return <code className="rounded bg-zinc-900 px-1 py-0.5 text-xs text-zinc-200">{children}</code>;
+  },
   code: ({ className, children }) => {
     const block = className?.includes("language-");
     if (block) {

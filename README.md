@@ -239,7 +239,7 @@ scripts/             challenge baseline smoke
 |---|---|
 | how we bench | [`docs/benchmarks.md`](docs/benchmarks.md) |
 | domains | [`docs/domains.md`](docs/domains.md) |
-| scoring | [`docs/judging.md`](docs/judging.md) |
+| scoring | [`docs/JUDGING.md`](docs/JUDGING.md) |
 | harness | [`docs/harness.md`](docs/harness.md) |
 | zero context | [`docs/zero-context.md`](docs/zero-context.md) |
 | realshot | [`docs/realshot.md`](docs/realshot.md) |

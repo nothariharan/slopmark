@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
     // streaming mode
     const task = await store.getTask(taskId);
-    if (!task) return NextResponse.json({ error: "task not found" }, { status: 404 });
+    if (!task) return NextResponse.json({ error: `task not found: ${taskId}` }, { status: 404 });
     const mode: HarnessMode =
       harnessMode ?? (task.domain === "zero_ctx" ? "zero_context" : "standard");
 

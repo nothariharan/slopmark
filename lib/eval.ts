@@ -123,7 +123,7 @@ async function finalizeSingleTurn(
 
 export async function evalTask(inp: RunInput) {
   const task = await store.getTask(inp.taskId);
-  if (!task) throw new Error("task not found");
+  if (!task) throw new Error(`task not found: ${inp.taskId}`);
 
   const ctx = modelCtx(inp);
   const slug = ctx.slug;

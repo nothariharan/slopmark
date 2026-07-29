@@ -14,7 +14,7 @@ how to ship slopmark as a public read-only MVP — challenge gallery, realshot B
 | `/bench` paste mode | no |
 | `/docs` | no |
 
-challenge results are read from committed `data/challenges/*/results.json` via [`lib/challenges/store-json.ts`](../lib/challenges/store-json.ts) — no sqlite on serverless.
+challenge results are read from committed `data/challenges/*/results.json` via `lib/challenges/store-json.ts` — no sqlite on serverless.
 
 ---
 
