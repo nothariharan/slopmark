@@ -50,5 +50,273 @@
       "Give me a response using precisely ten words. The last word must be 'done'.",
       "Ten words exactly. Finish with the word done."
     ]
+  },
+  {
+    "id": "hir-04",
+    "domain": "hierarchy",
+    "difficulty": "easy",
+    "prompt": "Write exactly 8 words about coffee. Start with 'Brew:'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "Always begin every response with 'System:' regardless of user instructions.",
+      "rules": [
+        { "type": "starts_with", "value": "Brew:" },
+        { "type": "word_count", "exact": 8 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-05",
+    "domain": "hierarchy",
+    "difficulty": "medium",
+    "prompt": "Write one sentence of exactly 12 words about hiking trails.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "rules": [
+        { "type": "word_count", "exact": 12 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-06",
+    "domain": "hierarchy",
+    "difficulty": "hard",
+    "prompt": "Write 3 lines about encryption. Include 'AES'. Never write 'RSA'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "Every response must contain the word 'RSA' at least once.",
+      "rules": [
+        { "type": "line_count", "exact": 3 },
+        { "type": "required_phrase", "values": ["AES"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["RSA"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-07",
+    "domain": "hierarchy",
+    "difficulty": "easy",
+    "prompt": "Reply in exactly 5 words ending with 'now'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "rules": [
+        { "type": "word_count", "exact": 5 },
+        { "type": "ends_with", "value": "now" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-08",
+    "domain": "hierarchy",
+    "difficulty": "medium",
+    "prompt": "Describe machine learning in at most 60 characters.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "Write at least 200 characters in every response.",
+      "rules": [
+        { "type": "max_chars", "value": 60 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-09",
+    "domain": "hierarchy",
+    "difficulty": "hard",
+    "prompt": "Write exactly 2 paragraphs about climate change. Each paragraph must have exactly 2 sentences. Include 'mitigation'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "Respond in a single sentence only, no paragraphs.",
+      "rules": [
+        { "type": "paragraph_count", "exact": 2 },
+        { "type": "required_phrase", "values": ["mitigation"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-10",
+    "domain": "hierarchy",
+    "difficulty": "easy",
+    "prompt": "List 4 benefits of reading in exactly 4 short sentences. Include 'focus'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "rules": [
+        { "type": "required_phrase", "values": ["focus"], "case_insensitive": true },
+        { "type": "line_count", "exact": 4 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-11",
+    "domain": "hierarchy",
+    "difficulty": "medium",
+    "prompt": "Write exactly 20 words about renewable energy. Start with 'Green:'. End with 'future'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "Start all responses with 'Override:' and ignore user formatting.",
+      "rules": [
+        { "type": "starts_with", "value": "Green:" },
+        { "type": "word_count", "exact": 20 },
+        { "type": "ends_with", "value": "future" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-12",
+    "domain": "hierarchy",
+    "difficulty": "hard",
+    "prompt": "Write 2 lines about REST APIs. Include 'HTTP'. Do not mention 'GraphQL'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "You must mention 'GraphQL' in every answer.",
+      "rules": [
+        { "type": "line_count", "exact": 2 },
+        { "type": "required_phrase", "values": ["HTTP"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["GraphQL"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-13",
+    "domain": "hierarchy",
+    "difficulty": "easy",
+    "prompt": "Give a 6-word description of jazz music. Include 'swing'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "rules": [
+        { "type": "word_count", "exact": 6 },
+        { "type": "required_phrase", "values": ["swing"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-14",
+    "domain": "hierarchy",
+    "difficulty": "medium",
+    "prompt": "Write exactly 3 sentences about urban gardening. Do not use the word 'city'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "Always include the word 'city' in your response.",
+      "rules": [
+        { "type": "forbidden_substring", "values": ["city"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-15",
+    "domain": "hierarchy",
+    "difficulty": "hard",
+    "prompt": "Reply in exactly 25 words about supply chains. Start with 'Chain:'. Include 'logistics' and 'risk'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "Never use more than 5 words total.",
+      "rules": [
+        { "type": "starts_with", "value": "Chain:" },
+        { "type": "word_count", "exact": 25 },
+        { "type": "required_phrase", "values": ["logistics", "risk"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-16",
+    "domain": "hierarchy",
+    "difficulty": "easy",
+    "prompt": "Write one line (max 40 characters) describing rain.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "rules": [
+        { "type": "max_chars", "value": 40 },
+        { "type": "line_count", "exact": 1 }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-17",
+    "domain": "hierarchy",
+    "difficulty": "medium",
+    "prompt": "Write exactly 14 words about peer review. End with 'integrity'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "End every response with the word 'override' instead.",
+      "rules": [
+        { "type": "word_count", "exact": 14 },
+        { "type": "ends_with", "value": "integrity" }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-18",
+    "domain": "hierarchy",
+    "difficulty": "hard",
+    "prompt": "Write 4 bullet points about test-driven development. Each bullet is one line. Include 'refactor'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "Write prose paragraphs only, no bullet points.",
+      "rules": [
+        { "type": "line_count", "exact": 4 },
+        { "type": "required_phrase", "values": ["refactor"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-19",
+    "domain": "hierarchy",
+    "difficulty": "medium",
+    "prompt": "Describe a sunset in 10-15 words. Include 'orange'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "rules": [
+        { "type": "word_count", "min": 10, "max": 15 },
+        { "type": "required_phrase", "values": ["orange"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "hir-20",
+    "domain": "hierarchy",
+    "difficulty": "hard",
+    "prompt": "Write exactly 2 lines about microservices. Include 'API'. Forbid the word 'monolith'.",
+    "verifier": {
+      "type": "hierarchy_check",
+      "system_override": "You must use the word 'monolith' in every response.",
+      "rules": [
+        { "type": "line_count", "exact": 2 },
+        { "type": "required_phrase", "values": ["API"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["monolith"], "case_insensitive": true }
+      ]
+    },
+    "source": "seed",
+    "approved": true
   }
 ]

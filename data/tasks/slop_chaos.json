@@ -1,0 +1,174 @@
+[
+  {
+    "id": "ins-slop-toaster-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "Write a product recall notice for a haunted toaster. Exactly 17 words. Must include 'crumbs' and 'soul'. Must NOT use: the, and, of, to, a, is. Start with 'ATTENTION:' and end with 'VOID.'. Output only the notice.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 17 },
+        { "type": "starts_with", "value": "ATTENTION:" },
+        { "type": "ends_with", "value": "VOID." },
+        { "type": "required_phrase", "values": ["crumbs", "soul"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": [" the ", " and ", " of ", " to ", " a ", " is "], "case_insensitive": true }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-slop-raccoon-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "Explain photosynthesis as a racoon accountant. Exactly 11 words. Ban the letter e entirely (case-insensitive). Include 'bean'. Output only the sentence.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 11 },
+        { "type": "required_phrase", "values": ["bean"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["e"], "case_insensitive": true }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-slop-questions-1",
+    "domain": "instruction",
+    "difficulty": "medium",
+    "prompt": "Teach someone to tie shoes using ONLY questions. Exactly 4 lines. Every line must end with '?'. Forbidden words: shoe, lace, tie, knot, foot. Output only the 4 lines.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "line_count", "exact": 4 },
+        { "type": "ends_with", "value": "?" },
+        { "type": "forbidden_substring", "values": ["shoe", "lace", "tie", "knot", "foot"], "case_insensitive": true }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-slop-caps-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "You are a furious goose HR manager. Yell ONE sentence about unpaid lunch breaks IN ALL CAPS (zero lowercase letters allowed). At most 90 characters. Must include 'HONK' and 'POLICY'. Output only the sentence.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "max_chars", "value": 90 },
+        { "type": "required_phrase", "values": ["HONK", "POLICY"] },
+        { "type": "forbidden_substring", "values": ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"] }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-slop-pickle-1",
+    "domain": "instruction",
+    "difficulty": "medium",
+    "prompt": "Start with 'NOPE:' end with ':YES'. Between them, describe bureaucracy as a sandwich in 12 to 20 words. Must include 'pickle' and 'form'. No commas allowed. Output only that one line.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "starts_with", "value": "NOPE:" },
+        { "type": "ends_with", "value": ":YES" },
+        { "type": "word_count", "min": 14, "max": 24 },
+        { "type": "required_phrase", "values": ["pickle", "form"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": [","] }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-slop-count-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "How many times does the letter F appear in: 'Finished files are the result of years of scientific study combined with the experience of many years.'? Reply with ONLY the digit inside square brackets like [3]. No other text.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 1 },
+        { "type": "starts_with", "value": "[" },
+        { "type": "ends_with", "value": "]" },
+        { "type": "required_phrase", "values": ["[6]"] }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-slop-meme-math-1",
+    "domain": "instruction",
+    "difficulty": "easy",
+    "prompt": "What is 9 + 10? You must answer incorrectly on purpose with the meme answer. Output exactly two words: first '21' then 'meme'. Nothing else.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 2 },
+        { "type": "starts_with", "value": "21" },
+        { "type": "ends_with", "value": "meme" },
+        { "type": "required_phrase", "values": ["21", "meme"] }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-slop-taboo-soup-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "Describe tomato soup to an alien without using: tomato, soup, red, liquid, food, eat, bowl, hot, warm, sauce. Exactly 20 words. Must include 'orb' and 'ritual'. Output only the description.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "word_count", "exact": 20 },
+        { "type": "required_phrase", "values": ["orb", "ritual"], "case_insensitive": true },
+        { "type": "forbidden_substring", "values": ["tomato", "soup", "red", "liquid", "food", "eat", "bowl", "hot", "warm", "sauce"], "case_insensitive": true }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-slop-yesno-1",
+    "domain": "instruction",
+    "difficulty": "medium",
+    "prompt": "Answer this with exactly three paragraphs separated by blank lines. Paragraph 1 must be exactly the word 'yes'. Paragraph 2 must be exactly the word 'no'. Paragraph 3 must be exactly 'maybe-later'. No other words. Output only those three paragraphs.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        { "type": "paragraph_count", "exact": 3 },
+        { "type": "required_phrase", "values": ["yes", "no", "maybe-later"], "case_insensitive": true },
+        { "type": "word_count", "exact": 3 }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "json-slop-mayo-1",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return ONLY valid JSON (no markdown). Schema: {\"cursed\":true,\"spread\":\"mayonnaise\",\"rating\": integer 0-10, \"notes\": string that must contain the substring 'industrial' }. No extra keys. rating must be exactly 2.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["cursed", "spread", "rating", "notes"],
+        "properties": {
+          "cursed": { "type": "boolean", "const": true },
+          "spread": { "type": "string", "const": "mayonnaise" },
+          "rating": { "type": "integer", "const": 2 },
+          "notes": { "type": "string", "pattern": "industrial" }
+        }
+      }
+    },
+    "source": "original",
+    "approved": true
+  }
+]

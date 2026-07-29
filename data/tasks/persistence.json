@@ -30,5 +30,293 @@
     },
     "source": "seed",
     "approved": true
+  },
+  {
+    "id": "per-03",
+    "domain": "persistence",
+    "difficulty": "easy",
+    "prompt": "Write 3 sentences about cats. Do not use the word 'the' anywhere in your response.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "forbidden_substring", "values": ["the"], "case_insensitive": true },
+      "follow_up_prompts": [
+        "Add one more sentence about dogs. All original rules still apply.",
+        "Now mention birds in a final sentence. Keep every rule from my first message."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-04",
+    "domain": "persistence",
+    "difficulty": "medium",
+    "prompt": "Write exactly 12 words about morning routines. End your response with the word 'today'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "ends_with", "value": "today" },
+      "follow_up_prompts": [
+        "Rewrite your answer as a question. Keep the same word count and ending word.",
+        "Change the topic to evening routines but keep all formatting rules from before."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-05",
+    "domain": "persistence",
+    "difficulty": "medium",
+    "prompt": "Describe wind energy in exactly 15 words. Include the phrase 'renewable source'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "word_count", "exact": 15 },
+      "follow_up_prompts": [
+        "Now describe solar energy instead. Same word count and required phrase.",
+        "Combine both energy types in one sentence. Still exactly 15 words with 'renewable source'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-06",
+    "domain": "persistence",
+    "difficulty": "easy",
+    "prompt": "Write 2 sentences about books. Every sentence must start with 'Note:'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "starts_with", "value": "Note:" },
+      "follow_up_prompts": [
+        "Add a third sentence about libraries. Keep the same opening format.",
+        "Summarize all three topics in two new sentences. Each must still start with 'Note:'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-07",
+    "domain": "persistence",
+    "difficulty": "hard",
+    "prompt": "Write exactly 3 lines about ocean tides. Include the word 'lunar'. Do not use 'moon'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "line_count", "exact": 3 },
+      "follow_up_prompts": [
+        "Add a fourth line about coastal erosion. All original constraints still apply.",
+        "Rewrite as exactly 3 lines about river currents. Keep 'lunar' and avoid 'moon'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-08",
+    "domain": "persistence",
+    "difficulty": "medium",
+    "prompt": "Explain photosynthesis in at most 80 characters. Be concise.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "max_chars", "value": 80 },
+      "follow_up_prompts": [
+        "Now explain respiration the same way. Stay within the character limit.",
+        "Compare both processes in one short reply. Character limit still applies."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-09",
+    "domain": "persistence",
+    "difficulty": "easy",
+    "prompt": "Write one paragraph (exactly 2 sentences) about tea. Include the word 'aroma'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "required_phrase", "values": ["aroma"], "case_insensitive": true },
+      "follow_up_prompts": [
+        "Write about coffee instead. Keep exactly 2 sentences and include 'aroma'.",
+        "Mention both beverages in 2 sentences. 'Aroma' must still appear."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-10",
+    "domain": "persistence",
+    "difficulty": "hard",
+    "prompt": "Reply in exactly 25 words about space exploration. Start with 'Space:'. End with 'horizon'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "word_count", "exact": 25 },
+      "follow_up_prompts": [
+        "Shorten to exactly 20 words. Keep starting with 'Space:' and ending with 'horizon'.",
+        "Expand back to 25 words about Mars missions. Same start and end rules."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-11",
+    "domain": "persistence",
+    "difficulty": "medium",
+    "prompt": "Write 4 sentences about gardening. Never use the words 'plant' or 'soil'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "forbidden_substring", "values": ["plant", "soil"], "case_insensitive": true },
+      "follow_up_prompts": [
+        "Add a fifth sentence about seasons. Forbidden words still apply.",
+        "Describe indoor growing in 3 sentences. Do not use 'plant' or 'soil'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-12",
+    "domain": "persistence",
+    "difficulty": "easy",
+    "prompt": "Give a 1-sentence tip about sleep. Start your response with 'Tip:'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "starts_with", "value": "Tip:" },
+      "follow_up_prompts": [
+        "Give another tip about exercise. Same opening format required.",
+        "Give a tip about hydration. Must still start with 'Tip:'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-13",
+    "domain": "persistence",
+    "difficulty": "medium",
+    "prompt": "Write exactly 8 words describing a thunderstorm. End with 'suddenly'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "ends_with", "value": "suddenly" },
+      "follow_up_prompts": [
+        "Describe a snowstorm in exactly 8 words ending with 'suddenly'.",
+        "Describe heavy rain in 8 words. Must end with 'suddenly'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-14",
+    "domain": "persistence",
+    "difficulty": "hard",
+    "prompt": "Write exactly 2 paragraphs about chess. Each paragraph must be exactly 2 sentences. Include 'strategy'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "paragraph_count", "exact": 2 },
+      "follow_up_prompts": [
+        "Add a third paragraph of 2 sentences about openings. Keep 'strategy' and 2-sentence paragraphs.",
+        "Rewrite focusing on endgames. Still 2 paragraphs, 2 sentences each, with 'strategy'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-15",
+    "domain": "persistence",
+    "difficulty": "easy",
+    "prompt": "List 3 benefits of walking in exactly 3 short sentences. Include the word 'health'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "required_phrase", "values": ["health"], "case_insensitive": true },
+      "follow_up_prompts": [
+        "Add a fourth benefit. 'Health' must still appear somewhere.",
+        "Rewrite as a single flowing paragraph. Keep 'health' in the text."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-16",
+    "domain": "persistence",
+    "difficulty": "medium",
+    "prompt": "Describe a city park in no more than 50 characters.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "max_chars", "value": 50 },
+      "follow_up_prompts": [
+        "Describe a beach in the same character limit.",
+        "Describe a mountain trail. Still max 50 characters."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-17",
+    "domain": "persistence",
+    "difficulty": "hard",
+    "prompt": "Write exactly 5 lines about coding best practices. Each line must start with a dash (-). Include 'testing'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "line_count", "exact": 5 },
+      "follow_up_prompts": [
+        "Add a sixth line about documentation. Keep dash format and include 'testing'.",
+        "Rewrite as exactly 5 lines about code review. Dashes and 'testing' required."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-18",
+    "domain": "persistence",
+    "difficulty": "medium",
+    "prompt": "Explain binary numbers in exactly 18 words. Do not use the word 'computer'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "forbidden_substring", "values": ["computer"], "case_insensitive": true },
+      "follow_up_prompts": [
+        "Explain hexadecimal in exactly 18 words. Still avoid 'computer'.",
+        "Compare binary and decimal in 18 words. No 'computer' allowed."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-19",
+    "domain": "persistence",
+    "difficulty": "easy",
+    "prompt": "Write one sentence (10-14 words) about jazz music. Include 'improvisation'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "word_count", "min": 10, "max": 14 },
+      "follow_up_prompts": [
+        "Write about blues music with the same word range and include 'improvisation'.",
+        "Compare jazz and blues in one sentence. 10-14 words, include 'improvisation'."
+      ]
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "per-20",
+    "domain": "persistence",
+    "difficulty": "hard",
+    "prompt": "Reply in exactly 30 words about climate policy. Start with 'Policy:'. Include 'carbon' and 'equity'. End with 'action'.",
+    "verifier": {
+      "type": "persistence_check",
+      "rule": { "type": "required_phrase", "values": ["carbon", "equity"], "case_insensitive": true },
+      "follow_up_prompts": [
+        "Shorten to 20 words. Keep 'Policy:' start, both required words, and 'action' ending.",
+        "Rewrite about renewable incentives in 30 words. Same start, phrases, and ending."
+      ]
+    },
+    "source": "seed",
+    "approved": true
   }
 ]

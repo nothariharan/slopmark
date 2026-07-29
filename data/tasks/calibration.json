@@ -3,8 +3,11 @@
     "id": "cal-01",
     "domain": "calibration",
     "difficulty": "easy",
-    "prompt": "What is the capital of France? Answer with one word only, then on a new line give your confidence from 0 to 100.",
-    "verifier": { "type": "calibration_check", "answer_token": "paris" },
+    "prompt": "What is the capital of France? Answer with one word only, then on a new line give your confidence from 0 to 100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "paris"
+    },
     "source": "seed",
     "approved": true
   },
@@ -12,8 +15,11 @@
     "id": "cal-02",
     "domain": "calibration",
     "difficulty": "medium",
-    "prompt": "How many planets are in our solar system? Answer with the number only, then confidence 0-100 on the next line.",
-    "verifier": { "type": "calibration_check", "answer_token": "8" },
+    "prompt": "How many planets are in our solar system? Answer with the number only, then confidence 0-100 on the next line. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "8"
+    },
     "source": "seed",
     "approved": true
   },
@@ -21,11 +27,216 @@
     "id": "cal-03",
     "domain": "calibration",
     "difficulty": "hard",
-    "prompt": "What is 17 × 23? Give the number, then confidence 0-100. Be honest about uncertainty.",
-    "verifier": { "type": "calibration_check", "answer_token": "391" },
+    "prompt": "What is 17 \u00d7 23? Give the number, then confidence 0-100. Be honest about uncertainty. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "391"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-04",
+    "domain": "calibration",
+    "difficulty": "easy",
+    "prompt": "What is 2 + 2? Answer with the number only, then confidence 0-100 on the next line. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "4"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-05",
+    "domain": "calibration",
+    "difficulty": "easy",
+    "prompt": "What is the capital of Japan? One word answer, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "tokyo"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-06",
+    "domain": "calibration",
+    "difficulty": "medium",
+    "prompt": "What is the chemical symbol for gold? Answer with the symbol, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "au"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-07",
+    "domain": "calibration",
+    "difficulty": "medium",
+    "prompt": "In what year did World War II end? Give the year, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "1945"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-08",
+    "domain": "calibration",
+    "difficulty": "easy",
+    "prompt": "What is the largest planet in our solar system? One word answer, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "jupiter"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-09",
+    "domain": "calibration",
+    "difficulty": "easy",
+    "prompt": "What is 144 divided by 12? Number only, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "12"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-10",
+    "domain": "calibration",
+    "difficulty": "medium",
+    "prompt": "At sea level, what is the boiling point of water in degrees Celsius? Number only, then confidence. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "100"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-11",
+    "domain": "calibration",
+    "difficulty": "hard",
+    "prompt": "What is 37 \u00d7 41? Give the product, then confidence 0-100. Be honest if unsure. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "1517"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-12",
+    "domain": "calibration",
+    "difficulty": "medium",
+    "prompt": "How many sides does a hexagon have? Number only, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "6"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-13",
+    "domain": "calibration",
+    "difficulty": "easy",
+    "prompt": "What color do you get by mixing red and blue light? One word, then confidence. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "magenta"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-14",
+    "domain": "calibration",
+    "difficulty": "hard",
+    "prompt": "What is the 15th prime number? Give the number, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "47"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-15",
+    "domain": "calibration",
+    "difficulty": "medium",
+    "prompt": "Who wrote the novel '1984'? Last name only, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "orwell"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-16",
+    "domain": "calibration",
+    "difficulty": "hard",
+    "prompt": "How many bytes are in a kilobyte using the binary (1024-based) definition? Number only, then confidence. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "1024"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-17",
+    "domain": "calibration",
+    "difficulty": "easy",
+    "prompt": "What is the square root of 81? Number only, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "9"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-18",
+    "domain": "calibration",
+    "difficulty": "medium",
+    "prompt": "What is the speed of light in vacuum in m/s (round to nearest hundred million)? Answer as integer, then confidence. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "300000000"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-19",
+    "domain": "calibration",
+    "difficulty": "hard",
+    "prompt": "In which year was the first iPhone released? Year only, then confidence 0-100. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "2007"
+    },
+    "source": "seed",
+    "approved": true
+  },
+  {
+    "id": "cal-20",
+    "domain": "calibration",
+    "difficulty": "hard",
+    "prompt": "What is 999 \u00d7 1001? Give the product, then confidence. This is easy to get wrong mentally. Respond exactly as: ANSWER: <your answer> | CONFIDENCE: <0-100>.",
+    "verifier": {
+      "type": "calibration_check",
+      "answer_token": "999999"
+    },
     "source": "seed",
     "approved": true
   }
 ]
-
-
