@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ByokAgentForm, EMPTY_BYOK } from "@/components/ByokAgentForm";
 import type { ByokAgent } from "@/lib/byok";
-import { aimlTestModels, defaultBenchSlug, openRouterFreeModels } from "@/lib/models";
+import { aimlTestModels, defaultBenchSlug, fireworksFrontierModels, openRouterFreeModels } from "@/lib/models";
 import type { Domain, EvalRun, HarnessMode, RuleResult, TaskPublic } from "@/lib/types";
 
 type EvalRes = {
@@ -333,6 +333,13 @@ export default function BenchPage() {
                         </option>
                       ))}
                     </optgroup>
+                    <optgroup label="fireworks — needs FIREWORKS_API_KEY (kimi k3 + frontier)">
+                      {fireworksFrontierModels.map((m) => (
+                        <option key={m.slug} value={m.slug}>
+                          {m.name}
+                        </option>
+                      ))}
+                    </optgroup>
                     <optgroup label="aiml — needs AIMLAPI_KEY or BYOK">
                       {aimlTestModels.map((m) => (
                         <option key={m.slug} value={m.slug}>
@@ -346,7 +353,8 @@ export default function BenchPage() {
 
               {!useByok && (
                 <p className="text-xs text-zinc-600">
-                  free host tier: 1 request per minute per tester. enable BYOK to go faster.
+                  free host tier: 1 request per minute per tester. fireworks / aiml
+                  use their own keys (no openrouter 1/min). enable BYOK for anything else.
                 </p>
               )}
               <div className="flex flex-wrap gap-2 pt-1">

@@ -148,8 +148,10 @@ for live calls put keys in `.env.local` see [`.env.example`](.env.example)
 
 ```bash
 AIMLAPI_KEY=          # cheap testing  aiml/<model-id>
-FIREWORKS_API_KEY=    # drawing · game night · slop chaos · trap season  fireworks/<model-id>
+FIREWORKS_API_KEY=    # bench fireworks group · drawing · game night · slop chaos · trap season
 OPENROUTER_API_KEY=   # openrouter model group
+
+# /bench model picker groups: openrouter free · fireworks (kimi k3 + frontier) · aiml
 ```
 
 optional postgres: `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`  

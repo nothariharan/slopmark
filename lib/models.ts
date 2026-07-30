@@ -1,4 +1,10 @@
 import { aimlTestModels } from "./aimlapi";
+import {
+  fireworksCursePanel,
+  fireworksCursePanelExtras,
+  fireworksFrontierModels,
+  isFireworksSlug,
+} from "./fireworks-models";
 import { openRouterFreeModels } from "./openrouter-free";
 
 /** public UI default — OpenRouter free models (host-funded) */
@@ -21,7 +27,14 @@ export const openRouterPaidModels = [
 /** @deprecated use openRouterPaidModels — kept for older imports */
 export const openRouterModels = openRouterPaidModels;
 
-export { aimlTestModels, openRouterFreeModels };
+export {
+  aimlTestModels,
+  fireworksCursePanel,
+  fireworksCursePanelExtras,
+  fireworksFrontierModels,
+  isFireworksSlug,
+  openRouterFreeModels,
+};
 
 /** default bench / game slug — free OpenRouter router */
 export const defaultBenchSlug = openRouterFreeModels[0].slug;

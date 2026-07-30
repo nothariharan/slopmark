@@ -13,7 +13,8 @@
     "smoke": "tsx scripts/smoke-local.ts",
     "challenge": "tsx scripts/run-challenge.ts",
     "challenge:slop-chaos": "tsx scripts/run-slop-chaos.ts",
-    "challenge:trap-season": "tsx scripts/run-trap-season.ts"
+    "challenge:trap-season": "tsx scripts/run-trap-season.ts",
+    "challenge:trap-season-extras": "tsx scripts/run-trap-season-extras.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

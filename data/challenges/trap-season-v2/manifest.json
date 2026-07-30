@@ -1,8 +1,8 @@
 {
   "slug": "trap-season-v2",
   "title": "Trap Season v2",
-  "subtitle": "Fireworks frontier panel · 10 cursed office / seasonal traps · monthly pack after Slop Chaos",
-  "description": "Second cursed pack in the Trap Season cadence. Cubicle mazes, owl lipograms, whispered standups, alien wifi, cactus JSON — every task is a machine-checkable rule contract. Same harness as Slop Chaos, new traps, zero LLM judges.",
+  "subtitle": "Fireworks frontier panel · 10 cursed office / seasonal traps · kimi k3 + minimax/qwen/deepseek flash extras",
+  "description": "Second cursed pack in the Trap Season cadence. Cubicle mazes, owl lipograms, whispered standups, alien wifi, cactus JSON — every task is a machine-checkable rule contract. Same harness as Slop Chaos, new traps, zero LLM judges. Panel includes Kimi K3 plus newer Fireworks models (Minimax M3, Qwen3.7 Plus, DeepSeek V4 Flash, Kimi K2.7 Code).",
   "harness_mode": "zero_context",
   "tasks": [
     {
@@ -76,6 +76,10 @@
       "label": "Kimi K2.6"
     },
     {
+      "slug": "fireworks/kimi-k2p7-code",
+      "label": "Kimi K2.7 Code"
+    },
+    {
       "slug": "fireworks/glm-5p2",
       "label": "GLM 5.2"
     },
@@ -84,8 +88,20 @@
       "label": "DeepSeek V4 Pro"
     },
     {
+      "slug": "fireworks/deepseek-v4-flash",
+      "label": "DeepSeek V4 Flash"
+    },
+    {
       "slug": "fireworks/gpt-oss-120b",
       "label": "GPT-OSS 120B"
+    },
+    {
+      "slug": "fireworks/minimax-m3",
+      "label": "Minimax M3"
+    },
+    {
+      "slug": "fireworks/qwen3p7-plus",
+      "label": "Qwen3.7 Plus"
     }
   ],
   "created_at": "2026-07-30T00:00:00.000Z"
