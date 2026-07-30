@@ -106,13 +106,15 @@ committed challenge / session json is what survives deploys
 ## what ships
 
 - **domains** — instruction json math procedural refusal hierarchy calibration persistence sycophancy agentic safety coding writing swe zero_ctx drawing
-- **bench** — `/bench` run one task or a full suite paste mode works without a key
+- **bench** — `/bench` scored suites + paste mode · nav **bench** cluster
+- **play** — `/playground` hub · canvas · thunderdome · goal · arena · realshot
 - **byok** — bring your own openai-compatible key for bench realshot and challenge builder
 - **realshot** — head to head agent duels auto scored
-- **challenges** — fixed sprints with revisitable infographics
+- **challenges** — fixed sprints with revisitable infographics + shareable receipt heroes
   - [niche sprint v1](https://slopmark.vercel.app/challenge/niche-sprint-v1)
   - [drawing contest v1](https://slopmark.vercel.app/challenge/drawing-contest-v1)
   - [game night v1](https://slopmark.vercel.app/challenge/game-night-v1)
+  - [slop chaos v1](https://slopmark.vercel.app/challenge/slop-chaos-v1)
 - **sessions wall** — `/sessions` plus leaderboard sessions tab
 - **shame** — worst failures from committed results
 - **goal** — stupid minigames vs live models

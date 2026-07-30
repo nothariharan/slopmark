@@ -4,19 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { models } from "@/lib/models";
 
-// the launcher tiles route into the modes that already exist — the playground
-// is the front door, not a rewrite of the games living under /goal
+// play-cluster launcher — freeform + games. scored spine lives under nav "bench"
 const VIBES = [
   { href: "/goal", tag: "you vs ai", title: "the games", blurb: "draw, stump, roulette, letter-count, direction — beat the model" },
   { href: "/canvas", tag: "battle", title: "canvas battles", blurb: "two models draw the same thing, you judge whose is worse" },
-  { href: "/challenges/new", tag: "build", title: "author a bench", blurb: "pick tasks, bring your own key, run a scored grid" },
   { href: "/thunderdome", tag: "debate", title: "thunderdome", blurb: "two models argue, you watch it get petty" },
   { href: "/arena", tag: "blind vote", title: "human arena", blurb: "a vs b, models hidden — pick the better answer" },
   { href: "/realshot", tag: "BYOK", title: "realshot duels", blurb: "test your own api key on one-shot tasks" },
-  { href: "/bench", tag: "run", title: "bench", blurb: "run the seed task set through the harness" },
-  { href: "/submit", tag: "contribute", title: "submit a task", blurb: "add your own stupid task to the pool" },
   { href: "/shame", tag: "wall", title: "hall of shame", blurb: "the epic failures, upvoted" },
-  { href: "/review", tag: "judge", title: "review queue", blurb: "vote on outputs that need a human eye" },
+  { href: "/challenges/new", tag: "bench", title: "author a sprint", blurb: "pick traps, bring your key, get a scored receipt" },
+  { href: "/submit", tag: "contribute", title: "submit a task", blurb: "add your own stupid task to the pool" },
 ];
 
 type Panel = {
@@ -101,9 +98,21 @@ export default function PlaygroundPage() {
     <div className="min-h-screen bg-black text-zinc-100">
       <main className="mx-auto max-w-5xl px-4 py-12">
         <div className="mb-10">
-          <h1 className="text-2xl font-medium tracking-tight text-zinc-100">playground</h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            throw one prompt at a row of models and watch them disagree. or wander into a mode below.
+          <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-600">
+            play
+          </p>
+          <h1 className="mt-1 text-2xl font-medium tracking-tight text-zinc-100">playground</h1>
+          <p className="mt-1 max-w-2xl text-sm text-zinc-500">
+            freeform multi-model dump + the game doors. for scored suites and challenge
+            receipts, jump to{" "}
+            <Link href="/bench" className="text-zinc-300 underline-offset-2 hover:underline">
+              bench
+            </Link>{" "}
+            or{" "}
+            <Link href="/challenges" className="text-zinc-300 underline-offset-2 hover:underline">
+              challenges
+            </Link>
+            .
           </p>
         </div>
 

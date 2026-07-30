@@ -20,10 +20,15 @@
 
 | route | document |
 |---|---|
-| `/` | landing, links to bench/docs |
+| `/` | landing — CTAs split **bench** vs **play**, featured receipts |
 | `/bench` | task pick, model pick, run task, run suite, paste mode, results panel |
-| `/leaderboard` | per-model stats table |
+| `/challenges` · `/challenge/[slug]` | curated sprints + shareable receipts |
+| `/playground` | play hub — freeform multi-model + game launcher |
+| `/canvas` · `/thunderdome` · `/goal` · `/arena` · `/realshot` | play cluster (also in nav) |
+| `/leaderboard` · `/sessions` · `/shame` | bench receipts / walls |
 | `/docs` | markdown docs from `docs/` folder |
+
+nav (`components/Nav.tsx`) is clustered **bench | play** so canvas/thunderdome are discoverable without opening playground first.
 
 - [ ] client vs server components
 - [ ] what data each page fetches

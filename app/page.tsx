@@ -68,19 +68,19 @@ export default async function Home() {
                 href="/bench"
                 className="border border-zinc-100 bg-zinc-100 px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-white"
               >
-                run the bench →
+                bench →
               </Link>
               <Link
                 href="/playground"
                 className="border border-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-zinc-600 hover:text-zinc-100"
               >
-                play with the models
+                play →
               </Link>
               <Link
-                href="/leaderboard"
+                href="/challenges"
                 className="border border-zinc-800 px-4 py-2 text-sm text-zinc-300 transition-colors hover:border-zinc-600 hover:text-zinc-100"
               >
-                leaderboard
+                receipts
               </Link>
             </div>
             <div className="mt-8 flex flex-wrap gap-x-8 gap-y-2 font-mono text-xs text-zinc-600">
@@ -99,7 +99,7 @@ export default async function Home() {
             <div>
               <h2 className="text-xl font-medium tracking-tight">featured challenges</h2>
               <p className="mt-1 text-sm text-zinc-500">
-                curated head-to-head sessions — fixed tasks, fixed harness, receipts included
+                bench receipts — fixed traps, fixed harness, wipeouts included
               </p>
             </div>
             <Link href="/challenges" className="text-sm text-zinc-500 hover:text-zinc-200">
@@ -198,17 +198,36 @@ export default async function Home() {
           </ol>
         </section>
 
-        {/* the rest of the playground */}
+        {/* play cluster — games + freeform, not the scored spine */}
         <section className="border-t border-zinc-900 py-14">
-          <h2 className="text-xl font-medium tracking-tight">and when you&apos;re bored of charts</h2>
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-600">
+                play
+              </p>
+              <h2 className="mt-1 text-xl font-medium tracking-tight">
+                when you&apos;re bored of charts
+              </h2>
+              <p className="mt-1 max-w-xl text-sm text-zinc-500">
+                still the same models — just doors into stupid traps instead of
+                suite runners. canvas and thunderdome live here too.
+              </p>
+            </div>
+            <Link
+              href="/playground"
+              className="shrink-0 text-sm text-zinc-500 hover:text-zinc-200"
+            >
+              playground hub →
+            </Link>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
             {[
-              { href: "/sessions", tag: "wall", title: "sessions", d: "every run anyone threw at the models, preserved" },
-              { href: "/shame", tag: "wall", title: "hall of shame", d: "the most confident wrong answers, upvoted" },
-              { href: "/goal", tag: "games", title: "you vs the model", d: "draw, stump, roulette — try to beat it yourself" },
-              { href: "/arena", tag: "blind vote", title: "arena", d: "a vs b with the names hidden" },
+              { href: "/goal", tag: "game", title: "you vs the model", d: "draw, stump, roulette — try to beat it yourself" },
+              { href: "/canvas", tag: "battle", title: "canvas battles", d: "two models draw the same thing, you pick the worse one" },
               { href: "/thunderdome", tag: "debate", title: "thunderdome", d: "two models argue. it gets petty." },
-              { href: "/docs", tag: "read", title: "docs", d: "how the harness, verifiers and scoring work" },
+              { href: "/arena", tag: "blind vote", title: "arena", d: "a vs b with the names hidden" },
+              { href: "/realshot", tag: "BYOK", title: "realshot", d: "one-shot duels with your own key" },
+              { href: "/shame", tag: "wall", title: "hall of shame", d: "the most confident wrong answers, upvoted" },
             ].map((v) => (
               <Link
                 key={v.href}
