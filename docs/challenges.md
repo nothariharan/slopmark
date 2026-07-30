@@ -163,7 +163,7 @@ ran via OpenRouter twins (`FIREWORKS_API_KEY` was not in local `.env.local`). re
 
 Kimi K3 still loses hard on multi-constraint lipogram / glue-word bans — the “frontend” model is not a constraint model.
 
-the challenge receipt UI now includes a **what these tasks actually are** briefing (plain-english blurb + expandable full prompt) and per-run verifier details on fails, so the short nicknames are readable for humans.
+challenge receipt pages (`/challenge/[slug]`) lead with a **shareable receipt hero**: top pass %, universal wipeout/clear chips, one specimen fail (prompt + verifier line + output), copy-link / share-card, and an Open Graph image. task briefing + per-run verifier chips sit below; json/csv export is tucked at the bottom.
 
 ---
 

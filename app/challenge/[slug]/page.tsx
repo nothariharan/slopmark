@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChallengeInfographic } from "@/components/ChallengeInfographic";
+import { ChallengeReceiptHero } from "@/components/ChallengeReceiptHero";
 import { SvgThumb, extractSvg } from "@/components/SvgOutput";
+import { modelAnchorId } from "@/lib/challenges/receipt";
 import type {
   ChallengeResults,
   ChallengeRunRow,
@@ -57,30 +59,17 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
           ← all challenges
         </Link>
 
-        <header className="mt-4 mb-10">
+        <header className="mt-4 mb-8">
           <p className="text-xs uppercase tracking-widest text-emerald-500/80">benchmark challenge</p>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight">{data.manifest.title}</h1>
           <p className="mt-2 text-zinc-400">{data.manifest.subtitle}</p>
-          <p className="mt-4 max-w-2xl text-sm text-zinc-500">{data.manifest.description}</p>
           <p className="mt-3 text-xs text-zinc-600">
             harness: {data.manifest.harness_mode} · completed{" "}
             {new Date(data.completed_at).toLocaleString()}
           </p>
-          <div className="mt-4 flex flex-wrap gap-3 text-sm">
-            <a
-              href={`/api/export?kind=challenge&slug=${encodeURIComponent(slug)}&format=json`}
-              className="border border-zinc-800 px-3 py-1.5 text-zinc-300 hover:border-zinc-600 hover:text-zinc-100"
-            >
-              export json
-            </a>
-            <a
-              href={`/api/export?kind=challenge&slug=${encodeURIComponent(slug)}&format=csv`}
-              className="border border-zinc-800 px-3 py-1.5 text-zinc-300 hover:border-zinc-600 hover:text-zinc-100"
-            >
-              export csv
-            </a>
-          </div>
         </header>
+
+        <ChallengeReceiptHero data={data} slug={slug} />
 
         <ChallengeInfographic data={data} />
 
@@ -88,7 +77,7 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
 
         <DrawingGallery data={data} />
 
-        <section className="mt-16">
+        <section className="mt-16" id="models">
           <h2 className="mb-2 text-xl font-medium">per-model breakdown</h2>
           <p className="mb-6 text-sm text-zinc-500">
             expand a model to see the exact prompt, what the rule checker said, and the raw output
@@ -97,7 +86,11 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
             {data.summaries
               .sort((a, b) => b.pass_rate - a.pass_rate)
               .map((s) => (
-                <div key={s.model_slug} className="border border-zinc-800 bg-zinc-950">
+                <div
+                  key={s.model_slug}
+                  id={modelAnchorId(s.model_slug)}
+                  className="scroll-mt-24 border border-zinc-800 bg-zinc-950"
+                >
                   <button
                     type="button"
                     className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-zinc-900"
@@ -125,6 +118,26 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
               ))}
           </div>
         </section>
+
+        <footer className="mt-16 border-t border-zinc-900 pt-6 pb-4">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-700">
+            export
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3 text-xs">
+            <a
+              href={`/api/export?kind=challenge&slug=${encodeURIComponent(slug)}&format=json`}
+              className="text-zinc-600 underline-offset-2 hover:text-zinc-400 hover:underline"
+            >
+              json
+            </a>
+            <a
+              href={`/api/export?kind=challenge&slug=${encodeURIComponent(slug)}&format=csv`}
+              className="text-zinc-600 underline-offset-2 hover:text-zinc-400 hover:underline"
+            >
+              csv
+            </a>
+          </div>
+        </footer>
       </main>
     </div>
   );
@@ -136,7 +149,7 @@ function TaskBriefing({ data }: { data: ChallengeResults }) {
   const byId = new Map(data.runs.map((r) => [r.task_id, r.task_prompt]));
 
   return (
-    <section className="mt-16">
+    <section className="mt-16 scroll-mt-24" id="briefing">
       <h2 className="text-xl font-medium">what these tasks actually are</h2>
       <p className="mt-1 max-w-2xl text-sm text-zinc-500">
         the short titles above are nicknames. each trap is a hard rule contract scored by a
@@ -191,7 +204,7 @@ function TaskBriefRow({
 }) {
   const [open, setOpen] = useState(false);
   return (
-    <li className="border border-zinc-900 bg-zinc-950/60">
+    <li id={`task-${task.id}`} className="scroll-mt-24 border border-zinc-900 bg-zinc-950/60">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -267,6 +280,15 @@ function DrawingGallery({ data }: { data: ChallengeResults }) {
 
 function RunCard({ run, blurb }: { run: ChallengeRunRow; blurb?: string }) {
   const [showPrompt, setShowPrompt] = useState(false);
+  const failLines = (run.details || "")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith("fail:"));
+  const passLines = (run.details || "")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.startsWith("pass:"));
+
   return (
     <div className="rounded border border-zinc-800 bg-black p-3 text-sm">
       <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -275,6 +297,24 @@ function RunCard({ run, blurb }: { run: ChallengeRunRow; blurb?: string }) {
         >
           {run.passed ? "pass" : "fail"}
         </span>
+        {!run.passed && failLines.slice(0, 2).map((line) => (
+          <span
+            key={line}
+            className="max-w-[14rem] truncate border border-red-950/60 bg-red-950/20 px-1.5 py-0.5 font-mono text-[10px] text-red-300/80"
+            title={line}
+          >
+            {line.replace(/^fail:\s*/, "")}
+          </span>
+        ))}
+        {run.passed && passLines.slice(0, 1).map((line) => (
+          <span
+            key={line}
+            className="max-w-[14rem] truncate border border-emerald-950/60 bg-emerald-950/15 px-1.5 py-0.5 font-mono text-[10px] text-emerald-300/80"
+            title={line}
+          >
+            {line.replace(/^pass:\s*/, "")}
+          </span>
+        ))}
         <span className="text-zinc-300">{run.task_label}</span>
         <span className="text-xs text-zinc-600">{run.task_category}</span>
         <span className="text-xs text-zinc-500">{run.score}%</span>

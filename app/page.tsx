@@ -2,6 +2,7 @@ import Link from "next/link";
 import fs from "fs/promises";
 import path from "path";
 import { listChallengeSlugs, loadChallengeResults } from "@/lib/challenges/store-json";
+import { buildChallengeReceipt } from "@/lib/challenges/receipt";
 import { listSessions } from "@/lib/challenges/sessions";
 import type { ChallengeResults } from "@/lib/challenges/types";
 import { SlopDoodle } from "@/components/SlopDoodle";
@@ -109,22 +110,40 @@ export default async function Home() {
           <div className="grid gap-3 sm:grid-cols-2">
             {featured.map((c) => {
               const top = [...c.summaries].sort((a, b) => b.pass_rate - a.pass_rate)[0];
+              const receipt = buildChallengeReceipt(c);
+              const wipe = receipt.wipeouts[0]?.task.label;
+              const punch =
+                wipe && top
+                  ? `${top.model_label.replace(/\s*\(via .*\)\s*$/i, "")} ${Math.round(top.pass_rate * 100)}% · ${wipe} 0/${receipt.wipeouts[0].total}`
+                  : null;
               return (
                 <Link
                   key={c.manifest.slug}
-                  href={`/challenge/${c.manifest.slug}`}
+                  href={`/challenge/${c.manifest.slug}#receipt`}
                   className="group block border border-zinc-900 bg-zinc-950/50 p-5 transition-colors hover:border-zinc-700"
                 >
                   <p className="font-mono text-xs uppercase tracking-widest text-amber-500/80">featured</p>
                   <h3 className="mt-2 font-medium text-zinc-100 group-hover:text-white">{c.manifest.title}</h3>
                   <p className="mt-1 text-sm text-zinc-500">{c.manifest.subtitle}</p>
-                  {top && (
+                  {punch ? (
+                    <p className="mt-4 font-mono text-xs leading-relaxed text-zinc-500">
+                      <span className="text-emerald-400">{Math.round((top?.pass_rate ?? 0) * 100)}%</span>
+                      {" · "}
+                      <span className="text-zinc-300">
+                        {top?.model_label.replace(/\s*\(via .*\)\s*$/i, "")}
+                      </span>
+                      {" · "}
+                      <span className="text-red-300/80">
+                        {wipe} 0/{receipt.wipeouts[0].total}
+                      </span>
+                    </p>
+                  ) : top ? (
                     <p className="mt-4 font-mono text-xs text-zinc-600">
                       winner: <span className="text-emerald-400">{top.model_label}</span>{" "}
                       · {Math.round(top.pass_rate * 100)}% pass ·{" "}
                       {new Date(c.completed_at).toLocaleDateString()}
                     </p>
-                  )}
+                  ) : null}
                 </Link>
               );
             })}

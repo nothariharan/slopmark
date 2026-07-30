@@ -14,8 +14,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000"),
+  ),
   title: "slopmark",
-  description: "benchmark base for ai models",
+  description:
+    "Machine-checkable stupid traps for AI models. Same harness, rule verifiers, zero LLM judges.",
 };
 
 export default function RootLayout({
