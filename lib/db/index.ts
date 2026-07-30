@@ -42,6 +42,9 @@ function initDb(): Db {
     input_tokens INTEGER NOT NULL,
     output_tokens INTEGER NOT NULL,
     cost_usd REAL NOT NULL,
+    upvotes INTEGER NOT NULL DEFAULT 0,
+    harness_version TEXT NOT NULL DEFAULT 'v0',
+    task_pool_version TEXT NOT NULL DEFAULT 'unknown',
     created_at TEXT NOT NULL
   );
 
@@ -119,6 +122,19 @@ function initDb(): Db {
     sqlite.exec(`ALTER TABLE eval_runs ADD COLUMN upvotes INTEGER NOT NULL DEFAULT 0;`);
   } catch {
     // column likely exists
+  }
+
+  // harness + pool versions used to get dropped on insert — keep them around
+  // so local receipts match what supabase already stores
+  for (const stmt of [
+    `ALTER TABLE eval_runs ADD COLUMN harness_version TEXT NOT NULL DEFAULT 'v0';`,
+    `ALTER TABLE eval_runs ADD COLUMN task_pool_version TEXT NOT NULL DEFAULT 'unknown';`,
+  ]) {
+    try {
+      sqlite.exec(stmt);
+    } catch {
+      // column likely exists
+    }
   }
 
   return drizzle(sqlite, { schema });

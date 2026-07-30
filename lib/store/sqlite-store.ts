@@ -47,6 +47,8 @@ export async function addRun(run: EvalRun) {
       input_tokens: run.input_tokens,
       output_tokens: run.output_tokens,
       cost_usd: run.cost_usd,
+      harness_version: run.harness_version,
+      task_pool_version: run.task_pool_version,
       created_at: run.created_at,
     });
   } catch (e) {
@@ -68,8 +70,8 @@ export async function listRuns(limit = 10): Promise<EvalRun[]> {
     return res.map((r) => ({
       ...r,
       domain: r.domain as Domain,
-      harness_version: "v0",
-      task_pool_version: "unknown",
+      harness_version: r.harness_version ?? "v0",
+      task_pool_version: r.task_pool_version ?? "unknown",
     })) as EvalRun[];
   } catch {
     return [];

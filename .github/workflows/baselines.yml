@@ -1,6 +1,9 @@
-name: ci-smoke
+name: ci
 
 on:
+  push:
+    branches: [main]
+  pull_request:
   workflow_dispatch:
   schedule:
     # weekly — catch drift when deps/tasks break without a full model re-bench
@@ -18,10 +21,12 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npx tsc --noEmit
-      - run: npm run vet-tasks
-        continue-on-error: true
+      # live model vet is not ci-safe (needs keys) — static shape check instead
+      - run: npm run vet-tasks -- --static
+      - run: npm run build
       - name: Challenge results present
         run: |
           test -f data/challenges/niche-sprint-v1/results.json
           test -f data/challenges/drawing-contest-v1/results.json
           test -f data/challenges/game-night-v1/results.json
+          test -f data/challenges/slop-chaos-v1/results.json

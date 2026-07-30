@@ -14,6 +14,8 @@ export const evalRuns = sqliteTable("eval_runs", {
   output_tokens: integer("output_tokens").notNull(),
   cost_usd: real("cost_usd").notNull(),
   upvotes: integer("upvotes").notNull().default(0),
+  harness_version: text("harness_version").notNull().default("v0"),
+  task_pool_version: text("task_pool_version").notNull().default("unknown"),
   created_at: text("created_at").notNull(),
 });
 
