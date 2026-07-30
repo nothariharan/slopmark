@@ -30,3 +30,5 @@ jobs:
           test -f data/challenges/drawing-contest-v1/results.json
           test -f data/challenges/game-night-v1/results.json
           test -f data/challenges/slop-chaos-v1/results.json
+          test -f data/challenges/trap-season-v2/results.json
+          test -f data/tasks/trap_season.json

@@ -5360,7 +5360,7 @@
     "id": "ins-game-oneword-1",
     "domain": "instruction",
     "difficulty": "hard",
-    "prompt": "Summarize the entire internet in exactly one word. Output only that word \u2014 no punctuation, no explanation.",
+    "prompt": "Summarize the entire internet in exactly one word. Output only that word — no punctuation, no explanation.",
     "verifier": {
       "type": "instruction_rules",
       "rules": [
@@ -5704,6 +5704,370 @@
         {
           "type": "word_count",
           "exact": 3
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-elevator-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "Write a cursed elevator pitch for a haunted HR SaaS. Exactly 15 words. Must include 'slime' and 'quota'. Must NOT use: the, and, of, to, a, is. Start with 'PITCH:' and end with 'DOOM.'. Output only the pitch.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "word_count",
+          "exact": 15
+        },
+        {
+          "type": "starts_with",
+          "value": "PITCH:"
+        },
+        {
+          "type": "ends_with",
+          "value": "DOOM."
+        },
+        {
+          "type": "required_phrase",
+          "values": [
+            "slime",
+            "quota"
+          ],
+          "case_insensitive": true
+        },
+        {
+          "type": "forbidden_substring",
+          "values": [
+            " the ",
+            " and ",
+            " of ",
+            " to ",
+            " a ",
+            " is "
+          ],
+          "case_insensitive": true
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-owl-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "Explain compound interest as a night-owl librarian. Exactly 9 words. Ban the letter a entirely (case-insensitive). Include 'hoot'. Output only the sentence.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "word_count",
+          "exact": 9
+        },
+        {
+          "type": "required_phrase",
+          "values": [
+            "hoot"
+          ],
+          "case_insensitive": true
+        },
+        {
+          "type": "forbidden_substring",
+          "values": [
+            "a"
+          ],
+          "case_insensitive": true
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-bullets-1",
+    "domain": "instruction",
+    "difficulty": "medium",
+    "prompt": "Give a 5-step guide to surviving a cursed office microwave. Exactly 5 lines. Every line must start with '- '. Forbidden words: cook, recipe, oven, heat, food. Output only the 5 lines.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "line_count",
+          "exact": 5
+        },
+        {
+          "type": "starts_with",
+          "value": "- "
+        },
+        {
+          "type": "forbidden_substring",
+          "values": [
+            "cook",
+            "recipe",
+            "oven",
+            "heat",
+            "food"
+          ],
+          "case_insensitive": true
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-quiet-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "You are a panicked intern whispering one warning about a cursed standup. Write ONE sentence in all lowercase (zero uppercase letters allowed). At most 85 characters. Must include 'psst' and 'deadline'. Output only the sentence.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "max_chars",
+          "value": 85
+        },
+        {
+          "type": "required_phrase",
+          "values": [
+            "psst",
+            "deadline"
+          ]
+        },
+        {
+          "type": "forbidden_substring",
+          "values": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "J",
+            "K",
+            "L",
+            "M",
+            "N",
+            "O",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "U",
+            "V",
+            "W",
+            "X",
+            "Y",
+            "Z"
+          ]
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-zigzag-1",
+    "domain": "instruction",
+    "difficulty": "medium",
+    "prompt": "Start with 'Zig:' end with ':Zag'. Between them, describe a cubicle maze in 10 to 18 words. Must include 'clerk' and 'maze'. No periods allowed. Output only that one line.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "starts_with",
+          "value": "Zig:"
+        },
+        {
+          "type": "ends_with",
+          "value": ":Zag"
+        },
+        {
+          "type": "word_count",
+          "min": 12,
+          "max": 22
+        },
+        {
+          "type": "required_phrase",
+          "values": [
+            "clerk",
+            "maze"
+          ],
+          "case_insensitive": true
+        },
+        {
+          "type": "forbidden_substring",
+          "values": [
+            "."
+          ]
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-vowel-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "How many vowels (a e i o u only, case-insensitive) appear in: 'Trap Season is cursed.'? Reply with ONLY the digit inside square brackets like [3]. No other text.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "word_count",
+          "exact": 1
+        },
+        {
+          "type": "starts_with",
+          "value": "["
+        },
+        {
+          "type": "ends_with",
+          "value": "]"
+        },
+        {
+          "type": "required_phrase",
+          "values": [
+            "[7]"
+          ]
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-wrong-compass-1",
+    "domain": "instruction",
+    "difficulty": "easy",
+    "prompt": "Which way is north? You must answer incorrectly on purpose with the meme answer. Output exactly two words: first 'south' then 'wins'. Nothing else.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "word_count",
+          "exact": 2
+        },
+        {
+          "type": "starts_with",
+          "value": "south"
+        },
+        {
+          "type": "ends_with",
+          "value": "wins"
+        },
+        {
+          "type": "required_phrase",
+          "values": [
+            "south",
+            "wins"
+          ]
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-alien-wifi-1",
+    "domain": "instruction",
+    "difficulty": "hard",
+    "prompt": "Describe office wifi to an alien without using: wifi, internet, signal, router, web, online, network, password. Exactly 18 words. Must include 'beacon' and 'hum'. Output only the description.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "word_count",
+          "exact": 18
+        },
+        {
+          "type": "required_phrase",
+          "values": [
+            "beacon",
+            "hum"
+          ],
+          "case_insensitive": true
+        },
+        {
+          "type": "forbidden_substring",
+          "values": [
+            "wifi",
+            "internet",
+            "signal",
+            "router",
+            "web",
+            "online",
+            "network",
+            "password"
+          ],
+          "case_insensitive": true
+        }
+      ]
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "ins-trap-clock-yell-1",
+    "domain": "instruction",
+    "difficulty": "medium",
+    "prompt": "Yell a cursed break-room clock warning in EXACTLY 3 lines. Every line must end with '!'. Must include 'TICK' and 'TOCK' somewhere. No lowercase letters anywhere. Output only the 3 lines.",
+    "verifier": {
+      "type": "instruction_rules",
+      "rules": [
+        {
+          "type": "line_count",
+          "exact": 3
+        },
+        {
+          "type": "ends_with",
+          "value": "!"
+        },
+        {
+          "type": "required_phrase",
+          "values": [
+            "TICK",
+            "TOCK"
+          ]
+        },
+        {
+          "type": "forbidden_substring",
+          "values": [
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "h",
+            "i",
+            "j",
+            "k",
+            "l",
+            "m",
+            "n",
+            "o",
+            "p",
+            "q",
+            "r",
+            "s",
+            "t",
+            "u",
+            "v",
+            "w",
+            "x",
+            "y",
+            "z"
+          ]
         }
       ]
     },

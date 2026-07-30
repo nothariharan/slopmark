@@ -115,6 +115,7 @@ committed challenge / session json is what survives deploys
   - [drawing contest v1](https://slopmark.vercel.app/challenge/drawing-contest-v1)
   - [game night v1](https://slopmark.vercel.app/challenge/game-night-v1)
   - [slop chaos v1](https://slopmark.vercel.app/challenge/slop-chaos-v1)
+  - [trap season v2](https://slopmark.vercel.app/challenge/trap-season-v2) — monthly cursed pack after slop chaos
 - **sessions wall** — `/sessions` plus leaderboard sessions tab
 - **shame** — worst failures from committed results
 - **goal** — stupid minigames vs live models
@@ -147,7 +148,7 @@ for live calls put keys in `.env.local` see [`.env.example`](.env.example)
 
 ```bash
 AIMLAPI_KEY=          # cheap testing  aiml/<model-id>
-FIREWORKS_API_KEY=    # drawing + game night  fireworks/<model-id>
+FIREWORKS_API_KEY=    # drawing · game night · slop chaos · trap season  fireworks/<model-id>
 OPENROUTER_API_KEY=   # openrouter model group
 ```
 

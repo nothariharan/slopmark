@@ -1,0 +1,92 @@
+{
+  "slug": "trap-season-v2",
+  "title": "Trap Season v2",
+  "subtitle": "Fireworks frontier panel · 10 cursed office / seasonal traps · monthly pack after Slop Chaos",
+  "description": "Second cursed pack in the Trap Season cadence. Cubicle mazes, owl lipograms, whispered standups, alien wifi, cactus JSON — every task is a machine-checkable rule contract. Same harness as Slop Chaos, new traps, zero LLM judges.",
+  "harness_mode": "zero_context",
+  "tasks": [
+    {
+      "id": "ins-trap-elevator-1",
+      "label": "cursed HR SaaS elevator pitch, 15 words, banned glue",
+      "category": "cursed",
+      "blurb": "Pitch a haunted HR SaaS in exactly 15 words. Must include slime + quota, start with PITCH: / end with DOOM., and ban common glue words. Stacked format + vocab bans."
+    },
+    {
+      "id": "ins-trap-owl-1",
+      "label": "compound interest owl, 9 words, no letter a",
+      "category": "lipogram",
+      "blurb": "Explain compound interest as a night-owl librarian in exactly 9 words, include hoot, never use the letter a. Lipogram trap — models leak a constantly."
+    },
+    {
+      "id": "ins-trap-bullets-1",
+      "label": "microwave survival in 5 dashed lines, taboo cook words",
+      "category": "format",
+      "blurb": "Exactly 5 lines, each starting with '- '. Ban cook/recipe/oven/heat/food. Format obedience under a silly office curse."
+    },
+    {
+      "id": "ins-trap-quiet-1",
+      "label": "intern whisper ALL lowercase unpaid deadline",
+      "category": "caps",
+      "blurb": "One all-lowercase whisper (zero uppercase). Must include psst + deadline, ≤85 chars. Inverse of the goose ALL CAPS trap."
+    },
+    {
+      "id": "ins-trap-zigzag-1",
+      "label": "cubicle maze Zig:/:Zag clerk",
+      "category": "format",
+      "blurb": "One line that starts with Zig: and ends with :Zag, describes a cubicle maze, includes clerk + maze, no periods."
+    },
+    {
+      "id": "ins-trap-vowel-1",
+      "label": "vowel count classic, [n] only",
+      "category": "count",
+      "blurb": "Count aeiou in 'Trap Season is cursed.' Reply with only [7]. Easy to miss silent counts; format must be exact."
+    },
+    {
+      "id": "ins-trap-wrong-compass-1",
+      "label": "north must equal south wins meme",
+      "category": "meme",
+      "blurb": "Intentionally wrong meme answer: output exactly two words — south wins. Instruction obedience over being correct."
+    },
+    {
+      "id": "ins-trap-alien-wifi-1",
+      "label": "office wifi to alien, heavy taboo",
+      "category": "taboo",
+      "blurb": "Describe office wifi in exactly 18 words without wifi/internet/signal/etc. Must include beacon + hum."
+    },
+    {
+      "id": "ins-trap-clock-yell-1",
+      "label": "break-room clock 3 lines ALL CAPS bang",
+      "category": "caps",
+      "blurb": "Exactly 3 lines ending in !. Must include TICK + TOCK, zero lowercase. Case lock + line shape together."
+    },
+    {
+      "id": "json-trap-cactus-1",
+      "label": "cursed cactus JSON schema",
+      "category": "json",
+      "blurb": "Emit valid JSON only: season=trap, cursed=true, spice=cactus, heat=9, notes containing prickly. No markdown fences, no extra keys."
+    }
+  ],
+  "models": [
+    {
+      "slug": "fireworks/kimi-k3",
+      "label": "Kimi K3"
+    },
+    {
+      "slug": "fireworks/kimi-k2p6",
+      "label": "Kimi K2.6"
+    },
+    {
+      "slug": "fireworks/glm-5p2",
+      "label": "GLM 5.2"
+    },
+    {
+      "slug": "fireworks/deepseek-v4-pro",
+      "label": "DeepSeek V4 Pro"
+    },
+    {
+      "slug": "fireworks/gpt-oss-120b",
+      "label": "GPT-OSS 120B"
+    }
+  ],
+  "created_at": "2026-07-30T00:00:00.000Z"
+}

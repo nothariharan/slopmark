@@ -571,7 +571,7 @@
     "id": "json-20",
     "domain": "json",
     "difficulty": "hard",
-    "prompt": "Return a JSON object with a 'value' field that is either a number or null (not a string, not omitted \u2014 it must be present), and a 'unit' field (string). Output only the JSON.",
+    "prompt": "Return a JSON object with a 'value' field that is either a number or null (not a string, not omitted — it must be present), and a 'unit' field (string). Output only the JSON.",
     "verifier": {
       "type": "json_schema",
       "schema": {
@@ -841,6 +841,50 @@
           "notes": {
             "type": "string",
             "pattern": "industrial"
+          }
+        }
+      }
+    },
+    "source": "original",
+    "approved": true
+  },
+  {
+    "id": "json-trap-cactus-1",
+    "domain": "json",
+    "difficulty": "hard",
+    "prompt": "Return ONLY valid JSON (no markdown). Schema: {\"season\":\"trap\",\"cursed\":true,\"spice\":\"cactus\",\"heat\": integer 0-10, \"notes\": string that must contain the substring 'prickly' }. No extra keys. heat must be exactly 9.",
+    "verifier": {
+      "type": "json_schema",
+      "schema": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "season",
+          "cursed",
+          "spice",
+          "heat",
+          "notes"
+        ],
+        "properties": {
+          "season": {
+            "type": "string",
+            "const": "trap"
+          },
+          "cursed": {
+            "type": "boolean",
+            "const": true
+          },
+          "spice": {
+            "type": "string",
+            "const": "cactus"
+          },
+          "heat": {
+            "type": "integer",
+            "const": 9
+          },
+          "notes": {
+            "type": "string",
+            "pattern": "prickly"
           }
         }
       }

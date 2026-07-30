@@ -167,6 +167,39 @@ challenge receipt pages (`/challenge/[slug]`) lead with a **shareable receipt he
 
 ---
 
+## trap season v2
+
+| | |
+|---|---|
+| slug | `trap-season-v2` |
+| models | same Fireworks panel as Slop Chaos (Kimi K3 / K2.6, GLM 5.2, DeepSeek V4 Pro, GPT-OSS 120B) |
+| tasks | 10 new cursed office / seasonal traps (`ins-trap-*` + `json-trap-cactus-1`) — elevator pitch glue bans, owl lipogram (no `a`), microwave dash lines, whisper lowercase, Zig/Zag maze, vowel count, `south wins` meme, alien wifi taboo, TICK/TOCK ALL CAPS, cactus JSON |
+| harness | `zero_context` |
+| view | `/challenge/trap-season-v2` |
+| run | `npm run challenge:trap-season` |
+
+second pack in the Trap Season cadence — same “stupid simultaneous contracts” mold as Slop Chaos, new jokes. seed prompts live in `data/tasks/trap_season.json` and are merged into `instruction.json` / `json.json` for the harness.
+
+### scoreboard (jul 30 2026)
+
+ran on **Fireworks** serverless (`FIREWORKS_API_KEY` present). re-run: `npm run challenge:trap-season`.
+
+| rank | model | pass rate |
+|---:|---|---:|
+| 1 | GPT-OSS 120B | **90%** (9/10) |
+| 2 | Kimi K3 | **80%** (8/10) |
+| 3 | DeepSeek V4 Pro | 60% |
+| 4 | Kimi K2.6 | 30% |
+| 4 | GLM 5.2 | 30% |
+
+**universal wipeout (0/5):** cursed HR SaaS elevator pitch (banned glue words + exact count + PITCH:/DOOM.).
+
+**universal clears (5/5):** vowel count `[7]`, `south wins` meme, cactus JSON schema.
+
+Kimi K3 looks strong here (80%) vs Slop Chaos (60%) — different trap mix, still loses the stacked glue-word elevator pitch like everyone else.
+
+---
+
 ## production (vercel)
 
 deployed api routes read from committed json via `lib/challenges/store-json.ts` — no sqlite on serverless. see [deploy](/docs/deploy).
