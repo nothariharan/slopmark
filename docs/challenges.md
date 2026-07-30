@@ -163,6 +163,8 @@ ran via OpenRouter twins (`FIREWORKS_API_KEY` was not in local `.env.local`). re
 
 Kimi K3 still loses hard on multi-constraint lipogram / glue-word bans — the “frontend” model is not a constraint model.
 
+the challenge receipt UI now includes a **what these tasks actually are** briefing (plain-english blurb + expandable full prompt) and per-run verifier details on fails, so the short nicknames are readable for humans.
+
 ---
 
 ## production (vercel)

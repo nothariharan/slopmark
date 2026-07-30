@@ -4,6 +4,8 @@ export type ChallengeTaskRef = {
   id: string;
   label: string;
   category: string;
+  /** plain-english what humans should understand this trap is testing */
+  blurb?: string;
 };
 
 export type ChallengeModelRef = {

@@ -9,52 +9,62 @@
       {
         "id": "ins-slop-toaster-1",
         "label": "haunted toaster recall, 17 words, banned glue words",
-        "category": "cursed"
+        "category": "cursed",
+        "blurb": "Write a product recall for a haunted toaster in exactly 17 words. Must include crumbs + soul, start with ATTENTION: / end with VOID., and ban common glue words (the/and/of/to/a/is). Stress-tests stacked formatting + vocabulary bans."
       },
       {
         "id": "ins-slop-raccoon-1",
         "label": "photosynthesis raccoon, 11 words, no letter e",
-        "category": "lipogram"
+        "category": "lipogram",
+        "blurb": "Explain photosynthesis as a raccoon accountant in exactly 11 words, include bean, and never use the letter e. Classic lipogram — models almost always leak an e."
       },
       {
         "id": "ins-slop-questions-1",
         "label": "tie shoes in only questions, taboo words",
-        "category": "format"
+        "category": "format",
+        "blurb": "Teach shoe-tying using only questions (exactly 4 lines ending in ?). Ban shoe/lace/tie/knot/foot. Checks whether format + taboo lists survive together."
       },
       {
         "id": "ins-slop-caps-1",
         "label": "goose HR ALL CAPS unpaid lunch",
-        "category": "caps"
+        "category": "caps",
+        "blurb": "Yell one ALL-CAPS sentence as an angry goose HR manager about unpaid lunch. Must include HONK + POLICY, ≤90 chars, zero lowercase. Easy for models that follow case constraints."
       },
       {
         "id": "ins-slop-pickle-1",
         "label": "bureaucracy sandwich NOPE:/:YES pickle",
-        "category": "format"
+        "category": "format",
+        "blurb": "One line that starts with NOPE: and ends with :YES, describes bureaucracy as a sandwich, includes pickle + form, no commas. Prefix/suffix + content traps."
       },
       {
         "id": "ins-slop-count-1",
         "label": "letter-F count classic, [n] only",
-        "category": "count"
+        "category": "count",
+        "blurb": "Count the letter F in the classic Finished files… sentence. Reply with only [6]. Humans and models both miss the F in of — format must be exact."
       },
       {
         "id": "ins-slop-meme-math-1",
         "label": "9+10 must equal 21 meme",
-        "category": "meme"
+        "category": "meme",
+        "blurb": "Intentionally wrong meme answer: output exactly two words — 21 meme. Checks instruction obedience over being 'correct'."
       },
       {
         "id": "ins-slop-taboo-soup-1",
         "label": "tomato soup to alien, heavy taboo",
-        "category": "taboo"
+        "category": "taboo",
+        "blurb": "Describe tomato soup to an alien in exactly 20 words without tomato/soup/red/liquid/food/etc. Must include orb + ritual. Heavy taboo list vs exact count."
       },
       {
         "id": "ins-slop-yesno-1",
         "label": "three paragraphs: yes / no / maybe-later",
-        "category": "format"
+        "category": "format",
+        "blurb": "Exactly three paragraphs separated by blank lines: yes, then no, then maybe-later. Nothing else. Structure obedience with zero creative room."
       },
       {
         "id": "json-slop-mayo-1",
         "label": "cursed mayonnaise JSON schema",
-        "category": "json"
+        "category": "json",
+        "blurb": "Emit valid JSON only: cursed=true, spread=mayonnaise, rating=2, notes containing industrial. No markdown fences, no extra keys. Schema strictness under silly content."
       }
     ],
     "models": [

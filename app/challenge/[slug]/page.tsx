@@ -4,7 +4,24 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ChallengeInfographic } from "@/components/ChallengeInfographic";
 import { SvgThumb, extractSvg } from "@/components/SvgOutput";
-import type { ChallengeResults, ChallengeRunRow } from "@/lib/challenges/types";
+import type {
+  ChallengeResults,
+  ChallengeRunRow,
+  ChallengeTaskRef,
+} from "@/lib/challenges/types";
+
+const CATEGORY_HELP: Record<string, string> = {
+  cursed: "stacked silly constraints at once — count + banned words + fixed start/end",
+  lipogram: "writing without a banned letter (here: no e). models leak the letter constantly",
+  format: "shape obedience — questions only, fixed prefixes, exact paragraph layout",
+  caps: "case lock — ALL CAPS, no lowercase anywhere",
+  count: "counting / exact token output (classic F-count trap)",
+  meme: "obey a joke instruction instead of being factually correct",
+  taboo: "describe something without using the obvious words for it",
+  json: "strict schema JSON — no markdown, no extra keys",
+  lipogram_alt: "letter bans",
+  roleplay: "stay in character while hitting hard rules",
+};
 
 export default function ChallengePage({ params }: { params: Promise<{ slug: string }> }) {
   const [slug, setSlug] = useState("");
@@ -67,10 +84,15 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
 
         <ChallengeInfographic data={data} />
 
+        <TaskBriefing data={data} />
+
         <DrawingGallery data={data} />
 
         <section className="mt-16">
-          <h2 className="mb-6 text-xl font-medium">per-model breakdown</h2>
+          <h2 className="mb-2 text-xl font-medium">per-model breakdown</h2>
+          <p className="mb-6 text-sm text-zinc-500">
+            expand a model to see the exact prompt, what the rule checker said, and the raw output
+          </p>
           <div className="space-y-3">
             {data.summaries
               .sort((a, b) => b.pass_rate - a.pass_rate)
@@ -91,7 +113,11 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
                   {openModel === s.model_label && (
                     <div className="border-t border-zinc-800 px-4 py-3 space-y-4">
                       {modelRuns(s.model_label).map((r) => (
-                        <RunCard key={r.id} run={r} />
+                        <RunCard
+                          key={r.id}
+                          run={r}
+                          blurb={data.manifest.tasks.find((t) => t.id === r.task_id)?.blurb}
+                        />
                       ))}
                     </div>
                   )}
@@ -101,6 +127,101 @@ export default function ChallengePage({ params }: { params: Promise<{ slug: stri
         </section>
       </main>
     </div>
+  );
+}
+
+/** plain-english map of every trap so the short labels make sense */
+function TaskBriefing({ data }: { data: ChallengeResults }) {
+  const cats = [...new Set(data.manifest.tasks.map((t) => t.category))];
+  const byId = new Map(data.runs.map((r) => [r.task_id, r.task_prompt]));
+
+  return (
+    <section className="mt-16">
+      <h2 className="text-xl font-medium">what these tasks actually are</h2>
+      <p className="mt-1 max-w-2xl text-sm text-zinc-500">
+        the short titles above are nicknames. each trap is a hard rule contract scored by a
+        parser — not vibes, not another model. here is the human-readable brief.
+      </p>
+
+      <div className="mt-6 flex flex-wrap gap-2">
+        {cats.map((c) => (
+          <span
+            key={c}
+            className="border border-zinc-800 bg-zinc-950 px-2.5 py-1 font-mono text-[11px] text-zinc-400"
+            title={CATEGORY_HELP[c] ?? c}
+          >
+            <span className="text-zinc-200">{c}</span>
+            <span className="text-zinc-600"> — {CATEGORY_HELP[c] ?? "constraint trap"}</span>
+          </span>
+        ))}
+      </div>
+
+      <ol className="mt-8 space-y-4">
+        {data.manifest.tasks.map((t, i) => (
+          <TaskBriefRow
+            key={t.id}
+            index={i + 1}
+            task={t}
+            prompt={byId.get(t.id) ?? ""}
+            passRate={taskPassRate(data, t.id)}
+          />
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function taskPassRate(data: ChallengeResults, taskId: string) {
+  const rows = data.runs.filter((r) => r.task_id === taskId);
+  if (!rows.length) return null;
+  const passed = rows.filter((r) => r.passed).length;
+  return { passed, total: rows.length, pct: Math.round((passed / rows.length) * 100) };
+}
+
+function TaskBriefRow({
+  index,
+  task,
+  prompt,
+  passRate,
+}: {
+  index: number;
+  task: ChallengeTaskRef;
+  prompt: string;
+  passRate: { passed: number; total: number; pct: number } | null;
+}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <li className="border border-zinc-900 bg-zinc-950/60">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-start gap-3 px-4 py-3 text-left hover:bg-zinc-900/50"
+      >
+        <span className="font-mono text-xs text-zinc-600 pt-0.5">{String(index).padStart(2, "0")}</span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-medium text-zinc-100">{task.label}</span>
+            <span className="font-mono text-[10px] uppercase tracking-wider text-zinc-600">
+              {task.category}
+            </span>
+            {passRate && (
+              <span className="font-mono text-[10px] text-zinc-500">
+                field: {passRate.passed}/{passRate.total} models ({passRate.pct}%)
+              </span>
+            )}
+          </div>
+          {task.blurb && (
+            <p className="mt-1 text-sm leading-relaxed text-zinc-400">{task.blurb}</p>
+          )}
+        </div>
+        <span className="shrink-0 text-xs text-zinc-600">{open ? "hide prompt" : "show prompt"}</span>
+      </button>
+      {open && prompt && (
+        <pre className="border-t border-zinc-900 bg-black px-4 py-3 text-xs leading-relaxed text-zinc-500 whitespace-pre-wrap">
+          {prompt}
+        </pre>
+      )}
+    </li>
   );
 }
 
@@ -121,6 +242,7 @@ function DrawingGallery({ data }: { data: ChallengeResults }) {
         {tasks.map((t) => (
           <div key={t.id}>
             <h3 className="mb-3 font-mono text-sm text-zinc-400">{t.label}</h3>
+            {t.blurb && <p className="mb-3 text-xs text-zinc-600">{t.blurb}</p>}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
               {data.manifest.models.map((m) => {
                 const run = drawn.find((r) => r.task_id === t.id && r.model_label === m.label);
@@ -143,7 +265,8 @@ function DrawingGallery({ data }: { data: ChallengeResults }) {
   );
 }
 
-function RunCard({ run }: { run: ChallengeRunRow }) {
+function RunCard({ run, blurb }: { run: ChallengeRunRow; blurb?: string }) {
+  const [showPrompt, setShowPrompt] = useState(false);
   return (
     <div className="rounded border border-zinc-800 bg-black p-3 text-sm">
       <div className="mb-2 flex flex-wrap items-center gap-2">
@@ -156,6 +279,31 @@ function RunCard({ run }: { run: ChallengeRunRow }) {
         <span className="text-xs text-zinc-600">{run.task_category}</span>
         <span className="text-xs text-zinc-500">{run.score}%</span>
       </div>
+
+      {blurb && <p className="mb-2 text-xs leading-relaxed text-zinc-500">{blurb}</p>}
+
+      <div className="mb-2 flex flex-wrap gap-3 text-[11px]">
+        <button
+          type="button"
+          onClick={() => setShowPrompt((v) => !v)}
+          className="text-zinc-500 underline-offset-2 hover:text-zinc-300 hover:underline"
+        >
+          {showPrompt ? "hide prompt" : "show prompt"}
+        </button>
+      </div>
+
+      {showPrompt && (
+        <pre className="mb-2 max-h-40 overflow-auto whitespace-pre-wrap border border-zinc-900 bg-zinc-950 p-2 text-xs text-zinc-500">
+          {run.task_prompt}
+        </pre>
+      )}
+
+      {!run.passed && run.details && (
+        <pre className="mb-2 max-h-28 overflow-auto whitespace-pre-wrap border border-red-950/60 bg-red-950/20 p-2 text-[11px] text-red-300/80">
+          {run.details}
+        </pre>
+      )}
+
       {run.error ? (
         <p className="text-red-400 text-xs">{run.error}</p>
       ) : (
