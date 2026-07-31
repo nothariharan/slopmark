@@ -200,7 +200,7 @@ ran on **Fireworks** serverless. classic 5-model panel first, then appended fron
 
 **universal clears (9/9):** vowel count `[7]`, `south wins` meme, cactus JSON schema.
 
-`/bench` now also exposes the full Fireworks frontier group (needs `FIREWORKS_API_KEY`) — Kimi K3 lives there next to OpenRouter free / AIML.
+`/bench` does **not** expose Fireworks — that key is ops-only for publishing committed receipts. public host path stays OpenRouter free (+ BYOK / AIML when configured).
 
 ---
 

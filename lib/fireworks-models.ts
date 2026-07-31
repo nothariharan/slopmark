@@ -1,12 +1,12 @@
 /**
  * Fireworks serverless frontier panel
  *
- * these are the whole "actually strong" models we use for cursed packs
- * (slop chaos / trap season) and for /bench when FIREWORKS_API_KEY is set.
- * short slugs resolve to accounts/fireworks/models/<id> in openrouter.ts
+ * private ops lane — we use these to run cursed packs (slop chaos / trap season)
+ * and commit the receipts. NOT exposed on public /bench: the only host-funded
+ * key visitors get is OpenRouter free (1 req/min). fireworks stays in .env.local
+ * for our sessions only.
  *
- * host openrouter free tier stays the default for vercel visitors —
- * fireworks is the local / keyed path so we dont eat the 1 req/min limit
+ * short slugs resolve to accounts/fireworks/models/<id> in openrouter.ts
  */
 
 export type FireworksModel = {

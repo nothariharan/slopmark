@@ -60,6 +60,13 @@ export function resolveProvider(modelSlug: string): { provider: ProviderConfig; 
     return { provider: aiml, model };
   }
   if (modelSlug.startsWith("fireworks/")) {
+    // fireworks is ops-only — we run cursed packs locally and commit receipts.
+    // never let vercel visitors burn FIREWORKS_API_KEY via crafted fireworks/ slugs.
+    if (process.env.VERCEL) {
+      throw new Error(
+        "fireworks models are ops-only (published challenge receipts). use openrouter free or BYOK on the public site",
+      );
+    }
     const fw = fireworksProvider();
     if (!fw) throw new Error("FIREWORKS_API_KEY not set");
     const rest = modelSlug.slice("fireworks/".length);
